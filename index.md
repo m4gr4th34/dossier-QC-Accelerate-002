@@ -1,4 +1,4 @@
-An Open Dossier · **QC-Accelerate-002** · self-explaining edition · survey · working draft · June 2026
+An Open Dossier · **QC-Accelerate-002**
 
 # Accelerating Quantum Computing Research Using AI and Robotics
 

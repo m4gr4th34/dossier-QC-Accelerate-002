@@ -1,6 +1,6 @@
 # Accelerating Quantum Computing Research Using AI and Robotics
 
-> @@ABSTRACT@@.
+> Chapter 1 — The story so far.
 
 ## Working draft
 

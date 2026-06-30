@@ -5,120 +5,68 @@ byline: Irfan Ali-Khan — Independent Researcher
 active: index.html
 -->
 <!--slot:body-->
-<p class="abstract">@@ABSTRACT@@. This dossier surveys quantum computing: the live avenues, what each rests on, and where the open questions and forward bets sit. Every card in the landscape below carries an honest status label — established findings asserted, open questions and forecasts labeled as such. End it with: <b>Don't trust this paper — run it.</b></p>
+<p class="abstract"><b>Chapter 1 — The story so far.</b> <em>This dossier continues a program begun in a sibling lineage. This opening chapter is a recap of that prior, DOI'd work — every result here is cited to it, not claimed as new. New results begin in Chapter 2.</em></p>
 
 <!--mount:howto-->
 
+<h2><span class="num">01</span>AI IS ALREADY A CO-AUTHOR</h2>
+
+<p><b>AI is already a co-author of quantum-computing research.</b> Walk up the stack and it is on every floor: it reads the error syndromes (neural decoders), it choreographs the gates (learned control pulses), and it has even drawn new error-correcting codes humans had not picked. The prior work sorted this into three distinct things AI does — <em>re-deriving</em> what humans designed, <em>discovering</em> what they did not, and a third, quieter one: <em>scoping</em> — using a search to map a hardware frontier rigorously and certify where human design is already optimal.</p>
+
+<h2><span class="num">02</span>THE FLOOR: A QUBIT THAT PROTECTS ITSELF</h2>
+
+<p><b>The floor: a qubit that protects itself.</b> The program's foundation (Chapter 1 of the prior lineage, <button class="cite" data-c="ch1">prior Ch.1 · DOI</button>) is the <button class="term" data-d="A qubit whose information is stored in two coherent states of an oscillator whose separation grows with the cat's size. As the cat grows, bit-flip errors are crushed exponentially while phase-flips rise only linearly. That exponentially growing noise bias is the whole point: it turns the qubit into a self-protecting memory.">cat qubit</button>: information stored in two coherent states whose separation grows with the cat's size. As the cat grows, bit-flip errors are crushed <em>exponentially</em> while phase-flips rise only gently — an exponentially growing noise bias that turns the qubit into a self-protecting memory (Mirrahimi et al., 2014). That asymmetry is the whole point. Drag the cat size and watch the two rates pull apart.</p>
+
+<figure data-figure='{"type":"qc-bitflip","nbarMin":0.5,"nbarMax":8,"gamma":0.05}'>
+    <svg data-poster="1" viewBox="0 0 800 480" width="100%" class="lf-svg" role="img" aria-label="Cat-qubit noise bias: bit-flip error falls exponentially with cat size while phase-flip rises linearly"><g class="lf-grid"><line x1="70" y1="426" x2="650" y2="426" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="369.43" x2="650" y2="369.43" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="312.86" x2="650" y2="312.86" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="256.29" x2="650" y2="256.29" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="199.71" x2="650" y2="199.71" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="143.14" x2="650" y2="143.14" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="86.57" x2="650" y2="86.57" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="30" x2="650" y2="30" stroke="#d7dee0" stroke-width="1"></line></g><g class="lf-axes"><line x1="70" y1="30" x2="70" y2="426" stroke="#5a6b70" stroke-width="1.5"></line><line x1="70" y1="426" x2="650" y2="426" stroke="#5a6b70" stroke-width="1.5"></line><line x1="108.67" y1="426" x2="108.67" y2="431" stroke="#5a6b70" stroke-width="1"></line><text x="108.67" y="444" text-anchor="middle" font-size="11" fill="#5a6b70">1</text><line x1="186" y1="426" x2="186" y2="431" stroke="#5a6b70" stroke-width="1"></line><text x="186" y="444" text-anchor="middle" font-size="11" fill="#5a6b70">2</text><line x1="263.33" y1="426" x2="263.33" y2="431" stroke="#5a6b70" stroke-width="1"></line><text x="263.33" y="444" text-anchor="middle" font-size="11" fill="#5a6b70">3</text><line x1="340.67" y1="426" x2="340.67" y2="431" stroke="#5a6b70" stroke-width="1"></line><text x="340.67" y="444" text-anchor="middle" font-size="11" fill="#5a6b70">4</text><line x1="418" y1="426" x2="418" y2="431" stroke="#5a6b70" stroke-width="1"></line><text x="418" y="444" text-anchor="middle" font-size="11" fill="#5a6b70">5</text><line x1="495.33" y1="426" x2="495.33" y2="431" stroke="#5a6b70" stroke-width="1"></line><text x="495.33" y="444" text-anchor="middle" font-size="11" fill="#5a6b70">6</text><line x1="572.67" y1="426" x2="572.67" y2="431" stroke="#5a6b70" stroke-width="1"></line><text x="572.67" y="444" text-anchor="middle" font-size="11" fill="#5a6b70">7</text><line x1="650" y1="426" x2="650" y2="431" stroke="#5a6b70" stroke-width="1"></line><text x="650" y="444" text-anchor="middle" font-size="11" fill="#5a6b70">8</text><text x="62" y="429" text-anchor="end" font-size="10" fill="#5a6b70">10^-7</text><text x="62" y="372.43" text-anchor="end" font-size="10" fill="#5a6b70">10^-6</text><text x="62" y="315.86" text-anchor="end" font-size="10" fill="#5a6b70">10^-5</text><text x="62" y="259.29" text-anchor="end" font-size="10" fill="#5a6b70">10^-4</text><text x="62" y="202.71" text-anchor="end" font-size="10" fill="#5a6b70">10^-3</text><text x="62" y="146.14" text-anchor="end" font-size="10" fill="#5a6b70">10^-2</text><text x="62" y="89.57" text-anchor="end" font-size="10" fill="#5a6b70">10^-1</text><text x="62" y="33" text-anchor="end" font-size="10" fill="#5a6b70">10^0</text><text x="360" y="468" text-anchor="middle" font-size="12" fill="#5a6b70">cat size  n̄  (mean photon number)</text><text x="16" y="228" text-anchor="middle" font-size="12" fill="#5a6b70" transform="rotate(-90 16 228)">error rate  (log, normalized)</text></g><g class="lf-curves"><path d="M70 54.57L73.22 56.62L76.44 58.66L79.67 60.71L82.89 62.76L86.11 64.81L89.33 66.85L92.56 68.9L95.78 70.95L99 73L102.22 75.04L105.44 77.09L108.67 79.14L111.89 81.18L115.11 83.23L118.33 85.28L121.56 87.33L124.78 89.37L128 91.42L131.22 93.47L134.44 95.52L137.67 97.56L140.89 99.61L144.11 101.66L147.33 103.71L150.56 105.75L153.78 107.8L157 109.85L160.22 111.9L163.44 113.94L166.67 115.99L169.89 118.04L173.11 120.09L176.33 122.13L179.56 124.18L182.78 126.23L186 128.27L189.22 130.32L192.44 132.37L195.67 134.42L198.89 136.46L202.11 138.51L205.33 140.56L208.56 142.61L211.78 144.65L215 146.7L218.22 148.75L221.44 150.8L224.67 152.84L227.89 154.89L231.11 156.94L234.33 158.99L237.56 161.03L240.78 163.08L244 165.13L247.22 167.18L250.44 169.22L253.67 171.27L256.89 173.32L260.11 175.36L263.33 177.41L266.56 179.46L269.78 181.51L273 183.55L276.22 185.6L279.44 187.65L282.67 189.7L285.89 191.74L289.11 193.79L292.33 195.84L295.56 197.89L298.78 199.93L302 201.98L305.22 204.03L308.44 206.08L311.67 208.12L314.89 210.17L318.11 212.22L321.33 214.26L324.56 216.31L327.78 218.36L331 220.41L334.22 222.45L337.44 224.5L340.67 226.55L343.89 228.6L347.11 230.64L350.33 232.69L353.56 234.74L356.78 236.79L360 238.83L363.22 240.88L366.44 242.93L369.67 244.98L372.89 247.02L376.11 249.07L379.33 251.12L382.56 253.17L385.78 255.21L389 257.26L392.22 259.31L395.44 261.35L398.67 263.4L401.89 265.45L405.11 267.5L408.33 269.54L411.56 271.59L414.78 273.64L418 275.69L421.22 277.73L424.44 279.78L427.67 281.83L430.89 283.88L434.11 285.92L437.33 287.97L440.56 290.02L443.78 292.07L447 294.11L450.22 296.16L453.44 298.21L456.67 300.26L459.89 302.3L463.11 304.35L466.33 306.4L469.56 308.44L472.78 310.49L476 312.54L479.22 314.59L482.44 316.63L485.67 318.68L488.89 320.73L492.11 322.78L495.33 324.82L498.56 326.87L501.78 328.92L505 330.97L508.22 333.01L511.44 335.06L514.67 337.11L517.89 339.16L521.11 341.2L524.33 343.25L527.56 345.3L530.78 347.35L534 349.39L537.22 351.44L540.44 353.49L543.67 355.53L546.89 357.58L550.11 359.63L553.33 361.68L556.56 363.72L559.78 365.77L563 367.82L566.22 369.87L569.44 371.91L572.67 373.96L575.89 376.01L579.11 378.06L582.33 380.1L585.56 382.15L588.78 384.2L592 386.25L595.22 388.29L598.44 390.34L601.67 392.39L604.89 394.44L608.11 396.48L611.33 398.53L614.56 400.58L617.78 402.62L621 404.67L624.22 406.72L627.44 408.77L630.67 410.81L633.89 412.86L637.11 414.91L640.33 416.96L643.56 419L646.78 421.05L650 423.1" fill="none" stroke="#2f6f8f" stroke-width="2.5"></path><path d="M70 120.63L73.22 118.66L76.44 116.84L79.67 115.15L82.89 113.56L86.11 112.07L89.33 110.67L92.56 109.34L95.78 108.08L99 106.88L102.22 105.74L105.44 104.65L108.67 103.6L111.89 102.6L115.11 101.63L118.33 100.71L121.56 99.81L124.78 98.95L128 98.12L131.22 97.31L134.44 96.53L137.67 95.78L140.89 95.04L144.11 94.33L147.33 93.64L150.56 92.97L153.78 92.31L157 91.67L160.22 91.05L163.44 90.44L166.67 89.85L169.89 89.27L173.11 88.71L176.33 88.16L179.56 87.62L182.78 87.09L186 86.57L189.22 86.06L192.44 85.57L195.67 85.08L198.89 84.6L202.11 84.14L205.33 83.68L208.56 83.23L211.78 82.78L215 82.35L218.22 81.92L221.44 81.5L224.67 81.09L227.89 80.68L231.11 80.28L234.33 79.89L237.56 79.5L240.78 79.12L244 78.75L247.22 78.38L250.44 78.01L253.67 77.66L256.89 77.3L260.11 76.95L263.33 76.61L266.56 76.27L269.78 75.94L273 75.61L276.22 75.28L279.44 74.96L282.67 74.64L285.89 74.33L289.11 74.02L292.33 73.72L295.56 73.41L298.78 73.12L302 72.82L305.22 72.53L308.44 72.24L311.67 71.96L314.89 71.68L318.11 71.4L321.33 71.13L324.56 70.86L327.78 70.59L331 70.32L334.22 70.06L337.44 69.8L340.67 69.54L343.89 69.29L347.11 69.04L350.33 68.79L353.56 68.54L356.78 68.29L360 68.05L363.22 67.81L366.44 67.58L369.67 67.34L372.89 67.11L376.11 66.88L379.33 66.65L382.56 66.42L385.78 66.2L389 65.97L392.22 65.75L395.44 65.54L398.67 65.32L401.89 65.11L405.11 64.89L408.33 64.68L411.56 64.47L414.78 64.26L418 64.06L421.22 63.86L424.44 63.65L427.67 63.45L430.89 63.25L434.11 63.06L437.33 62.86L440.56 62.67L443.78 62.47L447 62.28L450.22 62.09L453.44 61.9L456.67 61.72L459.89 61.53L463.11 61.35L466.33 61.17L469.56 60.98L472.78 60.8L476 60.63L479.22 60.45L482.44 60.27L485.67 60.1L488.89 59.92L492.11 59.75L495.33 59.58L498.56 59.41L501.78 59.24L505 59.07L508.22 58.91L511.44 58.74L514.67 58.58L517.89 58.41L521.11 58.25L524.33 58.09L527.56 57.93L530.78 57.77L534 57.61L537.22 57.46L540.44 57.3L543.67 57.15L546.89 56.99L550.11 56.84L553.33 56.69L556.56 56.54L559.78 56.38L563 56.24L566.22 56.09L569.44 55.94L572.67 55.79L575.89 55.65L579.11 55.5L582.33 55.36L585.56 55.21L588.78 55.07L592 54.93L595.22 54.79L598.44 54.65L601.67 54.51L604.89 54.37L608.11 54.23L611.33 54.1L614.56 53.96L617.78 53.83L621 53.69L624.22 53.56L627.44 53.42L630.67 53.29L633.89 53.16L637.11 53.03L640.33 52.9L643.56 52.77L646.78 52.64L650 52.51" fill="none" stroke="#c2562f" stroke-width="2.5"></path></g><g class="lf-legend"><line x1="666" y1="38" x2="688" y2="38" stroke="#2f6f8f" stroke-width="2.5"></line><text x="694" y="42" font-size="11" fill="#5a6b70">bit-flip  ∝ e^(−2n̄)</text><line x1="666" y1="58" x2="688" y2="58" stroke="#c2562f" stroke-width="2.5"></line><text x="694" y="62" font-size="11" fill="#5a6b70">phase-flip  ∝ n̄</text></g><g class="lf-marker"><line x1="186" y1="30" x2="186" y2="426" stroke="#5a6b70" stroke-width="1" stroke-dasharray="4 3" stroke-opacity="0.7"></line><circle cx="186" cy="128.27" r="5" fill="#2f6f8f" stroke="#fff" stroke-width="1.5"></circle><circle cx="186" cy="86.57" r="5" fill="#c2562f" stroke="#fff" stroke-width="1.5"></circle></g><text x="70" y="20" font-size="12" fill="#5a6b70">n̄ = 2   ·   bias  Γφ / Γx = 5.5</text></svg>
+  <figcaption>Illustrative of the established cat-qubit scaling (Mirrahimi 2014); rates
+  normalized for legibility — the physics is the exponential-vs-linear contrast, i.e. the
+  exponentially growing noise bias. Recap of the prior lineage's Chapter 1
+  (DOI 10.5281/zenodo.20838233); not a re-run of its simulation. [CITE · established]</figcaption>
+  <noscript>Bit-flip error falls exponentially with cat size while phase-flip rises linearly —
+  the self-protecting cat qubit.</noscript>
+</figure>
+
+<h2><span class="num">03</span>THE WALL: OPERATING WITHOUT BREAKING THE PROTECTION</h2>
+
+<p><b>The wall: operating on it without breaking the protection.</b> Storing a protected qubit is one thing; running a <em>gate</em> on it without waking its errors is another. A <button class="term" data-d="A logic gate run on a cat qubit that must stay slow enough to preserve the qubit's protection. But slowness lets ordinary photon loss accumulate, so the gate lives or dies on one ratio — the engineered protection versus the unavoidable loss (κ₁/κ₂).">bias-preserving gate</button> must run slowly enough to stay protected, but slowness lets ordinary photon loss accumulate — a brutal requirement on one ratio, the engineered protection versus the unavoidable loss (κ₁/κ₂). The prior chapter handed an AI search <em>more</em> freedom than any human gate and seeded it with the best human design, asking whether it could tolerate a worse ratio.</p>
+
+<h2><span class="num">04</span>THE KEPT NEGATIVE</h2>
+
+<p><b>The result was a clean "no" — kept, not hidden.</b> The search landed on the hand-designed baseline and could not push past it; handed a tempting bias-breaking shortcut, it drove that knob to <em>zero</em> on its own, because the scorecard made cheating worthless. Toggle the control scheme below and watch the search sit on the baseline rather than beat it. Values are from the prior lineage's current working edition, <button class="cite" data-c="frontier">working edition</button>.</p>
+
+<figure data-figure='{"type":"qc-frontier","points":[{"nbar":2,"gain":1.04},{"nbar":3,"gain":1.00}],"baselineOnly":[{"nbar":4}],"epsilonY":0,"singleQuadMargin":-0.29}'>
+    <svg data-poster="1" viewBox="0 0 800 480" width="100%" class="lf-svg" role="img" aria-label="AI-search gain versus cat size: the search lands on the hand-designed baseline (gain about 1) and the bias-breaking knob is driven to zero; a single-quadrature pulse falls below baseline"><g class="lf-grid"><line x1="70" y1="424" x2="632" y2="424" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="349.38" x2="632" y2="349.38" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="274.77" x2="632" y2="274.77" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="200.15" x2="632" y2="200.15" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="125.54" x2="632" y2="125.54" stroke="#d7dee0" stroke-width="1"></line><line x1="70" y1="50.92" x2="632" y2="50.92" stroke="#d7dee0" stroke-width="1"></line></g><g class="lf-axes"><line x1="70" y1="36" x2="70" y2="424" stroke="#5a6b70" stroke-width="1.5"></line><line x1="70" y1="424" x2="632" y2="424" stroke="#5a6b70" stroke-width="1.5"></line><line x1="175.38" y1="424" x2="175.38" y2="429" stroke="#5a6b70" stroke-width="1"></line><text x="175.38" y="442" text-anchor="middle" font-size="11" fill="#5a6b70">α²=2</text><line x1="351" y1="424" x2="351" y2="429" stroke="#5a6b70" stroke-width="1"></line><text x="351" y="442" text-anchor="middle" font-size="11" fill="#5a6b70">α²=3</text><line x1="526.63" y1="424" x2="526.63" y2="429" stroke="#5a6b70" stroke-width="1"></line><text x="526.63" y="442" text-anchor="middle" font-size="11" fill="#5a6b70">α²=4</text><text x="62" y="427" text-anchor="end" font-size="10" fill="#5a6b70">0.6</text><text x="62" y="352.38" text-anchor="end" font-size="10" fill="#5a6b70">0.7</text><text x="62" y="277.77" text-anchor="end" font-size="10" fill="#5a6b70">0.8</text><text x="62" y="203.15" text-anchor="end" font-size="10" fill="#5a6b70">0.9</text><text x="62" y="128.54" text-anchor="end" font-size="10" fill="#5a6b70">1.0</text><text x="62" y="53.92" text-anchor="end" font-size="10" fill="#5a6b70">1.1</text><text x="351" y="468" text-anchor="middle" font-size="12" fill="#5a6b70">cat size  α²  (mean photon number)</text><text x="16" y="230" text-anchor="middle" font-size="12" fill="#5a6b70" transform="rotate(-90 16 230)">AI-search gain  (search / baseline)</text></g><g class="lf-baseline"><line x1="70" y1="125.54" x2="632" y2="125.54" stroke="#9aa3a6" stroke-width="2" stroke-dasharray="7 4"></line><text x="628" y="141.54" text-anchor="end" font-size="11" fill="#5a6b70">hand-designed baseline = the wall (gain 1.0)</text></g><g class="lf-two-quad"><circle cx="175.38" cy="95.69" r="6" fill="#2f6f8f" stroke="#fff" stroke-width="1.5"></circle><text x="175.38" y="83.69" text-anchor="middle" font-size="11" fill="#2f6f8f">α²=2: 1.04</text><circle cx="351" cy="125.54" r="6" fill="#2f6f8f" stroke="#fff" stroke-width="1.5"></circle><text x="351" y="113.54" text-anchor="middle" font-size="11" fill="#2f6f8f">α²=3: 1.00</text><circle cx="526.63" cy="125.54" r="6" fill="none" stroke="#9aa3a6" stroke-width="2"></circle><text x="526.63" y="113.54" text-anchor="middle" font-size="10" fill="#5a6b70">α²=4 (baseline only)</text></g><g class="lf-single-quad" style="display:none"><line x1="70" y1="341.92" x2="632" y2="341.92" stroke="#c2562f" stroke-width="2" stroke-dasharray="4 3"></line><circle cx="175.38" cy="341.92" r="6" fill="#c2562f" stroke="#fff" stroke-width="1.5"></circle><text x="628" y="357.92" text-anchor="end" font-size="11" fill="#c2562f">single-quadrature shaped pulse · margin -0.29</text></g><text x="70" y="22" font-size="12" fill="#5a6b70">Two-quadrature search — lands on baseline (gain ≈ 1.00); bias-breaking ε_y → 0</text></svg>
+  <figcaption>The kept negative: the AI search lands on the hand-designed baseline (gain ≈ 1)
+  and drives the bias-breaking knob ε_y to zero; the single-quadrature pulse falls below
+  baseline (margin −0.29). Values from the prior lineage's current (working) edition,
+  github.com/m4gr4th34/dossier-QC-Accelerate — sparse (three cat sizes, as published), the
+  working-draft result, not DOI-archived. [CITE · reported]</figcaption>
+  <noscript>An AI search seeded with the best human gate recovers it but does not beat it;
+  the bias-breaking shortcut is driven to zero.</noscript>
+</figure>
+
+<p>An honestly-obtained negative is a map: it marks which doors are shut and points to the open ground.</p>
+
+<h2><span class="num">05</span>WHY THIS IS THE RIGHT OPENING</h2>
+
+<p><b>Why this is the right opening for what follows.</b> That kept negative is this program's thesis in miniature — AI is powerful at search <em>within</em> a paradigm and declines to fake what it cannot reach. Chapter 2 widens the lens to the whole landscape (decoders, calibration, code-search, autonomous labs) and asks where AI genuinely shortens the road to fault-tolerant quantum computing, and where the conceptual gates remain. That is where the new results begin.</p>
+
 <!-- ============================================================
-     SURVEY LANDSCAPE — the survey-shaped scaffold's centrepiece.
-     One card per avenue/option in the field. Drive it from the
-     AVENUES array in the script below (single source -> cards).
-     Each card: name + one-line thesis, an honest status label,
-     an optional dated forecast, and its sources. The card's top
-     border is colored by status for at-a-glance scanning.
-     STATUS values: ESTABLISHED / OPEN-UNVERIFIED / FORECAST /
-     REPORTED (others fall back to a neutral chip + border).
+     SURVEY LANDSCAPE — the survey-shaped scaffold's centrepiece, to be
+     filled in Chapter 2. Cards are driven from avenues.json (single
+     source). Until Chapter 2 lands the recon, the cards carry PLACEHOLDER
+     rows; the console below runs the survey-consistency check on them.
      ============================================================ -->
 <!--mount:landscape-->
 
 <!--mount:console-->
-
-<!-- ============================================================
-     AUTHOR INSTRUCTIONS (delete this comment when done):
-     This is the SURVEY-shaped self-explaining edition. The arc:
-       01 the field, and why survey it (problem as a story)
-       02 established foundations (plain prose + citations)
-       03 the avenues, one by one (each labeled in place)
-       04 what would settle the open questions
-       05 synthesis
-     Conventions:
-     - Wrap technical terms:  <button class="term" data-d="3-5 sentence plain explanation">term</button>
-     - Cite with chips:       <button class="cite" data-c="KEY">Venue 'YY</button>  (+ add KEY to CITES below)
-     - ESTABLISHED claims are asserted plainly, with citations. No box.
-     - OPEN-UNVERIFIED claims get an amber .openclaim box at the claim site.
-     - FORECAST claims get a violet .forecast box: state the estimate, the
-       reasoning, and the MANDATORY dated, falsifiable signpost.
-     - REPORTED items get a coral .reported box: name the interested-party
-       source, state plainly it is not independently reproduced, and give
-       the mundane candidate explanation with equal prominence.
-     - A genuine scientific DISPUTE is not a new status: render it as an
-       ESTABLISHED meta-claim ("the field is divided on X") citing both sides.
-     ============================================================ -->
-
-<h2><span class="num">01</span>THE FIELD, AND WHY SURVEY IT</h2>
-
-<p>Open with the field as a story: what is the question everyone in this area is
-circling, why is it hard, and why is a map of the whole landscape — rather than one
-more result — the useful thing to publish right now? Introduce your first
-<button class="term" data-d="Replace this with a 3-5 sentence plain-language explanation of the term, written for a smart non-specialist. What is it, why does it matter to this field, and what is the one surprising thing about it?">tappable term</button>
-here, and your first sourced claim
-<button class="cite" data-c="ref1">Journal 'YY</button>.</p>
-
-<p class="punch">End the opening with the one line a reader should carry into the rest of the survey.</p>
-
-<h2><span class="num">02</span>ESTABLISHED FOUNDATIONS</h2>
-
-<p>State plainly what the field has actually demonstrated — the bedrock every avenue
-shares. These are ESTABLISHED claims: asserted directly, each with a citation
-<button class="cite" data-c="ref2">Journal 'YY</button>. Being confident here is correct, not
-incautious; documented facts are bedrock, and timidity about them is its own kind of
-dishonesty. Save the hedging for the claims that have earned it.</p>
-
-<details class="deeper"><summary>Go deeper: NAME THE TECHNICAL LAYER</summary>
-<div class="body">Equations and formal detail live here, collapsed by default. The
-narrative above must be complete without opening this.
-<div class="eq" data-tex="E = mc^2"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>E</mi><mo>=</mo><mi>m</mi><msup><mi>c</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">E = mc^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord mathnormal">m</span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></div></div>
-</details>
-
-<h2><span class="num">03</span>THE AVENUES</h2>
-
-<p>The heart of the survey: walk each avenue in turn, and label each exactly as
-strongly as its evidence allows. The four conventions below show every status home.</p>
-
-<h3>Avenue A — a mature, documented direction</h3>
-<p>Describe it in plain language and assert what is established about it, with sources
-<button class="cite" data-c="ref1">Journal 'YY</button>. No callout box — established prose carries itself.</p>
-
-<h3>Avenue B — a direction with a central open question</h3>
-<p>Lay out the avenue, then mark the open question honestly, right where it arises:</p>
-<div class="openclaim">
-<span class="tag">OPEN-UNVERIFIED</span><b>Honest label:</b> DESCRIBE THE UNVERIFIED CLAIM. State that it is claim <span class="mono">CNN</span> in the public ledger and an open challenge: <b>the first person to confirm or refute it gets named credit in the next version.</b>
-</div>
-
-<h3>Avenue C — a direction you are making a forward bet on</h3>
-<p>Where you offer a judgment about how an avenue will develop, label it as a forecast —
-never smuggle an estimate in as a fact:</p>
-<div class="forecast">
-<span class="tag">FORECAST</span><b>Labeled estimate:</b> STATE THE ESTIMATE (e.g. ~35%) AND THE REASONING BEHIND IT. <b>Signpost:</b> name the dated, falsifiable event that will later mark this right or wrong (e.g. "by 2030, X is demonstrated at scale Y"). A forecast without a dated signpost is just an opinion with a number on it; the signpost is its verifier.
-</div>
-
-<h3>Avenue D — a direction sourced only to an interested party</h3>
-<p>Some avenues live mostly on vendor roadmaps, press-release figures, or claims that
-have not been independently reproduced. Record them — but mark the provenance plainly:</p>
-<div class="reported">
-<span class="tag">REPORTED</span><b>Non-independent source:</b> NAME THE INTERESTED-PARTY SOURCE and state plainly it is not independently reproduced. Give the mundane candidate explanation with at least equal prominence (or state that none has been identified). This is recorded for completeness; it is NOT the author's claim, and it gets no vote on any other claim's status.
-</div>
-
-<h2><span class="num">04</span>WHAT WOULD SETTLE THE OPEN QUESTIONS</h2>
-
-<p>For each open avenue, spell out the specific result, measurement, or signpost that
-would move it from open to established. This is what turns a survey from a snapshot into
-an instrument: a reader knows exactly what work is worth doing next, and your OPEN claims
-become standing invitations with named credit attached.</p>
-
-<h2><span class="num">05</span>SYNTHESIS</h2>
-
-<p>Pull the landscape together: which avenues are solid, which are live bets, which are
-mostly noise, and what the honest shape of the field is once every claim wears its true
-label. Close on the line you want to leave the reader with.</p>
-
-<p class="punch">End with the line your readers should carry away.</p>
 <!--/slot:body-->
 <!--slot:cites-->
 <!-- cite fields. who: "Author et al. (Year)". what: plain-language demonstration + why it matters. src: "Journal Vol, Page (Year)". -->
 <script type="application/json" id="cites-data">
-{ "ref1": { "who": "@@CITE-WHO@@", "what": "@@CITE-WHAT@@", "src": "@@CITE-SRC@@" },
-  "ref2": { "who": "@@CITE-WHO@@", "what": "@@CITE-WHAT@@", "src": "@@CITE-SRC@@" } }
+{ "ch1": { "who": "Prior lineage — Chapter 1 (Ali-Khan)", "what": "Recap of the established cat-qubit self-protection: bit-flip suppressed exponentially with cat size, phase-flip only linearly (the Mirrahimi 2014 scaling)", "src": "DOI 10.5281/zenodo.20838233" },
+  "frontier": { "who": "Prior lineage — current working edition (Ali-Khan)", "what": "AI bias-preserving-gate search lands on the hand-designed baseline (gain ≈ 1); the bias-breaking knob ε_y is driven to 0; a single-quadrature shaped pulse falls below baseline (margin −0.29)", "src": "github.com/m4gr4th34/dossier-QC-Accelerate (working draft, not DOI-archived)" } }
 </script>
 <!--/slot:cites-->
 <!--slot:foot-->
@@ -135,5 +83,22 @@ label. Close on the line you want to leave the reader with.</p>
   <b>About this edition:</b> this page is the complete survey in self-explaining form — the avenue <a href="#landscape">landscape</a> and the consistency console up top, the narrative below. This live edition is the paper. The <a href="dossier.html">audit trail</a> carries the citation audit and the receipts.
   <br><br><span class="mono">An Open Dossier · CC BY 4.0 · AI-assistance: @@AI-USE NOTE@@ and state your actual review basis · every verification label is true</span>
 </footer>
+
+<script src="figures/figures.js"></script>
+<script src="figures/qc-bitflip.js"></script>
+<script src="figures/qc-frontier.js"></script>
+<script>
+(function () {
+  if (!window.DossierFigures) return;
+  var R = { "qc-bitflip": window.DossierFigures.renderQCBitflip, "qc-frontier": window.DossierFigures.renderQCFrontier };
+  var figs = document.querySelectorAll("figure[data-figure]");
+  for (var i = 0; i < figs.length; i++) {
+    var fig = figs[i], spec;
+    try { spec = JSON.parse(fig.getAttribute("data-figure")); } catch (e) { continue; }
+    var fn = spec && R[spec.type];
+    if (typeof fn === "function") fn(fig, spec);
+  }
+})();
+</script>
 
 <!--/slot:foot-->

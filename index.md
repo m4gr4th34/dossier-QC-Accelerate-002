@@ -4,7 +4,33 @@ An Open Dossier · **QC-Accelerate-002** · self-explaining edition · survey ·
 
 *Irfan Ali-Khan — Independent Researcher*
 
-@@ABSTRACT@@. This dossier surveys quantum computing: the live avenues, what each rests on, and where the open questions and forward bets sit. Every card in the landscape below carries an honest status label — established findings asserted, open questions and forecasts labeled as such. End it with: **Don't trust this paper — run it.**
+**Chapter 1 — The story so far.** *This dossier continues a program begun in a sibling lineage. This opening chapter is a recap of that prior, DOI'd work — every result here is cited to it, not claimed as new. New results begin in Chapter 2.*
+
+## 01 AI IS ALREADY A CO-AUTHOR
+
+**AI is already a co-author of quantum-computing research.** Walk up the stack and it is on every floor: it reads the error syndromes (neural decoders), it choreographs the gates (learned control pulses), and it has even drawn new error-correcting codes humans had not picked. The prior work sorted this into three distinct things AI does — *re-deriving* what humans designed, *discovering* what they did not, and a third, quieter one: *scoping* — using a search to map a hardware frontier rigorously and certify where human design is already optimal.
+
+## 02 THE FLOOR: A QUBIT THAT PROTECTS ITSELF
+
+**The floor: a qubit that protects itself.** The program's foundation (Chapter 1 of the prior lineage, [prior Ch.1 · DOI]) is the cat qubit (A qubit whose information is stored in two coherent states of an oscillator whose separation grows with the cat's size. As the cat grows, bit-flip errors are crushed exponentially while phase-flips rise only linearly. That exponentially growing noise bias is the whole point: it turns the qubit into a self-protecting memory.): information stored in two coherent states whose separation grows with the cat's size. As the cat grows, bit-flip errors are crushed *exponentially* while phase-flips rise only gently — an exponentially growing noise bias that turns the qubit into a self-protecting memory (Mirrahimi et al., 2014). That asymmetry is the whole point. Drag the cat size and watch the two rates pull apart.
+
+*(figure: untitled — Illustrative of the established cat-qubit scaling (Mirrahimi 2014); rates normalized for legibility — the physics is the exponential-vs-linear contrast, i.e. the exponentially growing noise bias. Recap of the prior lineage's Chapter 1 (DOI 10.5281/zenodo.20838233); not a re-run of its simulation. [CITE · established])*
+
+## 03 THE WALL: OPERATING WITHOUT BREAKING THE PROTECTION
+
+**The wall: operating on it without breaking the protection.** Storing a protected qubit is one thing; running a *gate* on it without waking its errors is another. A bias-preserving gate (A logic gate run on a cat qubit that must stay slow enough to preserve the qubit's protection. But slowness lets ordinary photon loss accumulate, so the gate lives or dies on one ratio — the engineered protection versus the unavoidable loss (κ₁/κ₂).) must run slowly enough to stay protected, but slowness lets ordinary photon loss accumulate — a brutal requirement on one ratio, the engineered protection versus the unavoidable loss (κ₁/κ₂). The prior chapter handed an AI search *more* freedom than any human gate and seeded it with the best human design, asking whether it could tolerate a worse ratio.
+
+## 04 THE KEPT NEGATIVE
+
+**The result was a clean "no" — kept, not hidden.** The search landed on the hand-designed baseline and could not push past it; handed a tempting bias-breaking shortcut, it drove that knob to *zero* on its own, because the scorecard made cheating worthless. Toggle the control scheme below and watch the search sit on the baseline rather than beat it. Values are from the prior lineage's current working edition, [working edition].
+
+*(figure: untitled — The kept negative: the AI search lands on the hand-designed baseline (gain ≈ 1) and drives the bias-breaking knob ε_y to zero; the single-quadrature pulse falls below baseline (margin −0.29). Values from the prior lineage's current (working) edition, github.com/m4gr4th34/dossier-QC-Accelerate — sparse (three cat sizes, as published), the working-draft result, not DOI-archived. [CITE · reported])*
+
+An honestly-obtained negative is a map: it marks which doors are shut and points to the open ground.
+
+## 05 WHY THIS IS THE RIGHT OPENING
+
+**Why this is the right opening for what follows.** That kept negative is this program's thesis in miniature — AI is powerful at search *within* a paradigm and declines to fake what it cannot reach. Chapter 2 widens the lens to the whole landscape (decoders, calibration, code-search, autonomous labs) and asks where AI genuinely shortens the road to fault-tolerant quantum computing, and where the conceptual gates remain. That is where the new results begin.
 
 ## Avenues
 
@@ -25,62 +51,8 @@ Results from `verification/verify_numbers.py` — the same checks the in-page co
 
 **TOTAL: 3 checks · 3 pass · 0 fail** — All checks pass — the survey is internally consistent.
 
-## 01 THE FIELD, AND WHY SURVEY IT
-
-Open with the field as a story: what is the question everyone in this area is circling, why is it hard, and why is a map of the whole landscape — rather than one more result — the useful thing to publish right now? Introduce your first tappable term (Replace this with a 3-5 sentence plain-language explanation of the term, written for a smart non-specialist. What is it, why does it matter to this field, and what is the one surprising thing about it?) here, and your first sourced claim [Journal 'YY].
-
-*End the opening with the one line a reader should carry into the rest of the survey.*
-
-## 02 ESTABLISHED FOUNDATIONS
-
-State plainly what the field has actually demonstrated — the bedrock every avenue shares. These are ESTABLISHED claims: asserted directly, each with a citation [Journal 'YY]. Being confident here is correct, not incautious; documented facts are bedrock, and timidity about them is its own kind of dishonesty. Save the hedging for the claims that have earned it.
-
-**Go deeper: NAME THE TECHNICAL LAYER**
-
-Equations and formal detail live here, collapsed by default. The narrative above must be complete without opening this.
-
-```math
-E = mc^2
-```
-
-## 03 THE AVENUES
-
-The heart of the survey: walk each avenue in turn, and label each exactly as strongly as its evidence allows. The four conventions below show every status home.
-
-### Avenue A — a mature, documented direction
-
-Describe it in plain language and assert what is established about it, with sources [Journal 'YY]. No callout box — established prose carries itself.
-
-### Avenue B — a direction with a central open question
-
-Lay out the avenue, then mark the open question honestly, right where it arises:
-
-> **OPEN-UNVERIFIED** — **Honest label:** DESCRIBE THE UNVERIFIED CLAIM. State that it is claim `CNN` in the public ledger and an open challenge: **the first person to confirm or refute it gets named credit in the next version.**
-
-### Avenue C — a direction you are making a forward bet on
-
-Where you offer a judgment about how an avenue will develop, label it as a forecast — never smuggle an estimate in as a fact:
-
-> **FORECAST** — **Labeled estimate:** STATE THE ESTIMATE (e.g. ~35%) AND THE REASONING BEHIND IT. **Signpost:** name the dated, falsifiable event that will later mark this right or wrong (e.g. "by 2030, X is demonstrated at scale Y"). A forecast without a dated signpost is just an opinion with a number on it; the signpost is its verifier.
-
-### Avenue D — a direction sourced only to an interested party
-
-Some avenues live mostly on vendor roadmaps, press-release figures, or claims that have not been independently reproduced. Record them — but mark the provenance plainly:
-
-> **REPORTED** — **Non-independent source:** NAME THE INTERESTED-PARTY SOURCE and state plainly it is not independently reproduced. Give the mundane candidate explanation with at least equal prominence (or state that none has been identified). This is recorded for completeness; it is NOT the author's claim, and it gets no vote on any other claim's status.
-
-## 04 WHAT WOULD SETTLE THE OPEN QUESTIONS
-
-For each open avenue, spell out the specific result, measurement, or signpost that would move it from open to established. This is what turns a survey from a snapshot into an instrument: a reader knows exactly what work is worth doing next, and your OPEN claims become standing invitations with named credit attached.
-
-## 05 SYNTHESIS
-
-Pull the landscape together: which avenues are solid, which are live bets, which are mostly noise, and what the honest shape of the field is once every claim wears its true label. Close on the line you want to leave the reader with.
-
-*End with the line your readers should carry away.*
-
 ## References
 
-- **Journal 'YY** — @@CITE-WHO@@. @@CITE-WHAT@@ *@@CITE-SRC@@*
+- **prior Ch.1 · DOI** — Prior lineage — Chapter 1 (Ali-Khan). Recap of the established cat-qubit self-protection: bit-flip suppressed exponentially with cat size, phase-flip only linearly (the Mirrahimi 2014 scaling) *DOI 10.5281/zenodo.20838233*
 
-- **Journal 'YY** — @@CITE-WHO@@. @@CITE-WHAT@@ *@@CITE-SRC@@*
+- **working edition** — Prior lineage — current working edition (Ali-Khan). AI bias-preserving-gate search lands on the hand-designed baseline (gain ≈ 1); the bias-breaking knob ε_y is driven to 0; a single-quadrature shaped pulse falls below baseline (margin −0.29) *github.com/m4gr4th34/dossier-QC-Accelerate (working draft, not DOI-archived)*

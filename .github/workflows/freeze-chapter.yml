@@ -1,0 +1,123 @@
+name: freeze-chapter
+# A SEPARATE release workflow (kept out of the hardened auto-timestamp.yml so the
+# provenance/DOI machinery stays untouched). It is a THIN CALLER of the shared
+# verification/freeze_chapter.py — it reimplements no freeze logic.
+#
+# Disjoint-by-construction: this workflow writes ONLY chapters/ and lineage.json;
+# auto-timestamp.yml writes ONLY timestamps/ and provenance.json. The
+# pull --rebase before push therefore always replays cleanly onto a concurrent
+# provenance push. (True cross-workflow serialization would require the same
+# concurrency group on auto-timestamp.yml, which we must not modify — so the
+# rebase is the real conflict-avoidance; the group below serializes this
+# workflow's own runs.)
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-main-push
+  cancel-in-progress: false   # never cancel a half-done push — let it finish, then run
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0        # full history/tags so the tree + lineage.json are current
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'        # render-backcatalog (run below) needs node in addition to python3
+
+      - name: Freeze released chapter into lineage
+        # Release-supplied fields are passed as ENV VARS (not inlined via ${{ }}),
+        # so titles/bodies containing spaces, quotes, or newlines can't break the
+        # shell or inject commands.
+        env:
+          REL_TAG: ${{ github.event.release.tag_name }}
+          REL_NAME: ${{ github.event.release.name }}
+          REL_BODY: ${{ github.event.release.body }}
+          REL_PUBLISHED: ${{ github.event.release.published_at }}
+        run: |
+          set -euo pipefail
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Provenance-settled guard: auto-timestamp.yml updates provenance.json's
+          # release_tag to the real tag on this SAME release event. Wait until that
+          # lands (pulling latest main each iteration) so freeze_chapter.py's gate
+          # judges the real RELEASED state — never freeze a stale pre-release
+          # (v0.0.0) snapshot. Bounded (~2 min ceiling); on timeout we FAIL rather
+          # than freeze stale. (jq is preinstalled on ubuntu-latest — auto-timestamp.yml
+          # relies on it too — so no setup step is needed.)
+          settled=""
+          for _ in $(seq 1 24); do
+            git pull --rebase --quiet origin main || true
+            CURRENT="$(jq -r '.release_tag // ""' provenance.json 2>/dev/null || echo "")"
+            if [ "$CURRENT" = "$REL_TAG" ]; then
+              echo "provenance settled at $REL_TAG"; settled=1; break
+            fi
+            echo "waiting for provenance.json release_tag ($CURRENT) to reach $REL_TAG…"
+            sleep 5
+          done
+          if [ -z "$settled" ]; then
+            echo "::error::provenance.json release_tag did not settle to $REL_TAG within ~2 min. Not freezing a stale-gated snapshot. Re-run this workflow once auto-timestamp.yml has updated provenance — the freeze is write-once/idempotent, so a re-run is safe."
+            exit 1
+          fi
+
+          # --- derive chapter metadata from the release event (injection-safe) ---
+          TAG="$REL_TAG"
+          TITLE="${REL_NAME:-$TAG}"                      # fallback to TAG if name empty
+          SUMMARY="$(printf '%s\n' "$REL_BODY" | head -n1)"   # first line of body, or empty
+          RELEASED="${REL_PUBLISHED%%T*}"               # YYYY-MM-DD from ISO8601
+          CONCEPT_DOI="$(jq -r '.concept_doi // ""' provenance.json 2>/dev/null || echo "")"
+          case "$CONCEPT_DOI" in TODO*) CONCEPT_DOI="" ;; esac   # placeholder -> empty
+          VERSION_DOI="$(jq -r '.version_doi // ""' provenance.json 2>/dev/null || echo "")"
+          case "$VERSION_DOI" in TODO*) VERSION_DOI="" ;; esac   # placeholder -> empty
+
+          # --- run the shared freeze (gate / write-once / dup all enforced inside);
+          #     a non-zero exit aborts the workflow before any push. ---
+          python3 verification/freeze_chapter.py \
+            --tag "$TAG" --title "$TITLE" --summary "$SUMMARY" \
+            --released "$RELEASED" --version-doi "$VERSION_DOI" --concept-doi "$CONCEPT_DOI"
+
+          # --- generate the new chapter's CURRENT-skin reading view (live/<tag>/) ATOMICALLY, so
+          #     the chapter is born WITH its reading view in ONE commit. Regenerate-all is
+          #     idempotent; the git-add guard below scopes the commit to just the new live/<tag>/.
+          #     (render_backcatalog has no single-chapter mode; all-or-nothing is fine here.) ---
+          npm run render-backcatalog
+
+          # --- regenerate the lineage-driven markdown index (llms.txt) so it reflects the chapter
+          #     just appended to lineage.json. render-markdown rewrites llms.txt + index.md from
+          #     source+lineage; only llms.txt actually changes on a freeze (index.md is source-driven),
+          #     but we regenerate+stage both so the projection can never drift — whatever the renderer
+          #     emits, we commit. Without this, lineage.json advances but llms.txt stays stale and the
+          #     next check-markdown in CI goes red. ---
+          npm run render-markdown
+
+          # --- GATE-GUARD (fail-closed, BEFORE any commit): never seal a chapter with a broken
+          #     reading view. set -euo pipefail aborts the job here if either gate fails, so the
+          #     chapter + live/ are NOT committed — loud, not silent. ---
+          npm run check-backcatalog          # the new live/<tag> == what render_backcatalog produces
+          node verify_projection.js          # the new live/<tag> carries its sealed prose + machinery
+          npm run check-markdown             # llms.txt's lineage-driven index matches the new lineage.json
+
+          # --- commit & push ONLY the freeze outputs + the new reading view, by explicit path ---
+          git add chapters/ lineage.json live/ llms.txt index.md
+          if git diff --cached --quiet; then
+            echo "Nothing to freeze."
+          else
+            git commit -m "freeze(lineage): archive chapter ${TAG} + its live/ reading view + register in lineage.json (+ regenerate llms.txt) [skip ci]"
+            git pull --rebase origin main   # replay our disjoint commit on top of any concurrent provenance push
+            git push
+          fi

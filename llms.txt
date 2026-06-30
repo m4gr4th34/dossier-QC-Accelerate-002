@@ -1,0 +1,11 @@
+# @@TITLE@@
+
+> @@ABSTRACT@@.
+
+## Working draft
+
+- [The paper (front door)](index.md) — the live self-explaining edition: avenue landscape, consistency checks, and the full narrative, projected skin-free from the source.
+
+## Chapters
+
+No chapters frozen yet.

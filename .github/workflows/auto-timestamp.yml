@@ -1,0 +1,78 @@
+name: auto-timestamp
+on:
+  release:
+    types: [published]
+jobs:
+  timestamp:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install OpenTimestamps client
+        run: pip install opentimestamps-client
+      - name: Download release archive
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG=${{ github.event.release.tag_name }}
+          curl -L -H "Authorization: token $GH_TOKEN" \
+            "https://github.com/${{ github.repository }}/archive/refs/tags/${TAG}.tar.gz" \
+            -o "${TAG}.tar.gz"
+          echo "ARCHIVE=${TAG}.tar.gz" >> $GITHUB_ENV
+      - name: Stamp with OpenTimestamps
+        run: ots stamp "${{ env.ARCHIVE }}"
+      - name: Commit OpenTimestamps proof (independent of provenance)
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          mkdir -p timestamps
+          mv "${{ env.ARCHIVE }}.ots" timestamps/
+          git add timestamps/
+          if git diff --cached --quiet; then
+            echo "No new proof to commit."
+          else
+            git commit -m "Auto-timestamp: ${{ github.event.release.tag_name }} anchored via OpenTimestamps"
+            git push
+          fi
+      - name: Update OWNED provenance fields only (release_tag + date; never DOI)
+        run: |
+          set -euo pipefail
+          # INVARIANT: release automation never authors DOI fields. version_doi and
+          # concept_doi are minted by Zenodo and backfilled by a human, out of band.
+          # This step edits ONLY the fields automation legitimately owns and leaves
+          # every other key (the DOIs especially) byte-for-byte untouched.
+          test -f provenance.json || { echo "::error::provenance.json missing; cannot record release."; exit 1; }
+          cp provenance.json "$RUNNER_TEMP/provenance.before.json"
+          jq --arg tag "${{ github.event.release.tag_name }}" \
+             --arg today "$(date -u +%Y-%m-%d)" \
+             '.release_tag = $tag | .released = $today' \
+             "$RUNNER_TEMP/provenance.before.json" > provenance.json
+      - name: Guard — DOI fields must be unchanged by automation (halt on regression)
+        run: |
+          set -euo pipefail
+          bv=$(jq -r '.version_doi // ""' "$RUNNER_TEMP/provenance.before.json")
+          bc=$(jq -r '.concept_doi // ""' "$RUNNER_TEMP/provenance.before.json")
+          av=$(jq -r '.version_doi // ""' provenance.json)
+          ac=$(jq -r '.concept_doi // ""' provenance.json)
+          if [ "$bv" != "$av" ] || [ "$bc" != "$ac" ]; then
+            echo "::error::Release automation changed a DOI field (version_doi '$bv'->'$av', concept_doi '$bc'->'$ac'). DOIs are owned out-of-band; halting before commit."
+            exit 1
+          fi
+          echo "DOI fields unchanged by automation (version_doi='$av', concept_doi='$ac')."
+      - name: Commit provenance update
+        run: |
+          set -euo pipefail
+          git add provenance.json
+          if git diff --cached --quiet; then
+            echo "provenance.json unchanged; nothing to commit."
+          else
+            git commit -m "Auto-update provenance for ${{ github.event.release.tag_name }} (release_tag + date; DOI fields untouched)"
+            git push
+          fi

@@ -1,0 +1,28 @@
+name: verify-claims
+on:
+  push:
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Recompute every quantitative claim in the manuscript
+        run: python verification/verify_numbers.py
+      - name: Edition round-trip gate
+        run: node verify_edition.js
+      - name: Markdown projection gate
+        run: node verify_markdown.js
+      - name: Content-equivalence gate (prose)
+        run: node verify_projection.js
+      # Back-catalog byte-sync gate removed (5c): live/ freshness is now guaranteed at WRITE time —
+      # freeze-chapter.yml writes it atomically and reskin-backcatalog.yml regenerates it on a skin
+      # change, both fail-closing via `npm run check-backcatalog` BEFORE they commit. A per-push
+      # byte-sync gate here only produced red→green flicker. verify_backcatalog.js stays in the repo
+      # as both workflows' pre-commit guard — it's just no longer a standalone gate step here.

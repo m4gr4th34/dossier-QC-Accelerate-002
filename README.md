@@ -1,9 +1,10 @@
-# open-dossier-template
+# Accelerating Quantum Computing Research Using AI and Robotics
 
-**The starting point for every Open Dossier publication.**
-Click "Use this template" to create your Dossier NNN in one step.
+**Author:** Irfan Ali-Khan · Independent Researcher · ORCID [0009-0008-9685-8197](https://orcid.org/0009-0008-9685-8197)
 
-### ▶ [See a living figure — fall from a planet to the galaxy, live](https://m4gr4th34.github.io/open-dossier-template/showcase.html)
+An Open Dossier survey of how AI and robotics could shorten the path to fault-tolerant, scalable quantum computing — what's already working, what's plausible, and where the conceptual gates remain. Spawned from the [Open Dossier template](https://github.com/m4gr4th34/open-dossier-template); this README still carries some template scaffolding to be trimmed as the dossier is drafted.
+
+### ▶ [See a living figure — fall from a planet to the galaxy, live](https://m4gr4th34.github.io/dossier-QC-Accelerate-002/showcase.html)
 
 <!-- AGENT: after the author's GitHub Pages site is live, replace this comment with a quick-links line placed HERE (immediately after the title/tagline, above the GETTING-STARTED line and the badge) so visitors can open the live result in one click. Use the author's real Pages URL:
 ### ▶ [Read the living paper](https://USER.github.io/REPO/) · [Run the checks](https://USER.github.io/REPO/#verify) · [Audit trail](https://USER.github.io/REPO/dossier.html) · [Living figures showcase](https://USER.github.io/REPO/showcase.html)
@@ -13,7 +14,7 @@ Rationale: lead with the live result for the skeptic, then GETTING-STARTED for t
 ### 📖 Live preview (work in progress)
 > **This dossier is an active draft — not yet released.** Sections, claims, and checks may be incomplete. Shared early so the ideas can be read and discussed as they develop.
 
-▶ **[Read the self-explaining edition](https://YOURUSER.github.io/YOURREPO/)** · [Audit trail](https://YOURUSER.github.io/YOURREPO/dossier.html)
+▶ **[Read the self-explaining edition](https://m4gr4th34.github.io/dossier-QC-Accelerate-002/)** · [Audit trail](https://m4gr4th34.github.io/dossier-QC-Accelerate-002/dossier.html)
 
 ## How this works (the pre-release operating model)
 

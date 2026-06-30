@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DOSSIER NNN — @@TITLE@@ (Open Dossier)</title>
-<meta name="description" content="@@DESCRIPTION@@. A survey that explains itself.">
+<title>Accelerating Quantum Computing Research Using AI and Robotics (Open Dossier)</title>
+<meta name="description" content="Working draft — an Open Dossier survey of how AI and robotics could accelerate quantum-computing research. A survey that explains itself.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -349,22 +349,22 @@
 <body>
 <header>
   <div class="chrome">
-    <div class="eyebrow">An Open Dossier · <b>NNN</b> · audit trail · @@DATE@@</div>
+    <div class="eyebrow">An Open Dossier · <b>QC-Accelerate-002</b> · audit trail · June 2026</div>
     <div class="cta">
       <a class="btn" href="index.html">The paper</a>
       <a class="btn primary" href="dossier.html">Audit trail</a>
       <a class="btn" href="lineage.html">Chapters</a>
-      <a class="btn" href="https://github.com/YOURUSER/YOURREPO">Source</a>
+      <a class="btn" href="https://github.com/m4gr4th34/dossier-QC-Accelerate-002">Source</a>
     </div>
     <div class="provenance" role="contentinfo" aria-label="Provenance and verification">
       <span class="pv-item"><span class="pv-k">Reading</span><span class="pv-v" id="pv-state">live tip</span></span>
       <a class="pv-item" id="pv-doi" href="#" target="_blank" rel="noopener"><span class="pv-k">Archived DOI</span><span class="pv-v" id="pv-doi-v">loading… ↗</span></a>
       <a class="pv-item" href="verify.html" target="_blank" rel="noopener"><span class="pv-k">Bitcoin timestamp</span><span class="pv-v">verify proof ↗</span></a>
-      <a class="pv-item" href="https://github.com/YOURUSER/YOURREPO" target="_blank" rel="noopener"><span class="pv-k">Source</span><span class="pv-v">full history ↗</span></a>
+      <a class="pv-item" href="https://github.com/m4gr4th34/dossier-QC-Accelerate-002" target="_blank" rel="noopener"><span class="pv-k">Source</span><span class="pv-v">full history ↗</span></a>
     </div>
     <div class="lineage-strip" id="lineageStrip" aria-label="Lineage"></div>
-    <h1>Audit Trail — @@TITLE@@</h1>
-    <div class="byline">@@NAME@@ · companion verification record</div>
+    <h1>Audit Trail — Accelerating Quantum Computing Research Using AI and Robotics</h1>
+    <div class="byline">Irfan Ali-Khan · companion verification record</div>
   </div>
 </header>
 <div class="wrap">
@@ -625,13 +625,13 @@ fetch('provenance.json').then(r=>r.json()).then(p=>{
   const d=document.getElementById('pv-doi'), v=document.getElementById('pv-doi-v');
   if(!p.version_doi || p.version_doi.indexOf('TODO')===0){
     v.textContent='DOI after first release';
-    d.href='https://github.com/YOURUSER/YOURREPO';
+    d.href='https://github.com/m4gr4th34/dossier-QC-Accelerate-002';
   } else {
     d.href='https://doi.org/'+p.version_doi; v.textContent=p.version_doi+' \u2197';
   }
   document.getElementById('pv-state').textContent='release '+p.release_tag+' (+ live edits)';
 }).catch(()=>{document.getElementById('pv-doi-v').textContent='see repository \u2197';
-  document.getElementById('pv-doi').href='https://github.com/YOURUSER/YOURREPO';});
+  document.getElementById('pv-doi').href='https://github.com/m4gr4th34/dossier-QC-Accelerate-002';});
 </script>
 <div class="lbx" id="lbx" role="dialog" aria-modal="true" aria-label="Figure, full size" aria-hidden="true">
   <img id="lbx-img" alt="">

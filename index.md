@@ -1,10 +1,10 @@
-An Open Dossier · **NNN** · self-explaining edition · survey · @@VERSION@@
+An Open Dossier · **QC-Accelerate-002** · self-explaining edition · survey · working draft · June 2026
 
-# @@TITLE@@
+# Accelerating Quantum Computing Research Using AI and Robotics
 
-*@@NAME@@ — @@AFFILIATION@@*
+*Irfan Ali-Khan — Independent Researcher*
 
-@@ABSTRACT@@. This dossier surveys @@FIELD@@: the live avenues, what each rests on, and where the open questions and forward bets sit. Every card in the landscape below carries an honest status label — established findings asserted, open questions and forecasts labeled as such. End it with: **Don't trust this paper — run it.**
+@@ABSTRACT@@. This dossier surveys quantum computing: the live avenues, what each rests on, and where the open questions and forward bets sit. Every card in the landscape below carries an honest status label — established findings asserted, open questions and forecasts labeled as such. End it with: **Don't trust this paper — run it.**
 
 ## Avenues
 

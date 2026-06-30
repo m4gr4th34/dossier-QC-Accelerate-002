@@ -1,4 +1,4 @@
-# @@TITLE@@
+# Accelerating Quantum Computing Research Using AI and Robotics
 
 > @@ABSTRACT@@.
 

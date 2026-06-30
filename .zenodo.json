@@ -1,11 +1,11 @@
 {
-  "title": "DOSSIER NNN — @@TITLE@@",
-  "creators": [{"name": "@@NAME@@", "affiliation": "@@AFFILIATION@@"}],
+  "title": "Accelerating Quantum Computing Research Using AI and Robotics",
+  "creators": [{"name": "Ali-Khan, Irfan", "affiliation": "Independent Researcher", "orcid": "0009-0008-9685-8197"}],
   "description": "@@ABSTRACT@@. An Open Dossier publication: executable claims under CI, published adversarial review, auto-DOI and auto-timestamped releases.",
   "upload_type": "publication",
   "publication_type": "preprint",
   "access_right": "open",
   "license": "cc-by-4.0",
-  "keywords": ["open dossier", "verified open research", "@@FIELD@@"],
+  "keywords": ["open dossier", "verified open research", "quantum computing"],
   "communities": [{"identifier": "open-dossier"}]
 }

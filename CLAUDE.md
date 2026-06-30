@@ -112,16 +112,40 @@ labeled one is not.**
   resolves it true or refuted.
 
 ## What this project is
-The strategy room for **Dossier [NNN / short-name]: [ONE-LINE TOPIC]**.
+The strategy room for **Dossier QC-Accelerate-002: Concrete ways AI and robotics could shorten the path to fault-tolerant, scalable quantum computing — what's already working, what's plausible, and what the remaining conceptual gates are.**
 Connected repo: this synced repository. The dossier's two reading
 surfaces (the self-explaining front door and the audit trail), its manuscript, its
 verification script, and its claim ledger all live here.
 
 ## Standing context (edit per dossier)
-- [List this dossier's open claims by ledger id.]
-- [List current open red-team findings.]
-- [Note anything a fresh session must know: the topic's sensitivities, the
-  key prior work, the boldest claims and exactly how they're labeled.]
+- Topic: Dossier QC-Accelerate-002 — concrete ways AI and robotics could shorten the
+  path to fault-tolerant, scalable quantum computing: what's already working, what's
+  plausible, and what the remaining conceptual gates are.
+- Open claims: None entered yet (as of 2026-06-30) — recon hasn't run. Anticipated
+  structure: documented AI/robotics-in-QC results (calibration auto-tuning, ML
+  quantum-error-correction decoders, materials screening, autonomous/self-driving labs)
+  asserted as CITE with sources; the "how much this compresses the timeline to FTQC"
+  judgments posted as OPEN forecasts with falsifiable signposts.
+- Open red-team findings: None yet (as of 2026-06-30) — adversarial pass comes after
+  the first draft.
+- Anything a fresh session must know:
+  - Framing discipline (the spine): separate the engineering/search layer — where AI and
+    robotics demonstrably help (calibration auto-tuning, ML QEC decoders, materials
+    screening, autonomous labs); cite real, recent results, verify don't recall — from
+    the conceptual physics gates (topological-qubit existence, novel low-loss photonics,
+    and the like) where AI is currently weak. That science-vs-scale-up distinction is the
+    load-bearing structure of the whole dossier.
+  - Boldest claim and its label: "AI/robotics materially shortens the road to FTQC" →
+    OPEN-UNVERIFIED, posted as a FORECAST with a falsifiable signpost — an AI credited
+    with a genuinely conceptual QC advance (a new code, a new qubit mechanism, a physics
+    insight), not merely an engineering speedup.
+  - Known prior-art landmines (front-loaded): "fault tolerance as a phase of matter" and
+    Knill–Laflamme-objective automated code search are EXISTING prior art. Claim no novel
+    physics until a search-backed recon pass clears the specific intersection — treat
+    every "this is new" instinct as unproven until checked against primary sources.
+  - Sourcing rule: verify every specific recent result via search before asserting it;
+    label anything unsourceable rather than stating it. The topic is hype-prone, so CITE
+    only what a hostile referee could check.
 
 ## Geography (three layers)
 1. **GitHub = the truth.** The synced repo is the canonical state.

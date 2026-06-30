@@ -4,10 +4,8 @@
 
 An Open Dossier survey of how AI and robotics could shorten the path to fault-tolerant, scalable quantum computing — what's already working, what's plausible, and where the conceptual gates remain. Spawned from the [Open Dossier template](https://github.com/m4gr4th34/open-dossier-template); this README still carries some template scaffolding to be trimmed as the dossier is drafted.
 
-### ▶ [See a living figure — fall from a planet to the galaxy, live](https://m4gr4th34.github.io/dossier-QC-Accelerate-002/showcase.html)
-
 <!-- AGENT: after the author's GitHub Pages site is live, replace this comment with a quick-links line placed HERE (immediately after the title/tagline, above the GETTING-STARTED line and the badge) so visitors can open the live result in one click. Use the author's real Pages URL:
-### ▶ [Read the living paper](https://USER.github.io/REPO/) · [Run the checks](https://USER.github.io/REPO/#verify) · [Audit trail](https://USER.github.io/REPO/dossier.html) · [Living figures showcase](https://USER.github.io/REPO/showcase.html)
+### ▶ [Read the living paper](https://USER.github.io/REPO/) · [Run the checks](https://USER.github.io/REPO/#verify) · [Audit trail](https://USER.github.io/REPO/dossier.html)
 Rationale: lead with the live result for the skeptic, then GETTING-STARTED for the would-be author, then the explanatory sections. Do not leave these as live links until the Pages site actually resolves, or they 404. -->
 
 <!-- DRAFT BANNER: present during pre-release. At first release, the "Spawning"/release ritual replaces this block with the standard live-document links (no "work in progress" caveat). See DEPLOY.md and the Rituals section. AGENT: replace YOURUSER/YOURREPO in these links with the real repo path during the spawn rename pass, so the author's draft preview works immediately. -->

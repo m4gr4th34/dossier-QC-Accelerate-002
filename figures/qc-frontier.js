@@ -177,11 +177,11 @@
     gAx.appendChild(el("line", { x1: px, y1: py + ph, x2: px + pw, y2: py + ph, stroke: f.axisColor, "stroke-width": "1.5" }));
     f.xTicks.forEach(function (t) {
       gAx.appendChild(el("line", { x1: t.px, y1: py + ph, x2: t.px, y2: py + ph + 5, stroke: f.axisColor, "stroke-width": "1" }));
-      var tx = el("text", { x: t.px, y: py + ph + 18, "text-anchor": "middle", "font-size": "11", fill: f.axisColor });
+      var tx = el("text", { "class": "lf-tick", x: t.px, y: py + ph + 18, "text-anchor": "middle", "font-size": "11", fill: f.axisColor });
       tx.textContent = t.label; gAx.appendChild(tx);
     });
     f.yTicks.forEach(function (t) {
-      var ty = el("text", { x: px - 8, y: t.py + 3, "text-anchor": "end", "font-size": "10", fill: f.axisColor });
+      var ty = el("text", { "class": "lf-tick", x: px - 8, y: t.py + 3, "text-anchor": "end", "font-size": "10", fill: f.axisColor });
       ty.textContent = t.label; gAx.appendChild(ty);
     });
     var xlab = el("text", { x: px + pw / 2, y: f.H - 12, "text-anchor": "middle", "font-size": "12", fill: f.axisColor });
@@ -225,7 +225,7 @@
     svg.appendChild(gSingle);
 
     // --- subtitle text (inside the SVG, top-left) ------------------------
-    var subEl = el("text", { x: px, y: 22, "font-size": "12", fill: f.axisColor });
+    var subEl = el("text", { "class": "lf-callout", x: px, y: 22, "font-size": "12", fill: f.axisColor });
     subEl.textContent = subtitleFor(f, "two-quad"); svg.appendChild(subEl);
 
     // --- controls: the discrete toggle -----------------------------------
@@ -288,10 +288,10 @@
     s += '<line x1="' + px + '" y1="' + r2(py + ph) + '" x2="' + r2(px + pw) + '" y2="' + r2(py + ph) + '" stroke="' + f.axisColor + '" stroke-width="1.5"></line>';
     f.xTicks.forEach(function (t) {
       s += '<line x1="' + t.px + '" y1="' + r2(py + ph) + '" x2="' + t.px + '" y2="' + r2(py + ph + 5) + '" stroke="' + f.axisColor + '" stroke-width="1"></line>';
-      s += '<text x="' + t.px + '" y="' + r2(py + ph + 18) + '" text-anchor="middle" font-size="11" fill="' + f.axisColor + '">' + escTxt(t.label) + '</text>';
+      s += '<text class="lf-tick" x="' + t.px + '" y="' + r2(py + ph + 18) + '" text-anchor="middle" font-size="11" fill="' + f.axisColor + '">' + escTxt(t.label) + '</text>';
     });
     f.yTicks.forEach(function (t) {
-      s += '<text x="' + r2(px - 8) + '" y="' + r2(t.py + 3) + '" text-anchor="end" font-size="10" fill="' + f.axisColor + '">' + escTxt(t.label) + '</text>';
+      s += '<text class="lf-tick" x="' + r2(px - 8) + '" y="' + r2(t.py + 3) + '" text-anchor="end" font-size="10" fill="' + f.axisColor + '">' + escTxt(t.label) + '</text>';
     });
     s += '<text x="' + r2(px + pw / 2) + '" y="' + r2(f.H - 12) + '" text-anchor="middle" font-size="12" fill="' + f.axisColor + '">' + escTxt("cat size  α²  (mean photon number)") + '</text>';
     s += '<text x="16" y="' + r2(py + ph / 2) + '" text-anchor="middle" font-size="12" fill="' + f.axisColor + '" transform="rotate(-90 16 ' + r2(py + ph / 2) + ')">' + escTxt("AI-search gain  (search / baseline)") + '</text>';
@@ -321,7 +321,7 @@
     s += '<text x="' + r2(px + pw - 4) + '" y="' + r2(f.singleY + 16) + '" text-anchor="end" font-size="11" fill="' + f.singleColor + '">' + escTxt("single-quadrature shaped pulse · margin " + f.margin.toFixed(2)) + '</text>';
     s += '</g>';
 
-    s += '<text x="' + px + '" y="22" font-size="12" fill="' + f.axisColor + '">' + escTxt(subtitleFor(f, "two-quad")) + '</text>';
+    s += '<text class="lf-callout" x="' + px + '" y="22" font-size="12" fill="' + f.axisColor + '">' + escTxt(subtitleFor(f, "two-quad")) + '</text>';
     s += '</svg>';
     return s;
   }

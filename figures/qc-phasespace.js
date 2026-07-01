@@ -211,8 +211,8 @@
     var gL = el("g", { "class": "lf-phase" });
     gL.appendChild(el("line", { x1: LCX - LHALF, y1: LCY, x2: LCX + LHALF, y2: LCY, stroke: COL.grid, "stroke-width": "1" }));
     gL.appendChild(el("line", { x1: LCX, y1: LCY - LHALF + 22, x2: LCX, y2: LCY + LHALF - 4, stroke: COL.grid, "stroke-width": "1" }));
-    gL.appendChild(txt(LCX + LHALF, LCY - 6, "end", FS_AXHINT, COL.faint, "Re"));
-    gL.appendChild(txt(LCX + 8, LCY - LHALF + 28, "start", FS_AXHINT, COL.faint, "Im"));
+    gL.appendChild(txt(LCX + LHALF, LCY - 6, "end", FS_AXHINT, COL.faint, "Re", "lf-tick"));
+    gL.appendChild(txt(LCX + 8, LCY - LHALF + 28, "start", FS_AXHINT, COL.faint, "Im", "lf-tick"));
     svg.appendChild(gL);
 
     // ---- lobes + overlap (dynamic) ----
@@ -227,7 +227,7 @@
     // ---- bit-flip arrow across the gap (dynamic endpoints) ----
     var arrLine = el("line", { y1: f.arrY, y2: f.arrY, stroke: COL.pf, "stroke-width": "1.6", "marker-end": "url(#ps-arr)", "marker-start": "url(#ps-arr)" });
     svg.appendChild(arrLine);
-    svg.appendChild(txt(LCX, f.arrY - 10, "middle", FS_ANNO, COL.pf, "bit-flip (X): cross the gap"));
+    svg.appendChild(txt(LCX, f.arrY - 10, "middle", FS_ANNO, COL.pf, "bit-flip (X): cross the gap", "lf-callout"));
 
     // ---- separation caliper (dynamic endpoints, static label) ----
     var calLine = el("line", { y1: f.calY, y2: f.calY, stroke: COL.axis, "stroke-width": "1" });
@@ -248,9 +248,9 @@
     gAx.appendChild(el("line", { x1: RX, y1: RY + RH, x2: RX + RW, y2: RY + RH, stroke: COL.axis, "stroke-width": "1.5" }));
     f.xTicks.forEach(function (t) {
       gAx.appendChild(el("line", { x1: t.px, y1: RY + RH, x2: t.px, y2: RY + RH + 5, stroke: COL.axis, "stroke-width": "1" }));
-      gAx.appendChild(txt(t.px, RY + RH + 20, "middle", FS_TICK, COL.axis, t.label));
+      gAx.appendChild(txt(t.px, RY + RH + 20, "middle", FS_TICK, COL.axis, t.label, "lf-tick"));
     });
-    f.yTicks.forEach(function (t) { gAx.appendChild(txt(RX - 8, t.py + 4, "end", FS_TICK, COL.axis, t.label)); });
+    f.yTicks.forEach(function (t) { gAx.appendChild(txt(RX - 8, t.py + 4, "end", FS_TICK, COL.axis, t.label, "lf-tick")); });
     gAx.appendChild(txt(RX + RW / 2, H - 12, "middle", FS_AXTITLE, COL.axis, "cat size  n̄  (mean photon number)"));
     var yl = txt(RX - 50, RY + RH / 2, "middle", FS_AXTITLE, COL.axis, "error rate  (log, normalized)");
     yl.setAttribute("transform", "rotate(-90 " + (RX - 50) + " " + (RY + RH / 2) + ")");
@@ -312,8 +312,10 @@
     };
 
     // small DOM helper (live path); closes over el so the poster's string helpers stay separate
-    function txt(x, y, anchor, size, fill, str) {
-      var t = el("text", { x: x, y: y, "text-anchor": anchor, "font-size": String(size), fill: fill });
+    function txt(x, y, anchor, size, fill, str, cls) {
+      var a = { x: x, y: y, "text-anchor": anchor, "font-size": String(size), fill: fill };
+      if (cls) a["class"] = cls;   // annotation tier (runtime v0.4.0 owns the px size)
+      var t = el("text", a);
       t.textContent = str; return t;
     }
     function radialGrad(id, color) {
@@ -354,8 +356,8 @@
     s += '<g class="lf-phase">';
     s += lineS(LCX - LHALF, LCY, LCX + LHALF, LCY, COL.grid, 1);
     s += lineS(LCX, LCY - LHALF + 22, LCX, LCY + LHALF - 4, COL.grid, 1);
-    s += textS(LCX + LHALF, LCY - 6, "end", FS_AXHINT, COL.faint, "Re");
-    s += textS(LCX + 8, LCY - LHALF + 28, "start", FS_AXHINT, COL.faint, "Im");
+    s += textS(LCX + LHALF, LCY - 6, "end", FS_AXHINT, COL.faint, "Re", "lf-tick");
+    s += textS(LCX + 8, LCY - LHALF + 28, "start", FS_AXHINT, COL.faint, "Im", "lf-tick");
     s += '</g>';
 
     // overlap + lobes
@@ -367,7 +369,7 @@
 
     // bit-flip arrow
     s += '<line x1="' + r2(f.lxL + parseFloat(rLobe) * 0.55) + '" y1="' + f.arrY + '" x2="' + r2(f.lxR - parseFloat(rLobe) * 0.55) + '" y2="' + f.arrY + '" stroke="' + COL.pf + '" stroke-width="1.6" marker-end="url(#ps-arr)" marker-start="url(#ps-arr)"></line>';
-    s += textS(LCX, f.arrY - 10, "middle", FS_ANNO, COL.pf, "bit-flip (X): cross the gap");
+    s += textS(LCX, f.arrY - 10, "middle", FS_ANNO, COL.pf, "bit-flip (X): cross the gap", "lf-callout");
 
     // caliper + phase-flip note
     s += lineS(f.lxL, f.calY, f.lxR, f.calY, COL.axis, 1);
@@ -383,9 +385,9 @@
     s += lineS(RX, RY, RX, RY + RH, COL.axis, 1.5) + lineS(RX, RY + RH, RX + RW, RY + RH, COL.axis, 1.5);
     f.xTicks.forEach(function (t) {
       s += lineS(t.px, RY + RH, t.px, RY + RH + 5, COL.axis, 1);
-      s += textS(t.px, RY + RH + 20, "middle", FS_TICK, COL.axis, t.label);
+      s += textS(t.px, RY + RH + 20, "middle", FS_TICK, COL.axis, t.label, "lf-tick");
     });
-    f.yTicks.forEach(function (t) { s += textS(RX - 8, t.py + 4, "end", FS_TICK, COL.axis, t.label); });
+    f.yTicks.forEach(function (t) { s += textS(RX - 8, t.py + 4, "end", FS_TICK, COL.axis, t.label, "lf-tick"); });
     s += textS(RX + RW / 2, H - 12, "middle", FS_AXTITLE, COL.axis, "cat size  n̄  (mean photon number)");
     s += '<text x="' + (RX - 50) + '" y="' + (RY + RH / 2) + '" text-anchor="middle" font-size="' + FS_AXTITLE + '" fill="' + COL.axis + '" transform="rotate(-90 ' + (RX - 50) + ' ' + (RY + RH / 2) + ')">' + escTxt("error rate  (log, normalized)") + '</text>';
     s += '</g><g class="lf-curves">';
@@ -411,7 +413,7 @@
 
   // string-emit helpers (poster path)
   function lineS(x1, y1, x2, y2, c, w) { return '<line x1="' + r2(x1) + '" y1="' + r2(y1) + '" x2="' + r2(x2) + '" y2="' + r2(y2) + '" stroke="' + c + '" stroke-width="' + w + '"></line>'; }
-  function textS(x, y, anchor, size, fill, str) { return '<text x="' + r2(x) + '" y="' + r2(y) + '" text-anchor="' + anchor + '" font-size="' + size + '" fill="' + fill + '">' + escTxt(str) + '</text>'; }
+  function textS(x, y, anchor, size, fill, str, cls) { return '<text ' + (cls ? 'class="' + cls + '" ' : '') + 'x="' + r2(x) + '" y="' + r2(y) + '" text-anchor="' + anchor + '" font-size="' + size + '" fill="' + fill + '">' + escTxt(str) + '</text>'; }
   function radialGradS(id, color) {
     return '<radialGradient id="' + id + '" cx="50%" cy="50%" r="50%">' +
       '<stop offset="0%" stop-color="' + color + '" stop-opacity="0.92"></stop>' +

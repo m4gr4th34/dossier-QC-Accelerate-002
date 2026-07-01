@@ -37,7 +37,7 @@
 (function (root) {
   "use strict";
 
-  var FIGURES_RUNTIME_VERSION = "0.5.0";  // 0.2.0: +registry (registerPoster/posterEmitters) + dedupPoster; solveKepler relocated to orrery.js (additive + one relocation; live render back-compat intact); 0.3.0: +self-contained text-fit (annotation labels render at fixed px regardless of display width; browser-only, Node-safe); 0.4.0: +text tiers (lf-tick/lf-axis/lf-callout set --lf-text-size; additive, unclassed text unchanged); 0.5.0: +self-contained live-SVG lightbox (tap a living figure -> re-mount fresh, full-viewport, live; browser-only, Node-safe)
+  var FIGURES_RUNTIME_VERSION = "0.8.0";  // 0.2.0: +registry (registerPoster/posterEmitters) + dedupPoster; solveKepler relocated to orrery.js (additive + one relocation; live render back-compat intact); 0.3.0: +self-contained text-fit (annotation labels render at fixed px regardless of display width; browser-only, Node-safe); 0.4.0: +text tiers (lf-tick/lf-axis/lf-callout set --lf-text-size; additive, unclassed text unchanged); 0.5.0: +self-contained live-SVG lightbox (tap a living figure -> re-mount fresh, full-viewport, live; browser-only, Node-safe); 0.6.0: lightbox v2 — registerRenderer registry (reaches any figure type, not just the demos), postMessage breakout (full-viewport overlay from inside iframes), legible trigger; 0.7.0: overlay backdrop solid (no blur veiling the live figure) + self-injected control-bar CSS (controls styled in any breakout host) + zoom slider direction flipped (right = zoom IN; presentation-only, scale byte-identical) + IntersectionObserver visibility gate (off-screen figures stop animating); 0.8.0: registerRenderer is the sole lightbox dispatch contract — drop the initialism-fragile render<Cap(type)> fallback, warn (not silently skip) on an unregistered figure type, document registerRenderer as a required adoption step
 
   // (solveKepler — Kepler's-equation solver — was relocated to figures/orrery.js,
   //  its ONLY consumer. A galaxy / cosmic-web / uniform-field figure is statistical
@@ -161,6 +161,11 @@
   // -------------------------------------------------------------------------
   var posterEmitters = {};
   function registerPoster(type, fn) { posterEmitters[type] = fn; }
+  // Live-renderer registry — the sibling of posterEmitters. A module registers its
+  // interactive renderX under the SAME type key its spec uses, so the lightbox (and
+  // any consumer) can reach ANY figure type by data, with no hardcoded per-type list.
+  var renderers = {};
+  function registerRenderer(type, fn) { renderers[type] = fn; }
   function dedupPoster(container) {
     if (container && container.querySelector) {
       var baked = container.querySelector("[data-poster]");
@@ -185,6 +190,8 @@
     escTxt: escTxt,
     posterEmitters: posterEmitters,
     registerPoster: registerPoster,
+    renderers: renderers,
+    registerRenderer: registerRenderer,
     dedupPoster: dedupPoster
   };
 
@@ -306,22 +313,20 @@
     if (!root || !root.document) return;
     var doc = root.document, STYLE_ID = "lf-lightbox-style", OVERLAY_ID = "lf-lightbox";
 
-    // type -> renderX fn name: "cosmic" -> renderCosmicZoom, else render<Cap(type)>.
-    var TYPE_FN = {
-      orrery: "renderOrrery", galaxy: "renderGalaxy", cosmic: "renderCosmicZoom",
-      localgroup: "renderLocalGroup", cosmicweb: "renderCosmicWeb",
-      observableuniverse: "renderObservableUniverse"
-    };
-
     function specOf(host) {
       var raw = host.getAttribute("data-figure");
       if (!raw) return null;
       try { return JSON.parse(raw); } catch (e) { return null; }
     }
+    // Resolve a figure type to its live renderer through the registry ONLY: a module registers its
+    // renderer with DossierFigures.registerRenderer("<type>", fn) under the exact spec.type string.
+    // No name-based fallback -- an earlier render<Cap(type)> convention title-cased each segment
+    // ("qc-frontier" -> "renderQcFrontier"), which could never match an initialism-cased renderer
+    // (renderQCFrontier / renderMLModel), silently dropping the lightbox. The registry is exact, so
+    // the fn name is the author's to choose; it just has to be registered under the type string.
     function renderFnFor(spec, host) {
-      var t = (spec && spec.type) || host.getAttribute("data-figure-type") || "";
-      var name = TYPE_FN[t];
-      var fn = name && API[name];
+      var t = (spec && spec.type) || (host && host.getAttribute("data-figure-type")) || "";
+      var fn = t && API.renderers[t];
       return (typeof fn === "function") ? fn : null;
     }
 
@@ -331,19 +336,41 @@
       st.id = STYLE_ID;
       st.textContent =
         "#" + OVERLAY_ID + "{position:fixed;inset:0;z-index:10001;display:none;" +
-          "align-items:center;justify-content:center;background:rgba(23,38,44,.82);" +
-          "padding:24px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}" +
+          "align-items:center;justify-content:center;background:#0d1117;" +
+          "padding:24px;}" +
         "#" + OVERLAY_ID + ".open{display:flex;}" +
         "#" + OVERLAY_ID + " .lf-lightbox-stage{width:min(1200px,94vw);max-height:92vh;}" +
         "#" + OVERLAY_ID + " .lf-lightbox-stage .lf-svg{max-height:82vh;}" +
+        // Control-bar CSS shipped by the runtime, scoped to the overlay -- a breakout host (e.g. the
+        // showcase top doc) may lack the demos' .lf-controls styles, so the mounted controls would
+        // otherwise fall back to native browser chrome. Concrete values (not var tokens) so it works
+        // on any host. Only affects broken-out figures; the demos keep their own inline control CSS.
+        "#lf-lightbox .lf-controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;" +
+          "margin-top:12px;font:12.5px/1.4 ui-monospace,Menlo,Consolas,monospace;color:#586a6f;}" +
+        "#lf-lightbox .lf-btn{font:600 12.5px/1 ui-monospace,Menlo,Consolas,monospace;" +
+          "padding:7px 12px;border:1.5px solid #17262c;background:#fff;color:#17262c;" +
+          "border-radius:10px;cursor:pointer;-webkit-appearance:none;appearance:none;}" +
+        "#lf-lightbox .lf-btn:hover{box-shadow:0 2px 12px rgba(23,38,44,.12);}" +
+        "#lf-lightbox .lf-region{border-color:#0c8f86;color:#0c8f86;}" +
+        "#lf-lightbox .lf-play{border-color:#0c8f86;background:#0c8f86;color:#fff;}" +
+        "#lf-lightbox .lf-field{display:flex;align-items:center;gap:7px;letter-spacing:.06em;" +
+          "text-transform:uppercase;font-size:11px;}" +
+        "#lf-lightbox .lf-range{accent-color:#0c8f86;cursor:pointer;}" +
+        "#lf-lightbox .lf-readout{margin-left:auto;font-size:11.5px;color:#586a6f;white-space:nowrap;}" +
+        "#lf-lightbox .lf-cosmic{cursor:default;}" +
+        // lf-fallback: the "runtime not found" message; can't appear in a breakout (the renderer IS
+        // the runtime), covered for completeness so the whole emitted control family is host-independent.
+        "#lf-lightbox .lf-fallback{font:12.5px/1.4 ui-monospace,Menlo,Consolas,monospace;color:#cf5d36;}" +
         "#" + OVERLAY_ID + " .lf-lightbox-close{position:absolute;top:16px;right:20px;" +
           "font:600 13px/1 ui-monospace,Menlo,monospace;color:#fff;background:rgba(0,0,0,.35);" +
           "border:1.5px solid rgba(255,255,255,.5);border-radius:8px;padding:8px 12px;cursor:pointer;}" +
-        ".lf-expand{position:absolute;top:10px;right:10px;z-index:3;" +
-          "font:600 11px/1 ui-monospace,Menlo,monospace;color:#fff;background:rgba(0,0,0,.35);" +
-          "border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:5px 8px;cursor:zoom-in;" +
-          "opacity:.75;transition:opacity .15s ease;}" +
-        ".lf-expand:hover,.lf-expand:focus-visible{opacity:1;outline:2px solid #fff;outline-offset:1px;}";
+        ".lf-expand{position:absolute;top:10px;right:10px;z-index:6;" +
+          "font:600 11px/1 ui-monospace,Menlo,monospace;color:#fff;" +
+          "background:rgba(15,20,24,.92);border:1px solid rgba(255,255,255,.75);" +
+          "border-radius:6px;padding:6px 9px;cursor:zoom-in;opacity:1;" +
+          "box-shadow:0 1px 6px rgba(0,0,0,.4);transition:background .15s ease,transform .12s ease;}" +
+        ".lf-expand:hover,.lf-expand:focus-visible{background:rgba(30,40,48,.98);transform:translateY(-1px);" +
+          "outline:2px solid #fff;outline-offset:1px;}";
       (doc.head || doc.documentElement).appendChild(st);
     }
 
@@ -372,9 +399,10 @@
       (doc.body || doc.documentElement).appendChild(overlay);
     }
 
-    function open(host) {
-      var spec = specOf(host); if (!spec) return;
-      var fn = renderFnFor(spec, host); if (!fn) return;
+    // Mount a spec into the top-hosted overlay -- the shared core: BOTH a local open and a
+    // breakout message land here. No host needed; dispatch is purely by spec.type.
+    function openSpec(spec) {
+      var fn = renderFnFor(spec); if (!fn) return;
       buildOverlay();
       lastFocus = doc.activeElement;
       // fresh container each open; controls stay ON (it's the live, interactive copy)
@@ -385,6 +413,19 @@
       overlay.setAttribute("aria-hidden", "false");
       closeBtn.focus();
       doc.addEventListener("keydown", onKey, true);
+    }
+    function open(host) {
+      var spec = specOf(host); if (!spec) return;
+      // CHILD role: an iframed figure hands its spec UP to the top document, which hosts a
+      // full-viewport overlay (escapes the iframe cap). Same-origin is the live path; if top is
+      // unreachable (cross-origin throws) or we ARE the top (not iframed), fall back to a local overlay.
+      try {
+        if (root.top && root.top !== root.self) {
+          root.top.postMessage({ source: "lf-lightbox", type: "open", spec: spec }, "*");
+          return;
+        }
+      } catch (e) { /* cross-origin or blocked -> local fallback below */ }
+      openSpec(spec);
     }
     function close() {
       if (!overlay) return;
@@ -410,7 +451,17 @@
     function wire(host) {
       if (!host || host.__lfLightbox) return;
       var spec = specOf(host); if (!spec) return;
-      if (!renderFnFor(spec, host)) return;      // no live renderer -> no trigger
+      if (!renderFnFor(spec, host)) {
+        // A declared-but-unregistered type is almost always a forgotten registerRenderer, not intent.
+        // Warn (once per host -- wire runs once per host) naming the type + the fix, instead of a
+        // silent drop. A spec with NO type at all stays a silent skip; console guarded for Node-safety.
+        var t = (spec && spec.type) || host.getAttribute("data-figure-type") || "";
+        if (t && root.console && root.console.warn) {
+          root.console.warn('[figures] no live renderer registered for figure type "' + t +
+            '" -- call DossierFigures.registerRenderer("' + t + '", <yourRenderFn>) so the lightbox can open it.');
+        }
+        return;   // still no trigger, but now the author is TOLD why
+      }
       host.__lfLightbox = true;
       if (getComputedStyle(host).position === "static") host.style.position = "relative";
       var btn = doc.createElement("button");
@@ -441,6 +492,15 @@
         }).observe(doc.documentElement, { childList: true, subtree: true });
       }
     }
+    // HOST role: any document that loads figures.js also listens for breakout messages from
+    // child iframes and mounts them into ITS OWN top-level overlay (the same openSpec path).
+    // So the showcase, loading figures.js at top level, hosts full-viewport overlays for the
+    // figures living in its iframes.
+    root.addEventListener("message", function (ev) {
+      var d = ev.data;
+      if (!d || d.source !== "lf-lightbox" || d.type !== "open" || !d.spec) return;
+      openSpec(d.spec);
+    });
     if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", boot);
     else boot();
   })();

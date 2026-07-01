@@ -424,4 +424,5 @@
   DossierFigures.renderQCPhasespace = renderQCPhasespace;
   DossierFigures.renderQCPhasespacePosterSVG = renderQCPhasespacePosterSVG;
   DossierFigures.registerPoster("qc-phasespace", renderQCPhasespacePosterSVG);
+  DossierFigures.registerRenderer("qc-phasespace", renderQCPhasespace);        // live-renderer registry (the lightbox dispatches by spec.type)
 })(typeof window !== "undefined" ? window : null);

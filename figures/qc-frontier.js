@@ -329,4 +329,5 @@
   DossierFigures.renderQCFrontier = renderQCFrontier;
   DossierFigures.renderQCFrontierPosterSVG = renderQCFrontierPosterSVG;   // back-compat (direct callers)
   DossierFigures.registerPoster("qc-frontier", renderQCFrontierPosterSVG); // registry (the sealer dispatches by spec.type)
+  DossierFigures.registerRenderer("qc-frontier", renderQCFrontier);        // live-renderer registry (the lightbox dispatches by spec.type)
 })(typeof window !== "undefined" ? window : null);

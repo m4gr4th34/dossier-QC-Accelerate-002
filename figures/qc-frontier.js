@@ -167,14 +167,21 @@
     return null;
   }
 
-  // Live-only: a visible "pressed" treatment for the regime toggle, bound to aria-pressed (setMode
-  // toggles it). Injected once, scoped to .lf-btn inside .lf-controls; the Reset button carries no
-  // aria-pressed so it keeps the default look. Poster/JS-off floor is unaffected (buttons are live-only).
+  // Live-only: the figure's control buttons get the paper's styleguide radius (--r-sm = 10px, resolved
+  // at :root so it works inside the overlay too), and the regime toggle gets a visible "pressed" fill
+  // bound to aria-pressed (setMode toggles it). The pressed rule is stated TWICE: once for the page,
+  // and once scoped to #lf-lightbox so it beats the runtime's own "#lf-lightbox .lf-btn" base (an ID
+  // selector, specificity 1,1,0) in the expanded view — our #lf-lightbox .lf-controls .lf-btn[...] is
+  // 1,3,0, so it wins on specificity, no !important. The Reset button carries no aria-pressed, so it
+  // keeps the default look (rounded, unfilled). Poster/JS-off floor is unaffected (buttons are live-only).
   function injectToggleStyle(doc) {
     if (!doc || !doc.getElementById || doc.getElementById("qc-frontier-toggle-style")) return;
     var st = doc.createElement("style");
     st.id = "qc-frontier-toggle-style";
-    st.textContent = '.lf-controls .lf-btn[aria-pressed="true"]{background:#5a6b70;color:#fff;border-color:#5a6b70;}';
+    st.textContent =
+      '.lf-controls .lf-btn{border-radius:var(--r-sm,10px);}' +
+      '.lf-controls .lf-btn[aria-pressed="true"]{background:#5a6b70;color:#fff;border-color:#5a6b70;}' +
+      '#lf-lightbox .lf-controls .lf-btn[aria-pressed="true"]{background:#5a6b70;color:#fff;border-color:#5a6b70;}';
     (doc.head || doc.documentElement).appendChild(st);
   }
 

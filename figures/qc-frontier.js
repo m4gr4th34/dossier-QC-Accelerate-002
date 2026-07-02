@@ -141,6 +141,17 @@
     return null;
   }
 
+  // Live-only: a visible "pressed" treatment for the regime toggle, bound to aria-pressed (setMode
+  // toggles it). Injected once, scoped to .lf-btn inside .lf-controls; the Reset button carries no
+  // aria-pressed so it keeps the default look. Poster/JS-off floor is unaffected (buttons are live-only).
+  function injectToggleStyle(doc) {
+    if (!doc || !doc.getElementById || doc.getElementById("qc-frontier-toggle-style")) return;
+    var st = doc.createElement("style");
+    st.id = "qc-frontier-toggle-style";
+    st.textContent = '.lf-controls .lf-btn[aria-pressed="true"]{background:#5a6b70;color:#fff;border-color:#5a6b70;}';
+    (doc.head || doc.documentElement).appendChild(st);
+  }
+
   // -------------------------------------------------------------------------
   // renderQCFrontier(container, spec) — live entry point. dedupPoster first,
   // build the static chart once, then a discrete TOGGLE swaps which result set
@@ -158,6 +169,7 @@
     spec = spec || {};
 
     dedupPoster(container);   // RUNTIME: drop any sealed [data-poster] floor before going live
+    injectToggleStyle(doc);   // live-only: visible pressed state for the regime toggle (bound to aria-pressed)
 
     var f = computeFrontier(spec);
     var px = f.plot.x, py = f.plot.y, pw = f.plot.w, ph = f.plot.h;

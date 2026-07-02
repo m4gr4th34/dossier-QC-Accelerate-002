@@ -1,15 +1,18 @@
 /*
- * qc-frontier.js — "the kept negative" render module for Open Dossier living
- * figures (Dossier QC-Accelerate-002, Chapter 1).
+ * qc-frontier.js — "the kept negative, made spatial" render module for Open
+ * Dossier living figures (Dossier QC-Accelerate-002, Chapter 1).
  *
  * WHAT THIS IS
  *   A vendored, zero-dependency, reader-side render module that plots the AI
  *   bias-preserving-gate search result: search gain (search frontier / hand-
  *   designed baseline) vs cat size α², with a reference line at gain = 1.0 (the
- *   baseline = the wall). A discrete TOGGLE compares the two-quadrature search
- *   (lands ON the baseline, gain ≈ 1, ε_y driven to 0) against the single-
- *   quadrature shaped pulse (falls BELOW baseline, margin −0.29). Loaded after
- *   figures.js; extends window.DossierFigures with renderQCFrontier(container, spec).
+ *   baseline = the wall). BOTH regimes are drawn at once — the two-quadrature
+ *   search points AND the single-quadrature shaped-pulse line — and the two
+ *   buttons are FOCUS selectors (the pressed regime is full-opacity, the other
+ *   dimmed, never hidden). A light wash marks the region beyond the hand-designed
+ *   gate (gain > 1.0); a static badge shows the bias-breaking knob ε_y pinned at 0.
+ *   Loaded after figures.js; extends window.DossierFigures with
+ *   renderQCFrontier(container, spec).
  *
  * THE COMPOSITION LAW
  *   Every GENERAL primitive comes from the runtime (figures.js), never re-rolled:
@@ -29,7 +32,9 @@
  *   baseline-only (search compute-bound, N≥24 Fock states) — a baseline marker,
  *   no search point. The bias-breaking knob ε_y is driven to 0 by the search; the
  *   single-quadrature shaped pulse falls BELOW baseline at margin −0.29. This is a
- *   DISCRETE comparison, not a continuous sweep — there is NO fabricated curve.
+ *   DISCRETE comparison, not a continuous sweep — there is NO fabricated curve and
+ *   NO trajectory. The figure visualises the published ABSENCE (three points, one
+ *   baseline, one below-baseline line, ε_y=0); it does not simulate or interpolate.
  *   Values from the prior lineage's current (working) edition,
  *   github.com/m4gr4th34/dossier-QC-Accelerate — the working-draft result, sparse
  *   (three cat sizes, as published), not DOI-archived. [reported]
@@ -61,6 +66,22 @@
 
   var W = 800, H = 480;
   var ML = 70, MR = 168, MT = 36, MB = 56;   // wide right gutter for the legend/annotation
+  var DIM = "0.25";                            // the UNFOCUSED regime is dimmed, never hidden
+  var EPS = { x: 108, y: 250, w: 48 };         // ε_y mini-meter anchor (empty mid-left band)
+  // Forbidden-region label — a CLAIM about THIS search, scoped to what the published data shows.
+  // NOT "no search point ever landed here" (the α²=2 point IS at 1.04, above the gate); the honest
+  // statement is that the gate was crossed only transiently, at one cat size.
+  var FORBIDDEN_LABEL = "beyond the hand-designed gate — reached only transiently (α²=2: 1.04)";
+  var EPS_LABEL_1 = "bias-breaking knob ε_y:";
+  var EPS_LABEL_2 = "offered, driven to 0";
+
+  // Per-point notes (live-only detail; published facts, no interpolation).
+  function noteFor(nbar, kind) {
+    if (kind === "base") return "compute-bound (N≥24 Fock states) — baseline only, no search point";
+    if (nbar === 2) return "search recovers the human gate; transient gain ×1.04";
+    if (nbar === 3) return "exact match — gain 1.00";
+    return "α²=" + nbar;
+  }
 
   // ===== SHARED CHART GEOMETRY =============================================
   // Computed ONCE; consumed by the live el() emitter AND the pure poster string
@@ -95,11 +116,16 @@
 
     var searchPts = points.map(function (p) {
       return { x: r2(xPix(p.nbar)), y: r2(yPix(p.gain)), nbar: p.nbar, gain: p.gain,
-        label: "α²=" + p.nbar + ": " + p.gain.toFixed(2) };
+        label: "α²=" + p.nbar + ": " + p.gain.toFixed(2), note: noteFor(p.nbar, "search") };
     });
     var basePts = baselineOnly.map(function (p) {
-      return { x: r2(xPix(p.nbar)), y: baselineY, nbar: p.nbar, label: "α²=" + p.nbar + " (baseline only)" };
+      return { x: r2(xPix(p.nbar)), y: baselineY, nbar: p.nbar,
+        label: "α²=" + p.nbar + " (baseline only)", note: noteFor(p.nbar, "base") };
     });
+
+    // Forbidden region: the band ABOVE the hand-designed gate (gain > baseline=1.0), from the plot
+    // top down to the baseline. Published fact: the search entered it only transiently (α²=2, 1.04).
+    var forbidden = { x: plot.x, y: plot.y, w: plot.w, h: r2(yPix(baseline) - plot.y) };
 
     // x ticks at the integer cat sizes present; y ticks every 0.1.
     var xTickVals = nbars.slice().sort(function (a, b) { return a - b; });
@@ -115,18 +141,18 @@
       W: W, H: H, plot: plot,
       baseline: baseline, baselineY: baselineY,
       singleQuadGain: singleQuadGain, singleY: singleY, margin: margin, epsilonY: epsilonY,
-      searchPts: searchPts, basePts: basePts, xTicks: xTicks, yTicks: yTicks,
+      searchPts: searchPts, basePts: basePts, xTicks: xTicks, yTicks: yTicks, forbidden: forbidden,
       baseColor: "#9aa3a6", searchColor: "#2f6f8f", singleColor: "#c2562f",
-      axisColor: "#5a6b70", gridColor: "#d7dee0",
-      ariaLabel: "AI-search gain versus cat size: the search lands on the hand-designed baseline (gain about 1) and the bias-breaking knob is driven to zero; a single-quadrature pulse falls below baseline"
+      forbiddenColor: "#c2562f", axisColor: "#5a6b70", gridColor: "#d7dee0",
+      ariaLabel: "AI-search gain versus cat size, both regimes shown at once: two-quadrature search points sit on the hand-designed baseline (gain about 1, crossing it only transiently at cat size 2) with the bias-breaking knob driven to zero, and a single-quadrature pulse line falls below the baseline"
     };
   }
 
   function subtitleFor(f, mode) {
     if (mode === "single-quad") {
-      return "Single-quadrature shaped pulse — falls " + Math.abs(f.margin).toFixed(2) + " below baseline (margin " + f.margin.toFixed(2) + ")";
+      return "Focus: single-quadrature pulse — falls " + Math.abs(f.margin).toFixed(2) + " below baseline (margin " + f.margin.toFixed(2) + ")";
     }
-    return "Two-quadrature search — lands on baseline (gain ≈ 1.00); bias-breaking ε_y → " + f.epsilonY;
+    return "Focus: two-quadrature search — lands on baseline (gain ≈ 1.00); bias-breaking ε_y → " + f.epsilonY;
   }
 
   function fail(container, msg) {
@@ -154,12 +180,13 @@
 
   // -------------------------------------------------------------------------
   // renderQCFrontier(container, spec) — live entry point. dedupPoster first,
-  // build the static chart once, then a discrete TOGGLE swaps which result set
-  // (two-quadrature search vs single-quadrature pulse) is highlighted.
+  // build BOTH regimes at once, then the two buttons FOCUS (dim the other, never
+  // hide it). Points carry a per-point detail on hover/focus (keyboard-accessible).
   // -------------------------------------------------------------------------
   function renderQCFrontier(container, spec) {
     if (!container) return fail(null, "no container");
     var doc = (root && root.document) || container.ownerDocument;
+    injectToggleStyle(doc);   // live-only: visible pressed state for the regime toggle (bound to aria-pressed)
 
     if (spec == null && container.getAttribute) spec = container.getAttribute("data-figure");
     if (typeof spec === "string") {
@@ -169,7 +196,6 @@
     spec = spec || {};
 
     dedupPoster(container);   // RUNTIME: drop any sealed [data-poster] floor before going live
-    injectToggleStyle(doc);   // live-only: visible pressed state for the regime toggle (bound to aria-pressed)
 
     var f = computeFrontier(spec);
     var px = f.plot.x, py = f.plot.y, pw = f.plot.w, ph = f.plot.h;
@@ -178,6 +204,14 @@
       viewBox: "0 0 " + f.W + " " + f.H, width: "100%", "class": "lf-svg",
       role: "img", "aria-label": f.ariaLabel
     });
+
+    // --- forbidden-region wash (gain > 1.0) — drawn first, behind everything ---
+    var gForbid = el("g", { "class": "lf-forbidden" });
+    gForbid.appendChild(el("rect", { x: f.forbidden.x, y: f.forbidden.y, width: f.forbidden.w, height: f.forbidden.h,
+      fill: f.forbiddenColor, "fill-opacity": "0.06" }));
+    var fLab = el("text", { "class": "lf-axis", x: px + 8, y: py + 16, "text-anchor": "start", fill: f.axisColor });
+    fLab.textContent = FORBIDDEN_LABEL; gForbid.appendChild(fLab);
+    svg.appendChild(gForbid);
 
     // --- gridlines + axes ------------------------------------------------
     var gGrid = el("g", { "class": "lf-grid" });
@@ -213,37 +247,68 @@
     baseLab.textContent = "hand-designed baseline = the wall (gain 1.0)"; gBase.appendChild(baseLab);
     svg.appendChild(gBase);
 
-    // --- TWO-QUADRATURE group (default) ----------------------------------
+    // --- ε_y badge: the bias-breaking knob, offered but driven to 0 (static) ---
+    var gEps = el("g", { "class": "lf-eps" });
+    gEps.appendChild(el("line", { x1: EPS.x, y1: EPS.y, x2: EPS.x + EPS.w, y2: EPS.y, stroke: f.baseColor, "stroke-width": "2" }));
+    gEps.appendChild(el("line", { x1: EPS.x + EPS.w, y1: EPS.y - 4, x2: EPS.x + EPS.w, y2: EPS.y + 4, stroke: f.baseColor, "stroke-width": "1" }));
+    gEps.appendChild(el("circle", { cx: EPS.x, cy: EPS.y, r: "5", fill: f.singleColor, stroke: "#fff", "stroke-width": "1.5" }));
+    var epsNum = el("text", { "class": "lf-callout", x: EPS.x, y: EPS.y - 10, "text-anchor": "middle", fill: f.singleColor });
+    epsNum.textContent = "0"; gEps.appendChild(epsNum);
+    var epsL1 = el("text", { "class": "lf-axis", x: EPS.x + EPS.w + 12, y: EPS.y - 2, "text-anchor": "start", fill: f.axisColor });
+    epsL1.textContent = EPS_LABEL_1; gEps.appendChild(epsL1);
+    var epsL2 = el("text", { "class": "lf-axis", x: EPS.x + EPS.w + 12, y: EPS.y + 14, "text-anchor": "start", fill: f.axisColor });
+    epsL2.textContent = EPS_LABEL_2; gEps.appendChild(epsL2);
+    svg.appendChild(gEps);
+
+    // --- per-point detail (live-only): hover/focus a point -> its note REPLACES the readout
+    // line (reverting to the focus subtitle on blur), so the two never run together. The point is
+    // focusable with an aria-label, so it is announced to a screen reader on focus regardless.
+    function attachDetail(node, note) {
+      node.setAttribute("tabindex", "0");
+      node.setAttribute("role", "img");
+      node.setAttribute("aria-label", note);
+      node.style.cursor = "pointer";
+      var show = function () { readout.textContent = note; };
+      var clear = function () { readout.textContent = subtitleFor(f, currentMode); };
+      node.addEventListener("mouseenter", show);
+      node.addEventListener("mouseleave", clear);
+      node.addEventListener("focus", show);
+      node.addEventListener("blur", clear);
+      node.addEventListener("click", show);
+    }
+
+    // --- BOTH REGIMES drawn at once; buttons FOCUS (dim the other, never hide) ---
     var gTwo = el("g", { "class": "lf-two-quad" });
     f.searchPts.forEach(function (p) {
-      gTwo.appendChild(el("circle", { cx: p.x, cy: p.y, r: "6", fill: f.searchColor, stroke: "#fff", "stroke-width": "1.5" }));
+      var c = el("circle", { cx: p.x, cy: p.y, r: "6", fill: f.searchColor, stroke: "#fff", "stroke-width": "1.5" });
+      attachDetail(c, p.note); gTwo.appendChild(c);
       var tl = el("text", { "class": "lf-tick", x: p.x, y: p.y - 12, "text-anchor": "middle", fill: f.searchColor });
       tl.textContent = p.label; gTwo.appendChild(tl);
     });
     f.basePts.forEach(function (p) {
-      gTwo.appendChild(el("circle", { cx: p.x, cy: p.y, r: "6", fill: "none", stroke: f.baseColor, "stroke-width": "2" }));
+      var c = el("circle", { cx: p.x, cy: p.y, r: "6", fill: "none", stroke: f.baseColor, "stroke-width": "2" });
+      attachDetail(c, p.note); gTwo.appendChild(c);
       var tl2 = el("text", { "class": "lf-tick", x: p.x, y: p.y - 12, "text-anchor": "middle", fill: f.axisColor });
       tl2.textContent = p.label; gTwo.appendChild(tl2);
     });
     svg.appendChild(gTwo);
 
-    // --- SINGLE-QUADRATURE group (toggled) -------------------------------
     var gSingle = el("g", { "class": "lf-single-quad" });
     gSingle.appendChild(el("line", { x1: px, y1: f.singleY, x2: px + pw, y2: f.singleY,
       stroke: f.singleColor, "stroke-width": "2", "stroke-dasharray": "4 3" }));
     var sx = f.searchPts.length ? f.searchPts[0].x : (px + pw / 2);
-    gSingle.appendChild(el("circle", { cx: sx, cy: f.singleY, r: "6", fill: f.singleColor, stroke: "#fff", "stroke-width": "1.5" }));
+    var sc = el("circle", { cx: sx, cy: f.singleY, r: "6", fill: f.singleColor, stroke: "#fff", "stroke-width": "1.5" });
+    attachDetail(sc, "single-quadrature shaped pulse — margin −0.29 (below baseline)"); gSingle.appendChild(sc);
     var sLab = el("text", { "class": "lf-axis", x: px + pw - 4, y: f.singleY + 16, "text-anchor": "end", fill: f.singleColor });
     sLab.textContent = "single-quadrature shaped pulse · margin " + f.margin.toFixed(2); gSingle.appendChild(sLab);
-    gSingle.setAttribute("style", "display:none");
     svg.appendChild(gSingle);
 
     // --- subtitle text (inside the SVG, top-left) ------------------------
     var subEl = el("text", { "class": "lf-callout", x: px, y: 22, fill: f.axisColor });
     subEl.textContent = subtitleFor(f, "two-quad"); svg.appendChild(subEl);
 
-    // --- controls: the discrete toggle -----------------------------------
-    var currentMode = "two-quad";   // the PUBLISHED start (what the sealed poster freezes) — Reset restores it
+    // --- controls: the two focus selectors + Reset -----------------------
+    var currentMode = "two-quad";   // the PUBLISHED start focus (what the sealed poster freezes) — Reset restores it
     var controls = doc.createElement("div");
     controls.className = "lf-controls";
     var btnTwo = doc.createElement("button");
@@ -252,20 +317,22 @@
     btnSingle.type = "button"; btnSingle.className = "lf-btn"; btnSingle.textContent = "Single-quadrature pulse";
     controls.appendChild(btnTwo); controls.appendChild(btnSingle);
 
-    // Reset: restore the PUBLISHED start view (the two-quadrature mode the poster freezes).
+    // Reset: restore the PUBLISHED start focus (two-quadrature) + view the poster freezes.
     var resetBtn = doc.createElement("button");
     resetBtn.type = "button"; resetBtn.className = "lf-btn"; resetBtn.textContent = "Reset";
     controls.appendChild(resetBtn);
 
     var readout = doc.createElement("span");
     readout.className = "lf-readout";
+    readout.setAttribute("aria-live", "polite");
     controls.appendChild(readout);
 
     function setMode(mode) {
       currentMode = mode;
       var single = (mode === "single-quad");
-      gSingle.setAttribute("style", single ? "display:inline" : "display:none");
-      gTwo.setAttribute("style", single ? "display:none" : "display:inline");
+      // FOCUS, not visibility: the unfocused regime dims to DIM, never hides.
+      gTwo.setAttribute("opacity", single ? DIM : "1");
+      gSingle.setAttribute("opacity", single ? "1" : DIM);
       subEl.textContent = subtitleFor(f, mode);
       readout.textContent = subtitleFor(f, mode);
       btnTwo.setAttribute("aria-pressed", single ? "false" : "true");
@@ -279,8 +346,8 @@
     container.appendChild(controls);
     setMode("two-quad");
 
-    // A discrete-toggle figure carries no slider, so it exposes no setSlider: the lightbox
-    // handoff finds no {slider} and gracefully opens at the published start (two-quadrature).
+    // Handle: getState carries the focus mode (no slider — this is a discrete-focus figure, so the
+    // lightbox handoff finds no {slider} and opens at the published start; Reset restores two-quad).
     var handle = {
       runtimeVersion: DossierFigures.FIGURES_RUNTIME_VERSION,
       getState: function () { return { mode: currentMode, baseline: f.baseline, points: f.searchPts.map(function (p) { return { nbar: p.nbar, gain: p.gain }; }),
@@ -293,8 +360,9 @@
 
   // -------------------------------------------------------------------------
   // renderQCFrontierPosterSVG(spec) -> the SEALED FLOOR: a DETERMINISTIC <svg>
-  // string for the DEFAULT (two-quadrature) view. PURE — no DOM. Built from the
-  // SAME computeFrontier() the live path uses, so floor == ceiling by construction.
+  // string for the DEFAULT focus (two-quadrature) with BOTH regimes visible. PURE
+  // — no DOM. Built from the SAME computeFrontier() the live path uses, so
+  // floor == ceiling by construction.
   // -------------------------------------------------------------------------
   function renderQCFrontierPosterSVG(spec) {
     if (typeof spec === "string") { try { spec = JSON.parse(spec); } catch (e) { return ""; } }
@@ -303,6 +371,12 @@
     var px = f.plot.x, py = f.plot.y, pw = f.plot.w, ph = f.plot.h;
 
     var s = '<svg viewBox="0 0 ' + f.W + ' ' + f.H + '" width="100%" class="lf-svg" role="img" aria-label="' + escAttr(f.ariaLabel) + '">';
+
+    // forbidden-region wash (gain > 1.0), drawn first
+    s += '<g class="lf-forbidden">';
+    s += '<rect x="' + f.forbidden.x + '" y="' + f.forbidden.y + '" width="' + f.forbidden.w + '" height="' + f.forbidden.h + '" fill="' + f.forbiddenColor + '" fill-opacity="0.06"></rect>';
+    s += '<text class="lf-axis" x="' + r2(px + 8) + '" y="' + r2(py + 16) + '" text-anchor="start" fill="' + f.axisColor + '">' + escTxt(FORBIDDEN_LABEL) + '</text>';
+    s += '</g>';
 
     s += '<g class="lf-grid">';
     f.yTicks.forEach(function (t) {
@@ -329,7 +403,18 @@
     s += '<text class="lf-axis" x="' + r2(px + pw - 4) + '" y="' + r2(f.baselineY + 16) + '" text-anchor="end" fill="' + f.axisColor + '">' + escTxt("hand-designed baseline = the wall (gain 1.0)") + '</text>';
     s += '</g>';
 
-    s += '<g class="lf-two-quad">';
+    // ε_y badge (static): the bias-breaking knob offered but driven to 0.
+    s += '<g class="lf-eps">';
+    s += '<line x1="' + EPS.x + '" y1="' + EPS.y + '" x2="' + (EPS.x + EPS.w) + '" y2="' + EPS.y + '" stroke="' + f.baseColor + '" stroke-width="2"></line>';
+    s += '<line x1="' + (EPS.x + EPS.w) + '" y1="' + (EPS.y - 4) + '" x2="' + (EPS.x + EPS.w) + '" y2="' + (EPS.y + 4) + '" stroke="' + f.baseColor + '" stroke-width="1"></line>';
+    s += '<circle cx="' + EPS.x + '" cy="' + EPS.y + '" r="5" fill="' + f.singleColor + '" stroke="#fff" stroke-width="1.5"></circle>';
+    s += '<text class="lf-callout" x="' + EPS.x + '" y="' + (EPS.y - 10) + '" text-anchor="middle" fill="' + f.singleColor + '">' + escTxt("0") + '</text>';
+    s += '<text class="lf-axis" x="' + (EPS.x + EPS.w + 12) + '" y="' + (EPS.y - 2) + '" text-anchor="start" fill="' + f.axisColor + '">' + escTxt(EPS_LABEL_1) + '</text>';
+    s += '<text class="lf-axis" x="' + (EPS.x + EPS.w + 12) + '" y="' + (EPS.y + 14) + '" text-anchor="start" fill="' + f.axisColor + '">' + escTxt(EPS_LABEL_2) + '</text>';
+    s += '</g>';
+
+    // BOTH regimes; the poster bakes the DEFAULT two-quad focus (two-quad full, single dimmed).
+    s += '<g class="lf-two-quad" opacity="1">';
     f.searchPts.forEach(function (p) {
       s += '<circle cx="' + p.x + '" cy="' + p.y + '" r="6" fill="' + f.searchColor + '" stroke="#fff" stroke-width="1.5"></circle>';
       s += '<text class="lf-tick" x="' + p.x + '" y="' + r2(p.y - 12) + '" text-anchor="middle" fill="' + f.searchColor + '">' + escTxt(p.label) + '</text>';
@@ -340,9 +425,8 @@
     });
     s += '</g>';
 
-    // single-quad group baked but hidden (the live toggle reveals it).
     var sx = f.searchPts.length ? f.searchPts[0].x : r2(px + pw / 2);
-    s += '<g class="lf-single-quad" style="display:none">';
+    s += '<g class="lf-single-quad" opacity="' + DIM + '">';
     s += '<line x1="' + px + '" y1="' + f.singleY + '" x2="' + r2(px + pw) + '" y2="' + f.singleY + '" stroke="' + f.singleColor + '" stroke-width="2" stroke-dasharray="4 3"></line>';
     s += '<circle cx="' + sx + '" cy="' + f.singleY + '" r="6" fill="' + f.singleColor + '" stroke="#fff" stroke-width="1.5"></circle>';
     s += '<text class="lf-axis" x="' + r2(px + pw - 4) + '" y="' + r2(f.singleY + 16) + '" text-anchor="end" fill="' + f.singleColor + '">' + escTxt("single-quadrature shaped pulse · margin " + f.margin.toFixed(2)) + '</text>';

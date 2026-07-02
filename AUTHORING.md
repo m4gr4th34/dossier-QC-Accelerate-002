@@ -208,11 +208,20 @@ living figure only when the result has dynamics worth exploring.
   `DossierFigures.registerRenderer("<type>", fn)` for its figures to get the click-to-open
   lightbox — the lightbox dispatches through that registry **only** (no name-based fallback),
   and a declared-but-unregistered type gets no lightbox plus a console warning.
+- A module whose render returns a `{getState, setSlider}` handle (or `setMaster` for a composed
+  master) and **stashes it on its container** (`container.__lfHandle = handle`) gets **state-handoff
+  and Reset for free**: the lightbox reads `getState()` to open at the reader's current zoom, and the
+  Reset control restores the spec's start view via the setter. No handle → the overlay opens at the
+  published start (graceful). Figures also honor `prefers-reduced-motion` — consult
+  `DossierFigures.prefersReducedMotion()` at your play-state init so the figure starts paused.
 - If your figure sits on a **light background** (e.g. a chart on a light card), set the optional
   top-level `"stage":"#rrggbb"` to that card color: in the lightbox the runtime paints it onto the
   figure's own background and derives a luminance-separated mat from it (omit it and both default to
-  the dark astronomy field). Add an optional `"caption":"…"` (plain text) to show the figure's caption
-  under it in the expanded view, so a reader never closes the lightbox to read what the figure shows.
+  the dark astronomy field). Add an optional `"caption":"…"` (plain text) for the figure's caption:
+  the sealer bakes it as a `<figcaption>` below the figure (page + JS-off floor), and the lightbox
+  shows the same text under the expanded figure — one field, three surfaces. **Author the caption IN
+  THE SPEC; do not hand-write a prose caption next to the figure** — that recreates the drift this
+  single-sourcing removes.
 - After writing or editing any `data-figure`, run `npm run render-figures` (or
   `node render_figures.js <page.html>`). It auto-loads the runtime + every figure
   module and **dispatches by `type`** through the poster registry, baking a
@@ -238,6 +247,40 @@ living figure only when the result has dynamics worth exploring.
   `figures/` script-src to the shared root). Enabling Pages on the fork and filling
   the `USER/REPO` placeholders is the ordinary fork story — see the README "Use this
   template" steps and DEPLOY.md; there is nothing figure-specific to redo.
+
+**Writing an animated module.** The astronomy modules settled these conventions the hard
+way — measured in a real browser, fixed at the mechanism. Follow them and your figure
+inherits the whole interaction stack (lightbox, handoff, Reset, reduced-motion) for free.
+
+1. **The loop.** One `requestAnimationFrame` loop that re-schedules itself; advance state
+   only while your `playing` flag is set. Never advance by wall-clock assumption — use the
+   rAF timestamp delta (`dt = (now - last) / 1000`, clamped).
+2. **Visibility gate.** Attach an `IntersectionObserver(fn, { root: null })` to your figure
+   and stop re-scheduling the loop when it goes off-screen; resume from the frozen state on
+   re-entry (`lfVisible` / `lfResume` in any spin module). Off-screen figures burning frames
+   is the #1 cause of a janky page — and `root: null` fires on parent-scroll even inside an
+   iframe.
+3. **Reduced motion.** Consult `DossierFigures.prefersReducedMotion()` at your `playing`
+   init and start paused when the reader's OS asks for it; their Play press is the explicit
+   override.
+4. **Cadence — measure before you throttle.** The instinct to throttle expensive per-frame
+   work "to be safe" is how you ship invisible jerkiness: a 66ms recompute throttle reads as
+   prudent and renders as 15Hz stepping inside a 60Hz page — most visible on straight lines
+   and slow rotations. Time your actual write batch first (`performance.now()` around one
+   full recompute at default density). The measured costs here: 79 nodes = 0.2ms, 1400 =
+   0.9ms, 2600 = 1.0ms, 6000 nodes + a 9000-element cull = 2.5ms — against a 16.7ms frame
+   budget. Rule of thumb: a batch under ~2ms runs at frame rate; heavier drops to 30Hz **with
+   the measured number in a comment** (see `ROT_MS` in `galaxy.js`). Keep the throttle as a
+   knob; set its value on evidence. If your figure feels stepped, question the cadence before
+   the hardware.
+5. **The handle.** Return `{getState, setSlider}` (or `setMaster` for a composed figure) and
+   stash it: `container.__lfHandle = handle`. That one line buys state-handoff (expand
+   continues from the reader's current zoom) and Reset (re-derive the published start from the
+   spec).
+6. **Seam safety.** Posters and any composition seams must depend on slider position + spec
+   only — never on animation time (`t` / `angle`). Pausing, gating, and cadence changes must
+   leave sealed bytes untouched: `node render_figures.js <page>` reporting **0 rewritten** is
+   your proof.
 
 **Honest labels inline.** Any OPEN-UNVERIFIED claim gets an `.openclaim`
 amber box AT THE EXACT POINT the claim is made — naming its ledger id and

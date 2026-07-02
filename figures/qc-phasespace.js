@@ -27,9 +27,9 @@
  *   (the orrery.js shared-compute-split discipline). Self-contained: no cross-module
  *   dependency, so auto-load order does not matter.
  *
- *   Type sizes below are this module's OWN choices (tuned against the rendered
- *   half-panel size for legibility), NOT a template standard; keep the live el()
- *   and poster string emitters in lockstep so floor == ceiling.
+ *   Text is sized by ROLE via tier classes (lf-tick / lf-axis / lf-callout — the
+ *   runtime owns the px), NEVER a raw font-size; keep the live el() and poster
+ *   string emitters in lockstep so floor == ceiling.
  *
  * THE PHYSICS (illustrative, established — Mirrahimi et al. 2014)
  *   α=√n̄ ; coherent-state overlap |<α|-α>| = exp(-2α²) = exp(-2n̄) = the bit-flip
@@ -80,9 +80,9 @@
     return (Math.round(m * 10) / 10) + "×10^" + e;
   }
 
-  // ----- type sizes (module-local; tuned for the half-panel render) -----
-  var FS_TITLE = 14, FS_AXTITLE = 14, FS_TICK = 13, FS_LEGEND = 13,
-      FS_ANNO = 13, FS_LOBE = 13, FS_READOUT = 13, FS_AXHINT = 12;
+  // ----- text tiers (sized by ROLE; the runtime owns the px — lf-tick 11 / lf-axis 13 / lf-callout 15) -----
+  var TIER_TITLE = "lf-axis", TIER_AXTITLE = "lf-axis", TIER_TICK = "lf-tick", TIER_LEGEND = "lf-axis",
+      TIER_ANNO = "lf-axis", TIER_LOBE = "lf-axis", TIER_READOUT = "lf-axis", TIER_AXHINT = "lf-tick";
   // direction cues (short intuition tags — both error rates: lower better; bias: higher better)
   var CUE_LOWER = "  ↓ lower = better", CUE_HIGHER = "  ↑ higher = better";
 
@@ -204,15 +204,15 @@
     svg.appendChild(defs);
 
     // ---- panel titles ----
-    svg.appendChild(txt(LCX, 32, "middle", FS_TITLE, COL.axis, "Phase space  ·  the cause"));
-    svg.appendChild(txt(RX + RW / 2, 32, "middle", FS_TITLE, COL.axis, "Rates  ·  the consequence"));
+    svg.appendChild(txt(LCX, 32, "middle", TIER_TITLE, COL.axis, "Phase space  ·  the cause"));
+    svg.appendChild(txt(RX + RW / 2, 32, "middle", TIER_TITLE, COL.axis, "Rates  ·  the consequence"));
 
     // ============ LEFT: phase-space crosshair + labels (static) ============
     var gL = el("g", { "class": "lf-phase" });
     gL.appendChild(el("line", { x1: LCX - LHALF, y1: LCY, x2: LCX + LHALF, y2: LCY, stroke: COL.grid, "stroke-width": "1" }));
     gL.appendChild(el("line", { x1: LCX, y1: LCY - LHALF + 22, x2: LCX, y2: LCY + LHALF - 4, stroke: COL.grid, "stroke-width": "1" }));
-    gL.appendChild(txt(LCX + LHALF, LCY - 6, "end", FS_AXHINT, COL.faint, "Re", "lf-tick"));
-    gL.appendChild(txt(LCX + 8, LCY - LHALF + 28, "start", FS_AXHINT, COL.faint, "Im", "lf-tick"));
+    gL.appendChild(txt(LCX + LHALF, LCY - 6, "end", TIER_AXHINT, COL.faint, "Re"));
+    gL.appendChild(txt(LCX + 8, LCY - LHALF + 28, "start", TIER_AXHINT, COL.faint, "Im"));
     svg.appendChild(gL);
 
     // ---- lobes + overlap (dynamic) ----
@@ -220,24 +220,24 @@
     var lobeR = el("circle", { cy: LCY, r: f.rLobe, fill: "url(#ps-lobe)" });
     var overlapEl = el("ellipse", { cx: LCX, cy: LCY, rx: f.rOv, ry: f.rLobe, fill: "url(#ps-ov)" });
     svg.appendChild(overlapEl); svg.appendChild(lobeL); svg.appendChild(lobeR);
-    var labL = txt(0, LCY - f.rLobe - 8, "middle", FS_LOBE, COL.lobe, "|−α⟩");
-    var labR = txt(0, LCY - f.rLobe - 8, "middle", FS_LOBE, COL.lobe, "|+α⟩");
+    var labL = txt(0, LCY - f.rLobe - 8, "middle", TIER_LOBE, COL.lobe, "|−α⟩");
+    var labR = txt(0, LCY - f.rLobe - 8, "middle", TIER_LOBE, COL.lobe, "|+α⟩");
     svg.appendChild(labL); svg.appendChild(labR);
 
     // ---- bit-flip arrow across the gap (dynamic endpoints) ----
     var arrLine = el("line", { y1: f.arrY, y2: f.arrY, stroke: COL.pf, "stroke-width": "1.6", "marker-end": "url(#ps-arr)", "marker-start": "url(#ps-arr)" });
     svg.appendChild(arrLine);
-    svg.appendChild(txt(LCX, f.arrY - 10, "middle", FS_ANNO, COL.pf, "bit-flip (X): cross the gap", "lf-callout"));
+    svg.appendChild(txt(LCX, f.arrY - 10, "middle", "lf-callout", COL.pf, "bit-flip (X): cross the gap"));
 
     // ---- separation caliper (dynamic endpoints, static label) ----
     var calLine = el("line", { y1: f.calY, y2: f.calY, stroke: COL.axis, "stroke-width": "1" });
     var calTickL = el("line", { y1: f.calY - 4, y2: f.calY + 4, stroke: COL.axis, "stroke-width": "1" });
     var calTickR = el("line", { y1: f.calY - 4, y2: f.calY + 4, stroke: COL.axis, "stroke-width": "1" });
     svg.appendChild(calLine); svg.appendChild(calTickL); svg.appendChild(calTickR);
-    svg.appendChild(txt(LCX, f.calY + 19, "middle", FS_ANNO, COL.axis, "separation  2√n̄"));
+    svg.appendChild(txt(LCX, f.calY + 19, "middle", TIER_ANNO, COL.axis, "separation  2√n̄"));
 
     // ---- phase-flip note (static) ----
-    svg.appendChild(txt(LCX, LCY + LHALF - 2, "middle", FS_ANNO, COL.axis, "phase-flip (Z): dephasing, ~ n̄"));
+    svg.appendChild(txt(LCX, LCY + LHALF - 2, "middle", TIER_ANNO, COL.axis, "phase-flip (Z): dephasing, ~ n̄"));
 
     // ============ RIGHT: the rate chart (static scaffold) ============
     var gGrid = el("g", { "class": "lf-grid" });
@@ -248,11 +248,11 @@
     gAx.appendChild(el("line", { x1: RX, y1: RY + RH, x2: RX + RW, y2: RY + RH, stroke: COL.axis, "stroke-width": "1.5" }));
     f.xTicks.forEach(function (t) {
       gAx.appendChild(el("line", { x1: t.px, y1: RY + RH, x2: t.px, y2: RY + RH + 5, stroke: COL.axis, "stroke-width": "1" }));
-      gAx.appendChild(txt(t.px, RY + RH + 20, "middle", FS_TICK, COL.axis, t.label, "lf-tick"));
+      gAx.appendChild(txt(t.px, RY + RH + 20, "middle", TIER_TICK, COL.axis, t.label));
     });
-    f.yTicks.forEach(function (t) { gAx.appendChild(txt(RX - 8, t.py + 4, "end", FS_TICK, COL.axis, t.label, "lf-tick")); });
-    gAx.appendChild(txt(RX + RW / 2, H - 12, "middle", FS_AXTITLE, COL.axis, "cat size  n̄  (mean photon number)"));
-    var yl = txt(RX - 50, RY + RH / 2, "middle", FS_AXTITLE, COL.axis, "error rate  (log, normalized)");
+    f.yTicks.forEach(function (t) { gAx.appendChild(txt(RX - 8, t.py + 4, "end", TIER_TICK, COL.axis, t.label)); });
+    gAx.appendChild(txt(RX + RW / 2, H - 12, "middle", TIER_AXTITLE, COL.axis, "cat size  n̄  (mean photon number)"));
+    var yl = txt(RX - 50, RY + RH / 2, "middle", TIER_AXTITLE, COL.axis, "error rate  (log, normalized)");
     yl.setAttribute("transform", "rotate(-90 " + (RX - 50) + " " + (RY + RH / 2) + ")");
     gAx.appendChild(yl);
     svg.appendChild(gAx);
@@ -264,9 +264,9 @@
     var lgx = RX + 14, lgy = RY + RH - 40;
     var gLg = el("g", { "class": "lf-legend" });
     gLg.appendChild(el("line", { x1: lgx, y1: lgy, x2: lgx + 22, y2: lgy, stroke: COL.bf, "stroke-width": "2.5" }));
-    gLg.appendChild(txt(lgx + 30, lgy + 4, "start", FS_LEGEND, COL.axis, "bit-flip  ∝ e^(−2n̄)" + CUE_LOWER));
+    gLg.appendChild(txt(lgx + 30, lgy + 4, "start", TIER_LEGEND, COL.axis, "bit-flip  ∝ e^(−2n̄)" + CUE_LOWER));
     gLg.appendChild(el("line", { x1: lgx, y1: lgy + 22, x2: lgx + 22, y2: lgy + 22, stroke: COL.pf, "stroke-width": "2.5" }));
-    gLg.appendChild(txt(lgx + 30, lgy + 26, "start", FS_LEGEND, COL.axis, "phase-flip  ∝ n̄" + CUE_LOWER));
+    gLg.appendChild(txt(lgx + 30, lgy + 26, "start", TIER_LEGEND, COL.axis, "phase-flip  ∝ n̄" + CUE_LOWER));
     svg.appendChild(gLg);
     // marker (dynamic)
     var gM = el("g", { "class": "lf-marker" });
@@ -299,23 +299,30 @@
     input.type = "range"; input.min = String(nMin); input.max = String(nMax); input.step = "0.1";
     input.value = String(nStart); input.className = "lf-range";
     wrap.appendChild(input); controls.appendChild(wrap);
+    // Reset: restore the PUBLISHED start view (the cat size the sealed poster freezes).
+    var resetBtn = doc.createElement("button");
+    resetBtn.type = "button"; resetBtn.className = "lf-btn"; resetBtn.textContent = "Reset";
+    resetBtn.addEventListener("click", function () { input.value = String(nStart); apply(computeFrame(spec, nStart)); });
+    controls.appendChild(resetBtn);
     var readout = doc.createElement("span"); readout.className = "lf-readout"; controls.appendChild(readout);
     input.addEventListener("input", function () { apply(computeFrame(spec, parseFloat(input.value))); });
 
     container.appendChild(svg); container.appendChild(controls);
     apply(f);
 
-    return {
+    // Handle: the cat-size slider IS the handoff state — expand continues from the reader's
+    // current n̄, and Reset re-derives the published start. getState carries {slider} for the runtime.
+    var handle = {
       runtimeVersion: DossierFigures.FIGURES_RUNTIME_VERSION,
-      getState: function () { var fr = computeFrame(spec, parseFloat(input.value)); return { nbar: fr.nb, separation: 2 * fr.alpha, overlap: gammaBF(fr.nb), bias: gammaPF(fr.nb, fr.gamma) / gammaBF(fr.nb) }; },
-      setNbar: function (v) { input.value = String(clamp(v, nMin, nMax)); apply(computeFrame(spec, parseFloat(input.value))); }
+      getState: function () { var fr = computeFrame(spec, parseFloat(input.value)); return { slider: parseFloat(input.value), nbar: fr.nb, separation: 2 * fr.alpha, overlap: gammaBF(fr.nb), bias: gammaPF(fr.nb, fr.gamma) / gammaBF(fr.nb) }; },
+      setSlider: function (v) { input.value = String(clamp(v, nMin, nMax)); apply(computeFrame(spec, parseFloat(input.value))); }
     };
+    container.__lfHandle = handle;
+    return handle;
 
     // small DOM helper (live path); closes over el so the poster's string helpers stay separate
-    function txt(x, y, anchor, size, fill, str, cls) {
-      var a = { x: x, y: y, "text-anchor": anchor, "font-size": String(size), fill: fill };
-      if (cls) a["class"] = cls;   // annotation tier (runtime v0.4.0 owns the px size)
-      var t = el("text", a);
+    function txt(x, y, anchor, cls, fill, str) {
+      var t = el("text", { x: x, y: y, "text-anchor": anchor, fill: fill, "class": cls });   // tier class owns the px size (runtime v0.4.0+)
       t.textContent = str; return t;
     }
     function radialGrad(id, color) {
@@ -334,7 +341,7 @@
 
   // -------------------------------------------------------------------------
   // POSTER: renderQCPhasespacePosterSVG(spec) — pure string, static at posterNbar.
-  // Same computeFrame + same type sizes -> floor == ceiling by construction.
+  // Same computeFrame + same tier classes -> floor == ceiling by construction.
   // -------------------------------------------------------------------------
   function renderQCPhasespacePosterSVG(spec) {
     if (typeof spec === "string") { try { spec = JSON.parse(spec); } catch (e) { return ""; } }
@@ -349,34 +356,34 @@
     s += '<marker id="ps-arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="' + COL.pf + '"></path></marker>';
     s += '</defs>';
 
-    s += textS(LCX, 32, "middle", FS_TITLE, COL.axis, "Phase space  ·  the cause");
-    s += textS(RX + RW / 2, 32, "middle", FS_TITLE, COL.axis, "Rates  ·  the consequence");
+    s += textS(LCX, 32, "middle", TIER_TITLE, COL.axis, "Phase space  ·  the cause");
+    s += textS(RX + RW / 2, 32, "middle", TIER_TITLE, COL.axis, "Rates  ·  the consequence");
 
     // LEFT crosshair + labels
     s += '<g class="lf-phase">';
     s += lineS(LCX - LHALF, LCY, LCX + LHALF, LCY, COL.grid, 1);
     s += lineS(LCX, LCY - LHALF + 22, LCX, LCY + LHALF - 4, COL.grid, 1);
-    s += textS(LCX + LHALF, LCY - 6, "end", FS_AXHINT, COL.faint, "Re", "lf-tick");
-    s += textS(LCX + 8, LCY - LHALF + 28, "start", FS_AXHINT, COL.faint, "Im", "lf-tick");
+    s += textS(LCX + LHALF, LCY - 6, "end", TIER_AXHINT, COL.faint, "Re");
+    s += textS(LCX + 8, LCY - LHALF + 28, "start", TIER_AXHINT, COL.faint, "Im");
     s += '</g>';
 
     // overlap + lobes
     s += '<ellipse cx="' + LCX + '" cy="' + LCY + '" rx="' + f.rOv + '" ry="' + rLobe + '" fill="url(#ps-ov)" fill-opacity="' + f.overlapOpacity + '"></ellipse>';
     s += '<circle cx="' + f.lxL + '" cy="' + LCY + '" r="' + rLobe + '" fill="url(#ps-lobe)"></circle>';
     s += '<circle cx="' + f.lxR + '" cy="' + LCY + '" r="' + rLobe + '" fill="url(#ps-lobe)"></circle>';
-    s += textS(f.lxL, LCY - parseFloat(rLobe) - 8, "middle", FS_LOBE, COL.lobe, "|−α⟩");
-    s += textS(f.lxR, LCY - parseFloat(rLobe) - 8, "middle", FS_LOBE, COL.lobe, "|+α⟩");
+    s += textS(f.lxL, LCY - parseFloat(rLobe) - 8, "middle", TIER_LOBE, COL.lobe, "|−α⟩");
+    s += textS(f.lxR, LCY - parseFloat(rLobe) - 8, "middle", TIER_LOBE, COL.lobe, "|+α⟩");
 
     // bit-flip arrow
     s += '<line x1="' + r2(f.lxL + parseFloat(rLobe) * 0.55) + '" y1="' + f.arrY + '" x2="' + r2(f.lxR - parseFloat(rLobe) * 0.55) + '" y2="' + f.arrY + '" stroke="' + COL.pf + '" stroke-width="1.6" marker-end="url(#ps-arr)" marker-start="url(#ps-arr)"></line>';
-    s += textS(LCX, f.arrY - 10, "middle", FS_ANNO, COL.pf, "bit-flip (X): cross the gap", "lf-callout");
+    s += textS(LCX, f.arrY - 10, "middle", "lf-callout", COL.pf, "bit-flip (X): cross the gap");
 
     // caliper + phase-flip note
     s += lineS(f.lxL, f.calY, f.lxR, f.calY, COL.axis, 1);
     s += lineS(f.lxL, f.calY - 4, f.lxL, f.calY + 4, COL.axis, 1);
     s += lineS(f.lxR, f.calY - 4, f.lxR, f.calY + 4, COL.axis, 1);
-    s += textS(LCX, f.calY + 19, "middle", FS_ANNO, COL.axis, "separation  2√n̄");
-    s += textS(LCX, LCY + LHALF - 2, "middle", FS_ANNO, COL.axis, "phase-flip (Z): dephasing, ~ n̄");
+    s += textS(LCX, f.calY + 19, "middle", TIER_ANNO, COL.axis, "separation  2√n̄");
+    s += textS(LCX, LCY + LHALF - 2, "middle", TIER_ANNO, COL.axis, "phase-flip (Z): dephasing, ~ n̄");
 
     // RIGHT chart
     s += '<g class="lf-grid">';
@@ -385,19 +392,19 @@
     s += lineS(RX, RY, RX, RY + RH, COL.axis, 1.5) + lineS(RX, RY + RH, RX + RW, RY + RH, COL.axis, 1.5);
     f.xTicks.forEach(function (t) {
       s += lineS(t.px, RY + RH, t.px, RY + RH + 5, COL.axis, 1);
-      s += textS(t.px, RY + RH + 20, "middle", FS_TICK, COL.axis, t.label, "lf-tick");
+      s += textS(t.px, RY + RH + 20, "middle", TIER_TICK, COL.axis, t.label);
     });
-    f.yTicks.forEach(function (t) { s += textS(RX - 8, t.py + 4, "end", FS_TICK, COL.axis, t.label, "lf-tick"); });
-    s += textS(RX + RW / 2, H - 12, "middle", FS_AXTITLE, COL.axis, "cat size  n̄  (mean photon number)");
-    s += '<text x="' + (RX - 50) + '" y="' + (RY + RH / 2) + '" text-anchor="middle" font-size="' + FS_AXTITLE + '" fill="' + COL.axis + '" transform="rotate(-90 ' + (RX - 50) + ' ' + (RY + RH / 2) + ')">' + escTxt("error rate  (log, normalized)") + '</text>';
+    f.yTicks.forEach(function (t) { s += textS(RX - 8, t.py + 4, "end", TIER_TICK, COL.axis, t.label); });
+    s += textS(RX + RW / 2, H - 12, "middle", TIER_AXTITLE, COL.axis, "cat size  n̄  (mean photon number)");
+    s += '<text class="' + TIER_AXTITLE + '" x="' + (RX - 50) + '" y="' + (RY + RH / 2) + '" text-anchor="middle" fill="' + COL.axis + '" transform="rotate(-90 ' + (RX - 50) + ' ' + (RY + RH / 2) + ')">' + escTxt("error rate  (log, normalized)") + '</text>';
     s += '</g><g class="lf-curves">';
     s += '<path d="' + f.bfD + '" fill="none" stroke="' + COL.bf + '" stroke-width="2.5"></path>';
     s += '<path d="' + f.pfD + '" fill="none" stroke="' + COL.pf + '" stroke-width="2.5"></path>';
     s += '</g>';
     var lgx = RX + 14, lgy = RY + RH - 40;
     s += '<g class="lf-legend">';
-    s += lineS(lgx, lgy, lgx + 22, lgy, COL.bf, 2.5) + textS(lgx + 30, lgy + 4, "start", FS_LEGEND, COL.axis, "bit-flip  ∝ e^(−2n̄)" + CUE_LOWER);
-    s += lineS(lgx, lgy + 22, lgx + 22, lgy + 22, COL.pf, 2.5) + textS(lgx + 30, lgy + 26, "start", FS_LEGEND, COL.axis, "phase-flip  ∝ n̄" + CUE_LOWER);
+    s += lineS(lgx, lgy, lgx + 22, lgy, COL.bf, 2.5) + textS(lgx + 30, lgy + 4, "start", TIER_LEGEND, COL.axis, "bit-flip  ∝ e^(−2n̄)" + CUE_LOWER);
+    s += lineS(lgx, lgy + 22, lgx + 22, lgy + 22, COL.pf, 2.5) + textS(lgx + 30, lgy + 26, "start", TIER_LEGEND, COL.axis, "phase-flip  ∝ n̄" + CUE_LOWER);
     s += '</g>';
     s += '<g class="lf-marker">';
     s += '<line x1="' + f.mX + '" y1="' + RY + '" x2="' + f.mX + '" y2="' + (RY + RH) + '" stroke="' + COL.axis + '" stroke-width="1" stroke-dasharray="4 3" stroke-opacity="0.7"></line>';
@@ -406,14 +413,14 @@
     s += '</g>';
 
     // baked readout (interactive in the ceiling)
-    s += textS(LCX - LHALF + 8, H - 12, "start", FS_READOUT, COL.axis, f.readout);
+    s += textS(LCX - LHALF + 8, H - 12, "start", TIER_READOUT, COL.axis, f.readout);
     s += '</svg>';
     return s;
   }
 
   // string-emit helpers (poster path)
   function lineS(x1, y1, x2, y2, c, w) { return '<line x1="' + r2(x1) + '" y1="' + r2(y1) + '" x2="' + r2(x2) + '" y2="' + r2(y2) + '" stroke="' + c + '" stroke-width="' + w + '"></line>'; }
-  function textS(x, y, anchor, size, fill, str, cls) { return '<text ' + (cls ? 'class="' + cls + '" ' : '') + 'x="' + r2(x) + '" y="' + r2(y) + '" text-anchor="' + anchor + '" font-size="' + size + '" fill="' + fill + '">' + escTxt(str) + '</text>'; }
+  function textS(x, y, anchor, cls, fill, str) { return '<text class="' + cls + '" x="' + r2(x) + '" y="' + r2(y) + '" text-anchor="' + anchor + '" fill="' + fill + '">' + escTxt(str) + '</text>'; }
   function radialGradS(id, color) {
     return '<radialGradient id="' + id + '" cx="50%" cy="50%" r="50%">' +
       '<stop offset="0%" stop-color="' + color + '" stop-opacity="0.92"></stop>' +

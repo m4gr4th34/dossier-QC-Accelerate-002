@@ -21,6 +21,8 @@
  *   figure module (no load-order dependency). Geometry is computed ONCE in
  *   computeFrontier(spec) and consumed by BOTH the live el() emitter AND the pure
  *   poster string emitter, so the JS-off floor can never drift from the live ceiling.
+ *   Text is sized by ROLE via tier classes (lf-tick / lf-axis / lf-callout — the
+ *   runtime owns the px), NEVER a raw font-size; keep both emit paths in lockstep.
  *
  * THE DATA (REAL + CITED — do NOT add or interpolate points)
  *   Published search points: α²=2 → gain 1.04 ; α²=3 → gain 1.00. α²=4 is
@@ -177,16 +179,16 @@
     gAx.appendChild(el("line", { x1: px, y1: py + ph, x2: px + pw, y2: py + ph, stroke: f.axisColor, "stroke-width": "1.5" }));
     f.xTicks.forEach(function (t) {
       gAx.appendChild(el("line", { x1: t.px, y1: py + ph, x2: t.px, y2: py + ph + 5, stroke: f.axisColor, "stroke-width": "1" }));
-      var tx = el("text", { "class": "lf-tick", x: t.px, y: py + ph + 18, "text-anchor": "middle", "font-size": "11", fill: f.axisColor });
+      var tx = el("text", { "class": "lf-tick", x: t.px, y: py + ph + 18, "text-anchor": "middle", fill: f.axisColor });
       tx.textContent = t.label; gAx.appendChild(tx);
     });
     f.yTicks.forEach(function (t) {
-      var ty = el("text", { "class": "lf-tick", x: px - 8, y: t.py + 3, "text-anchor": "end", "font-size": "10", fill: f.axisColor });
+      var ty = el("text", { "class": "lf-tick", x: px - 8, y: t.py + 3, "text-anchor": "end", fill: f.axisColor });
       ty.textContent = t.label; gAx.appendChild(ty);
     });
-    var xlab = el("text", { x: px + pw / 2, y: f.H - 12, "text-anchor": "middle", "font-size": "12", fill: f.axisColor });
+    var xlab = el("text", { "class": "lf-axis", x: px + pw / 2, y: f.H - 12, "text-anchor": "middle", fill: f.axisColor });
     xlab.textContent = "cat size  α²  (mean photon number)"; gAx.appendChild(xlab);
-    var ylab = el("text", { x: 16, y: py + ph / 2, "text-anchor": "middle", "font-size": "12", fill: f.axisColor,
+    var ylab = el("text", { "class": "lf-axis", x: 16, y: py + ph / 2, "text-anchor": "middle", fill: f.axisColor,
       transform: "rotate(-90 16 " + (py + ph / 2) + ")" });
     ylab.textContent = "AI-search gain  (search / baseline)"; gAx.appendChild(ylab);
     svg.appendChild(gAx);
@@ -195,7 +197,7 @@
     var gBase = el("g", { "class": "lf-baseline" });
     gBase.appendChild(el("line", { x1: px, y1: f.baselineY, x2: px + pw, y2: f.baselineY,
       stroke: f.baseColor, "stroke-width": "2", "stroke-dasharray": "7 4" }));
-    var baseLab = el("text", { x: px + pw - 4, y: f.baselineY + 16, "text-anchor": "end", "font-size": "11", fill: f.axisColor });
+    var baseLab = el("text", { "class": "lf-axis", x: px + pw - 4, y: f.baselineY + 16, "text-anchor": "end", fill: f.axisColor });
     baseLab.textContent = "hand-designed baseline = the wall (gain 1.0)"; gBase.appendChild(baseLab);
     svg.appendChild(gBase);
 
@@ -203,12 +205,12 @@
     var gTwo = el("g", { "class": "lf-two-quad" });
     f.searchPts.forEach(function (p) {
       gTwo.appendChild(el("circle", { cx: p.x, cy: p.y, r: "6", fill: f.searchColor, stroke: "#fff", "stroke-width": "1.5" }));
-      var tl = el("text", { x: p.x, y: p.y - 12, "text-anchor": "middle", "font-size": "11", fill: f.searchColor });
+      var tl = el("text", { "class": "lf-tick", x: p.x, y: p.y - 12, "text-anchor": "middle", fill: f.searchColor });
       tl.textContent = p.label; gTwo.appendChild(tl);
     });
     f.basePts.forEach(function (p) {
       gTwo.appendChild(el("circle", { cx: p.x, cy: p.y, r: "6", fill: "none", stroke: f.baseColor, "stroke-width": "2" }));
-      var tl2 = el("text", { x: p.x, y: p.y - 12, "text-anchor": "middle", "font-size": "10", fill: f.axisColor });
+      var tl2 = el("text", { "class": "lf-tick", x: p.x, y: p.y - 12, "text-anchor": "middle", fill: f.axisColor });
       tl2.textContent = p.label; gTwo.appendChild(tl2);
     });
     svg.appendChild(gTwo);
@@ -219,16 +221,17 @@
       stroke: f.singleColor, "stroke-width": "2", "stroke-dasharray": "4 3" }));
     var sx = f.searchPts.length ? f.searchPts[0].x : (px + pw / 2);
     gSingle.appendChild(el("circle", { cx: sx, cy: f.singleY, r: "6", fill: f.singleColor, stroke: "#fff", "stroke-width": "1.5" }));
-    var sLab = el("text", { x: px + pw - 4, y: f.singleY + 16, "text-anchor": "end", "font-size": "11", fill: f.singleColor });
+    var sLab = el("text", { "class": "lf-axis", x: px + pw - 4, y: f.singleY + 16, "text-anchor": "end", fill: f.singleColor });
     sLab.textContent = "single-quadrature shaped pulse · margin " + f.margin.toFixed(2); gSingle.appendChild(sLab);
     gSingle.setAttribute("style", "display:none");
     svg.appendChild(gSingle);
 
     // --- subtitle text (inside the SVG, top-left) ------------------------
-    var subEl = el("text", { "class": "lf-callout", x: px, y: 22, "font-size": "12", fill: f.axisColor });
+    var subEl = el("text", { "class": "lf-callout", x: px, y: 22, fill: f.axisColor });
     subEl.textContent = subtitleFor(f, "two-quad"); svg.appendChild(subEl);
 
     // --- controls: the discrete toggle -----------------------------------
+    var currentMode = "two-quad";   // the PUBLISHED start (what the sealed poster freezes) — Reset restores it
     var controls = doc.createElement("div");
     controls.className = "lf-controls";
     var btnTwo = doc.createElement("button");
@@ -236,11 +239,18 @@
     var btnSingle = doc.createElement("button");
     btnSingle.type = "button"; btnSingle.className = "lf-btn"; btnSingle.textContent = "Single-quadrature pulse";
     controls.appendChild(btnTwo); controls.appendChild(btnSingle);
+
+    // Reset: restore the PUBLISHED start view (the two-quadrature mode the poster freezes).
+    var resetBtn = doc.createElement("button");
+    resetBtn.type = "button"; resetBtn.className = "lf-btn"; resetBtn.textContent = "Reset";
+    controls.appendChild(resetBtn);
+
     var readout = doc.createElement("span");
     readout.className = "lf-readout";
     controls.appendChild(readout);
 
     function setMode(mode) {
+      currentMode = mode;
       var single = (mode === "single-quad");
       gSingle.setAttribute("style", single ? "display:inline" : "display:none");
       gTwo.setAttribute("style", single ? "display:none" : "display:inline");
@@ -251,17 +261,22 @@
     }
     btnTwo.addEventListener("click", function () { setMode("two-quad"); });
     btnSingle.addEventListener("click", function () { setMode("single-quad"); });
+    resetBtn.addEventListener("click", function () { setMode("two-quad"); });
 
     container.appendChild(svg);
     container.appendChild(controls);
     setMode("two-quad");
 
-    return {
+    // A discrete-toggle figure carries no slider, so it exposes no setSlider: the lightbox
+    // handoff finds no {slider} and gracefully opens at the published start (two-quadrature).
+    var handle = {
       runtimeVersion: DossierFigures.FIGURES_RUNTIME_VERSION,
-      getState: function () { return { baseline: f.baseline, points: f.searchPts.map(function (p) { return { nbar: p.nbar, gain: p.gain }; }),
+      getState: function () { return { mode: currentMode, baseline: f.baseline, points: f.searchPts.map(function (p) { return { nbar: p.nbar, gain: p.gain }; }),
         epsilonY: f.epsilonY, singleQuadMargin: f.margin }; },
       setMode: setMode
     };
+    container.__lfHandle = handle;
+    return handle;
   }
 
   // -------------------------------------------------------------------------
@@ -288,28 +303,28 @@
     s += '<line x1="' + px + '" y1="' + r2(py + ph) + '" x2="' + r2(px + pw) + '" y2="' + r2(py + ph) + '" stroke="' + f.axisColor + '" stroke-width="1.5"></line>';
     f.xTicks.forEach(function (t) {
       s += '<line x1="' + t.px + '" y1="' + r2(py + ph) + '" x2="' + t.px + '" y2="' + r2(py + ph + 5) + '" stroke="' + f.axisColor + '" stroke-width="1"></line>';
-      s += '<text class="lf-tick" x="' + t.px + '" y="' + r2(py + ph + 18) + '" text-anchor="middle" font-size="11" fill="' + f.axisColor + '">' + escTxt(t.label) + '</text>';
+      s += '<text class="lf-tick" x="' + t.px + '" y="' + r2(py + ph + 18) + '" text-anchor="middle" fill="' + f.axisColor + '">' + escTxt(t.label) + '</text>';
     });
     f.yTicks.forEach(function (t) {
-      s += '<text class="lf-tick" x="' + r2(px - 8) + '" y="' + r2(t.py + 3) + '" text-anchor="end" font-size="10" fill="' + f.axisColor + '">' + escTxt(t.label) + '</text>';
+      s += '<text class="lf-tick" x="' + r2(px - 8) + '" y="' + r2(t.py + 3) + '" text-anchor="end" fill="' + f.axisColor + '">' + escTxt(t.label) + '</text>';
     });
-    s += '<text x="' + r2(px + pw / 2) + '" y="' + r2(f.H - 12) + '" text-anchor="middle" font-size="12" fill="' + f.axisColor + '">' + escTxt("cat size  α²  (mean photon number)") + '</text>';
-    s += '<text x="16" y="' + r2(py + ph / 2) + '" text-anchor="middle" font-size="12" fill="' + f.axisColor + '" transform="rotate(-90 16 ' + r2(py + ph / 2) + ')">' + escTxt("AI-search gain  (search / baseline)") + '</text>';
+    s += '<text class="lf-axis" x="' + r2(px + pw / 2) + '" y="' + r2(f.H - 12) + '" text-anchor="middle" fill="' + f.axisColor + '">' + escTxt("cat size  α²  (mean photon number)") + '</text>';
+    s += '<text class="lf-axis" x="16" y="' + r2(py + ph / 2) + '" text-anchor="middle" fill="' + f.axisColor + '" transform="rotate(-90 16 ' + r2(py + ph / 2) + ')">' + escTxt("AI-search gain  (search / baseline)") + '</text>';
     s += '</g>';
 
     s += '<g class="lf-baseline">';
     s += '<line x1="' + px + '" y1="' + f.baselineY + '" x2="' + r2(px + pw) + '" y2="' + f.baselineY + '" stroke="' + f.baseColor + '" stroke-width="2" stroke-dasharray="7 4"></line>';
-    s += '<text x="' + r2(px + pw - 4) + '" y="' + r2(f.baselineY + 16) + '" text-anchor="end" font-size="11" fill="' + f.axisColor + '">' + escTxt("hand-designed baseline = the wall (gain 1.0)") + '</text>';
+    s += '<text class="lf-axis" x="' + r2(px + pw - 4) + '" y="' + r2(f.baselineY + 16) + '" text-anchor="end" fill="' + f.axisColor + '">' + escTxt("hand-designed baseline = the wall (gain 1.0)") + '</text>';
     s += '</g>';
 
     s += '<g class="lf-two-quad">';
     f.searchPts.forEach(function (p) {
       s += '<circle cx="' + p.x + '" cy="' + p.y + '" r="6" fill="' + f.searchColor + '" stroke="#fff" stroke-width="1.5"></circle>';
-      s += '<text x="' + p.x + '" y="' + r2(p.y - 12) + '" text-anchor="middle" font-size="11" fill="' + f.searchColor + '">' + escTxt(p.label) + '</text>';
+      s += '<text class="lf-tick" x="' + p.x + '" y="' + r2(p.y - 12) + '" text-anchor="middle" fill="' + f.searchColor + '">' + escTxt(p.label) + '</text>';
     });
     f.basePts.forEach(function (p) {
       s += '<circle cx="' + p.x + '" cy="' + p.y + '" r="6" fill="none" stroke="' + f.baseColor + '" stroke-width="2"></circle>';
-      s += '<text x="' + p.x + '" y="' + r2(p.y - 12) + '" text-anchor="middle" font-size="10" fill="' + f.axisColor + '">' + escTxt(p.label) + '</text>';
+      s += '<text class="lf-tick" x="' + p.x + '" y="' + r2(p.y - 12) + '" text-anchor="middle" fill="' + f.axisColor + '">' + escTxt(p.label) + '</text>';
     });
     s += '</g>';
 
@@ -318,10 +333,10 @@
     s += '<g class="lf-single-quad" style="display:none">';
     s += '<line x1="' + px + '" y1="' + f.singleY + '" x2="' + r2(px + pw) + '" y2="' + f.singleY + '" stroke="' + f.singleColor + '" stroke-width="2" stroke-dasharray="4 3"></line>';
     s += '<circle cx="' + sx + '" cy="' + f.singleY + '" r="6" fill="' + f.singleColor + '" stroke="#fff" stroke-width="1.5"></circle>';
-    s += '<text x="' + r2(px + pw - 4) + '" y="' + r2(f.singleY + 16) + '" text-anchor="end" font-size="11" fill="' + f.singleColor + '">' + escTxt("single-quadrature shaped pulse · margin " + f.margin.toFixed(2)) + '</text>';
+    s += '<text class="lf-axis" x="' + r2(px + pw - 4) + '" y="' + r2(f.singleY + 16) + '" text-anchor="end" fill="' + f.singleColor + '">' + escTxt("single-quadrature shaped pulse · margin " + f.margin.toFixed(2)) + '</text>';
     s += '</g>';
 
-    s += '<text class="lf-callout" x="' + px + '" y="22" font-size="12" fill="' + f.axisColor + '">' + escTxt(subtitleFor(f, "two-quad")) + '</text>';
+    s += '<text class="lf-callout" x="' + px + '" y="22" fill="' + f.axisColor + '">' + escTxt(subtitleFor(f, "two-quad")) + '</text>';
     s += '</svg>';
     return s;
   }

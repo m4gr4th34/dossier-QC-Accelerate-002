@@ -201,6 +201,7 @@
     defs.appendChild(radialGrad("ps-lobe", COL.lobe));
     defs.appendChild(radialGrad("ps-ov", COL.overlap));
     defs.appendChild(arrowMarker("ps-arr", COL.pf));
+    defs.appendChild(arrowMarker("ps-darr", COL.axis));   // neutral marker for the drive-axes reference
     svg.appendChild(defs);
 
     // ---- panel titles ----
@@ -214,6 +215,15 @@
     gL.appendChild(txt(LCX + LHALF, LCY - 6, "end", TIER_AXHINT, COL.faint, "Re"));
     gL.appendChild(txt(LCX + 8, LCY - LHALF + 28, "start", TIER_AXHINT, COL.faint, "Im"));
     svg.appendChild(gL);
+
+    // ---- drive-axes reference (conservative: source names ε_y as bias-breaking but does NOT state
+    // the phase-space geometry or a conversion mechanism — so labels only, no mechanistic claims) ----
+    var gD = el("g", { "class": "lf-drive" });
+    gD.appendChild(el("line", { x1: 104, y1: 116, x2: 132, y2: 116, stroke: COL.axis, "stroke-width": "1.4", "marker-end": "url(#ps-darr)" }));
+    gD.appendChild(el("line", { x1: 104, y1: 116, x2: 104, y2: 94, stroke: COL.axis, "stroke-width": "1.4", "marker-end": "url(#ps-darr)" }));
+    gD.appendChild(txt(138, 112, "start", TIER_AXHINT, COL.axis, "ε_x — safe drive quadrature"));
+    gD.appendChild(txt(138, 129, "start", TIER_AXHINT, COL.axis, "ε_y — bias-breaking quadrature"));
+    svg.appendChild(gD);
 
     // ---- lobes + overlap (dynamic) ----
     var lobeL = el("circle", { cy: LCY, r: f.rLobe, fill: "url(#ps-lobe)" });
@@ -354,6 +364,7 @@
     s += '<defs>';
     s += radialGradS("ps-lobe", COL.lobe) + radialGradS("ps-ov", COL.overlap);
     s += '<marker id="ps-arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="' + COL.pf + '"></path></marker>';
+    s += '<marker id="ps-darr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="' + COL.axis + '"></path></marker>';
     s += '</defs>';
 
     s += textS(LCX, 32, "middle", TIER_TITLE, COL.axis, "Phase space  ·  the cause");
@@ -365,6 +376,14 @@
     s += lineS(LCX, LCY - LHALF + 22, LCX, LCY + LHALF - 4, COL.grid, 1);
     s += textS(LCX + LHALF, LCY - 6, "end", TIER_AXHINT, COL.faint, "Re");
     s += textS(LCX + 8, LCY - LHALF + 28, "start", TIER_AXHINT, COL.faint, "Im");
+    s += '</g>';
+
+    // drive-axes reference (conservative labels; see the live path for the honesty note)
+    s += '<g class="lf-drive">';
+    s += '<line x1="104" y1="116" x2="132" y2="116" stroke="' + COL.axis + '" stroke-width="1.4" marker-end="url(#ps-darr)"></line>';
+    s += '<line x1="104" y1="116" x2="104" y2="94" stroke="' + COL.axis + '" stroke-width="1.4" marker-end="url(#ps-darr)"></line>';
+    s += textS(138, 112, "start", TIER_AXHINT, COL.axis, "ε_x — safe drive quadrature");
+    s += textS(138, 129, "start", TIER_AXHINT, COL.axis, "ε_y — bias-breaking quadrature");
     s += '</g>';
 
     // overlap + lobes

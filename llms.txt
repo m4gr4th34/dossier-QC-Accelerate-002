@@ -8,4 +8,4 @@
 
 ## Chapters
 
-No chapters frozen yet.
+- [Chapter 1 — Chapter 1 — The story so far (recap bridge)](chapters/v1.0.0/index.md)

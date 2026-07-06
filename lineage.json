@@ -1,3 +1,14 @@
 {
-  "chapters": []
+  "chapters": [
+    {
+      "n": 1,
+      "tag": "v1.0.0",
+      "title": "Chapter 1 — The story so far (recap bridge)",
+      "summary": "Chapter 1 of dossier QC-Accelerate-002: a recap-bridge of the prior DOI-archived",
+      "released": "2026-07-06",
+      "version_doi": "",
+      "concept_doi": "",
+      "path": "chapters/v1.0.0/"
+    }
+  ]
 }

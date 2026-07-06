@@ -1,0 +1,15 @@
+{
+  "avenues": [
+    {"name": "Engineering layer — make today's machine better", "thesis": "AI already improves the machines we have — neural decoders read the error syndromes, below-threshold codes run on real hardware — without changing what qubits are made of. Restated from the prior program's map.", "status": "ESTABLISHED", "forecast": null, "signpost": null, "cites": ["frontier"]},
+    {"name": "Designed qubits — search the hardware space", "thesis": "Let the optimiser design the circuit and screen the materials; a blank-slate search rediscovered fluxonium. Restated from the prior program's map.", "status": "REPORTED", "forecast": null, "signpost": null, "cites": ["frontier"]},
+    {"name": "Self-correcting matter — passive storage", "thesis": "A 3D self-correcting quantum memory is claimed; stability and fabrication remain open. Restated from the prior program's map.", "status": "OPEN-UNVERIFIED", "forecast": null, "signpost": null, "cites": ["frontier"]},
+    {"name": "The floor — a qubit that heals itself", "thesis": "The cat qubit's exponential bias is this program's foundation — and the prior lineage's open bet on what automated search finds next.", "status": "FORECAST", "forecast": 55, "signpost": "first automated discovery of a loss-correcting bosonic code beyond the cat family, peer-reviewed and reproduced, by 2031", "cites": ["ch1", "mirrahimi"]}
+  ],
+  "checks": {
+    "_comment": "Single source of truth for the consistency-check RULES. Both index.html's console and verification/verify_numbers.py read these, so a threshold can never drift between the page and the verifier. Change a rule HERE and both sides enforce it on next run. (The check LOGIC is still written in each language — see AUTHORING.md — but the rules it enforces live only here.)",
+    "min_avenues": 1,
+    "forecast_signpost_required": true,
+    "forecast_pct_min": 0,
+    "forecast_pct_max": 100
+  }
+}

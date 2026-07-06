@@ -1,7 +1,8 @@
 {
   "release_tag": "v0.0.0",
-  "version_doi": "TODO-AFTER-FIRST-RELEASE",
-  "concept_doi": "TODO-AFTER-FIRST-RELEASE",
+  "version_doi": "",
+  "concept_doi": "",
+  "doi_archived": false,
   "released": "YYYY-MM-DD",
   "updated": "2026-07-06"
 }

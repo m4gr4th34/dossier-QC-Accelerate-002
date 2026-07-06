@@ -1,5 +1,5 @@
 id,claim,type,verifier,status
-C01,PLACEHOLDER — replace with your first claim,NUM,verify_numbers.py #1,OPEN
-C02,PLACEHOLDER — replace with your second claim,CITE,citation_audit.md,OPEN
-C03,PLACEHOLDER — replace with a novelty claim,NOVEL,prior-art search DATE,TO-OUR-KNOWLEDGE
-C04,PLACEHOLDER — replace with a forecast (reasoning + dated signpost required),FORECAST,signpost DATE,OPEN-UNVERIFIED
+C01,Cat-qubit floor: bit-flip errors are suppressed exponentially with cat size while phase-flips grow only linearly — an exponentially growing noise bias.,CITE,"Mirrahimi et al., New J. Phys. 16, 045014 (2014), DOI 10.1088/1367-2630/16/4/045014",CITED
+C02,The prior lineage's Chapter 1 established the self-protecting cat-qubit floor this chapter restates.,CITE,DOI 10.5281/zenodo.20838233,CITED
+C03,"The kept negative: an AI search seeded with the best human gate recovered it but did not beat it (gain 1.04 transient at α²=2, 1.00 at α²=3), drove the bias-breaking knob ε_y to zero, and the single-quadrature pulse fell below baseline (margin −0.29).",CITE,"prior lineage working edition, github.com/m4gr4th34/dossier-QC-Accelerate @ 080b2ca, OpenTimestamped, not DOI-archived",OPEN-CAVEATED
+C04,eq. 1's identity: the coherent-state overlap |⟨α|−α⟩| = e^(−2n̄) equals the bit-flip suppression the figures plot — Fig 1's readout and the bit-flip curve compute the same number.,NUM,figure shared-compute self-test (e.g. n̄=3.5 → 9.1×10⁻⁴),VERIFIED

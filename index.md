@@ -36,18 +36,18 @@ The two coherent states' overlap is exactly the bit-flip rate — the identity F
 
 An honestly-obtained negative is a map: it marks which doors are shut and points to the open ground.
 
-## 05 WHY THIS IS THE RIGHT OPENING
+## 05 WHERE THIS LEADS
 
-**Why this is the right opening for what follows.** That kept negative is this program's thesis in miniature — AI is powerful at search *within* a paradigm and declines to fake what it cannot reach. Chapter 2 widens the lens to the whole landscape (decoders, calibration, code-search, autonomous labs) and asks where AI genuinely shortens the road to fault-tolerant quantum computing, and where the conceptual gates remain. That is where the new results begin.
+**That kept negative is this program's thesis in miniature** — AI is powerful at search within a paradigm, and declines to fake what it cannot reach. Chapter 2 widens the lens in three steps. First, the documented layer: the places AI already works in quantum computing — decoders, calibration, code search — cited to results a hostile referee can check. Second, the conjunction: robotics in science is decades old, but a robot executing a human's protocol is mere automation; the new thing is the closed loop, where AI chooses the next experiment, machines run it, and the loop compounds around the clock. Third, the horizon that follows if the loop matures: research groups where the server farm does the theory and the robot runs the bench, and the human role shifts from performing the experiment to understanding what the machines report. Which parts of that future are already documented, which are dated bets, and which run into conceptual gates no amount of iteration can open — that is Chapter 2's survey. The landscape below restates the prior program's own map — its avenues, its labels, its open bet — as the ground Chapter 2 widens. An honest map first marks the doors that are shut; the next chapter walks the open ground.
 
 ## Avenues
 
 | Avenue | Thesis | Status | Forecast | Sources |
 |---|---|---|---|---|
-| PLACEHOLDER avenue A | One-line thesis — what this avenue is and why it's in play. | ESTABLISHED | — | REF1, REF2 |
-| PLACEHOLDER avenue B | One-line thesis for an avenue with a central open question. | OPEN-UNVERIFIED | — | REF3 |
-| PLACEHOLDER avenue C | One-line thesis for an avenue you're making a forward bet on. | FORECAST | ~35% by 2030 | REF4 |
-| PLACEHOLDER avenue D | One-line thesis sourced only to an interested party / roadmap. | REPORTED | — | REF5 |
+| Engineering layer — make today's machine better | AI already improves the machines we have — neural decoders read the error syndromes, below-threshold codes run on real hardware — without changing what qubits are made of. Restated from the prior program's map. | ESTABLISHED | — | frontier |
+| Designed qubits — search the hardware space | Let the optimiser design the circuit and screen the materials; a blank-slate search rediscovered fluxonium. Restated from the prior program's map. | REPORTED | — | frontier |
+| Self-correcting matter — passive storage | A 3D self-correcting quantum memory is claimed; stability and fabrication remain open. Restated from the prior program's map. | OPEN-UNVERIFIED | — | frontier |
+| The floor — a qubit that heals itself | The cat qubit's exponential bias is this program's foundation — and the prior lineage's open bet on what automated search finds next. | FORECAST | ~55% by first automated discovery of a loss-correcting bosonic code beyond the cat family, peer-reviewed and reproduced, by 2031 | ch1, mirrahimi |
 
 ## Consistency checks
 

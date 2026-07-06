@@ -405,23 +405,6 @@
   <br><br><span class="mono">An Open Dossier · CC BY 4.0 · AI-assistance: extremely heavy AI use, with human guidance and final review · every verification label is true</span>
 </footer>
 
-<script src="figures/figures.js"></script>
-<script src="figures/qc-phasespace.js"></script>
-<script src="figures/qc-frontier.js"></script>
-<script>
-(function () {
-  if (!window.DossierFigures) return;
-  var R = { "qc-phasespace": window.DossierFigures.renderQCPhasespace, "qc-frontier": window.DossierFigures.renderQCFrontier };
-  var figs = document.querySelectorAll("figure[data-figure]");
-  for (var i = 0; i < figs.length; i++) {
-    var fig = figs[i], spec;
-    try { spec = JSON.parse(fig.getAttribute("data-figure")); } catch (e) { continue; }
-    var fn = spec && R[spec.type];
-    if (typeof fn === "function") fn(fig, spec);
-  }
-})();
-</script>
-
 </div>
 
 <!-- cite fields. who: "Author et al. (Year)". what: 1-2 sentence plain-language summary of what it showed + why it matters. src: "Journal Vol, Page (Year), DOI/arXiv". Re-state fresh per chapter; never back-reference. -->

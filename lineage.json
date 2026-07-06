@@ -8,7 +8,8 @@
       "released": "2026-07-06",
       "version_doi": "",
       "concept_doi": "",
-      "path": "chapters/v1.0.0/"
+      "path": "chapters/v1.0.0/",
+      "doi_archived": false
     }
   ]
 }

@@ -21,6 +21,17 @@
       "concept_doi": "",
       "path": "chapters/v2.0.0/",
       "doi_archived": false
+    },
+    {
+      "n": 3,
+      "tag": "v3.0.0",
+      "title": "v3.0.0 — Chapter 3: Where to stand before the puck arrives",
+      "summary": "Chapter 3 of dossier QC-Accelerate-002 — \"Where to stand before the puck arrives.\"",
+      "released": "2026-07-07",
+      "version_doi": "",
+      "concept_doi": "",
+      "path": "chapters/v3.0.0/",
+      "doi_archived": false
     }
   ]
 }

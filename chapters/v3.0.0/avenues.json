@@ -1,0 +1,124 @@
+{
+  "avenues": [
+    {
+      "name": "First to loop — the venue",
+      "thesis": "Every loop ingredient already exists at the defect/materials-qubit venue — ML-steered synthesis, feedback-stop defect writing, 4 K operation — and nowhere else has the full set. The author's venue bet, conditional on Chapter 2's loop bet resolving true.",
+      "status": "FORECAST",
+      "forecast": 60,
+      "signpost": "conditional on a loop-credited, adopted advance by 2031 (the Chapter 2 card, 65%): the first venue is defect/materials qubits; scored when and if that bet resolves",
+      "cites": [
+        "laserwrite",
+        "jhuria",
+        "abobeih"
+      ]
+    },
+    {
+      "name": "The defect loop, demonstrated",
+      "thesis": "Yield loops are the near case: the decide-half (Bayesian synthesis steering) and the make-step's own feedback (fluorescence-triggered defect writing) need only joining. Coherence-grade loops inherit the cruel-reward problem in full.",
+      "status": "FORECAST",
+      "forecast": 55,
+      "signpost": "a published, independently verifiable autonomous closed loop iterating a defect-qubit figure of merit (creation yield, coherence, or charge stability) over 3+ unattended cycles, by 2030-12-31",
+      "cites": [
+        "mldiamond",
+        "jiang",
+        "laserwrite"
+      ]
+    },
+    {
+      "name": "The loop feeds the incumbent",
+      "thesis": "Superconducting losses are materials problems (TLS, junction disorder); tantalum-for-niobium already tripled coherence. A synthesis loop can crown the incumbent without ever touching a processor — if attribution clears, which history says is the hard part.",
+      "status": "FORECAST",
+      "forecast": 35,
+      "signpost": "a loop-discovered materials improvement adopted on a flagship superconducting chip, credited as loop-discovered, by 2032-12-31",
+      "cites": [
+        "deleon",
+        "place",
+        "tls"
+      ]
+    },
+    {
+      "name": "Portfolio: neutral atoms",
+      "thesis": "The deepest peer-reviewed logical-qubit floor: 96 logical from 448 atoms below threshold, all-logical magic-state distillation, on the 48-logical lineage. ENTRY: Magne customer-operational at 40+ logical by 2027-06-30, or any neutral-atom system at 100+ logical by 2027-12-31. EXIT: neither by 2028-12-31.",
+      "status": "ESTABLISHED",
+      "forecast": null,
+      "signpost": "ENTRY/EXIT dates above, scored in later editions; a deliberate six-month slip allowance over vendor claims",
+      "cites": [
+        "queraqldpc",
+        "queramsd",
+        "bluvstein"
+      ]
+    },
+    {
+      "name": "Portfolio: trapped ions",
+      "thesis": "The most impressive raw numbers — 94 detected / 48 corrected logical from 98 ions, four-nines gates — currently ride on company preprints and an R&D prototype. ENTRY: iceberg result peer-published AND the promised 256-qubit system demonstrated, both by 2027-06-30. EXIT: four-nines still confined to prototypes (no customer system) by 2028-12-31.",
+      "status": "REPORTED",
+      "forecast": null,
+      "signpost": "ENTRY/EXIT dates above; the evidence-grade gap, not the numbers, is what the card tracks",
+      "cites": [
+        "helios",
+        "iceberg",
+        "ionq99"
+      ]
+    },
+    {
+      "name": "Portfolio: superconducting",
+      "thesis": "The incumbent keeps the only peer-reviewed below-threshold memory and the deepest industrial base; its ceiling is a materials wall this chapter's half-bet targets. ENTRY: a peer-reviewed below-threshold result at distance 9+, or a logical memory at 1e-5 error, by 2027-12-31. EXIT: no larger-distance below-threshold result anywhere by 2028-12-31.",
+      "status": "ESTABLISHED",
+      "forecast": null,
+      "signpost": "ENTRY/EXIT dates above; one Google-cadence step, not a leap",
+      "cites": [
+        "google",
+        "deleon"
+      ]
+    },
+    {
+      "name": "Portfolio: bosonic",
+      "thesis": "Concatenated cat-qubit error correction is on a chip and below threshold for phase flips — the industrial continuation of this dossier's Chapter 1 floor. ENTRY: a multi-logical-qubit bosonic device demonstrating logical OPERATIONS (not just memory) beyond break-even by 2028-12-31. EXIT: cat/GKP scaling still single-digit by 2029-12-31.",
+      "status": "ESTABLISHED",
+      "forecast": null,
+      "signpost": "ENTRY/EXIT dates above; the dark horse this dossier watches by lineage",
+      "cites": [
+        "ocelot",
+        "ch1v1"
+      ]
+    },
+    {
+      "name": "Portfolio: Majorana",
+      "thesis": "The claimed readout is published; the published critique argues its diagnostic is unreliable; the Reply is published; the existence question stands open. No loop closes on a reward whose interpretation is disputed.",
+      "status": "OPEN-UNVERIFIED",
+      "forecast": null,
+      "signpost": "ENTRY only on independent reproduction resolving the published critique; the EXIT flag is already armed, unchanged from Chapter 2",
+      "cites": [
+        "majorana"
+      ]
+    },
+    {
+      "name": "The reauthorization clock",
+      "thesis": "Unanimous Senate committee, bipartisan House committee, unified industry, the outcompete-China frame — against a midterm floor calendar, unresolved chamber differences, and the prior Congress's identical bill dying of schedule. Secondary line: 75% by 2027-12-31 allowing a fast reintroduction.",
+      "status": "FORECAST",
+      "forecast": 55,
+      "signpost": "NQI reauthorization (S.3597 / H.R.8462 or successor) enacted by 2027-01-03, the end of the 119th Congress",
+      "cites": [
+        "nqi",
+        "iqmp"
+      ]
+    },
+    {
+      "name": "The loop layer at the park",
+      "thesis": "The allied Hefei answer already broke ground — IQMP has the co-location, the cryoplant, the proving ground, the tenants. What no public document funds is the loop layer: autonomous experimentation, probers, robotic synthesis, active-learning stacks as first-class deliverables. Saying that out loud is this dossier's distinctive ask.",
+      "status": "FORECAST",
+      "forecast": 35,
+      "signpost": "loop infrastructure funded as a named deliverable (program line, RFP, or facility plan) at IQMP or an equivalent allied co-located site by 2028-12-31",
+      "cites": [
+        "iqmp"
+      ]
+    }
+  ],
+  "checks": {
+    "_comment": "Single source of truth for the consistency-check RULES. Both index.html's console and verification/verify_numbers.py read these, so a threshold can never drift between the page and the verifier. Change a rule HERE and both sides enforce it on next run. (The check LOGIC is still written in each language — see AUTHORING.md — but the rules it enforces live only here.)",
+    "min_avenues": 1,
+    "forecast_signpost_required": true,
+    "forecast_pct_min": 0,
+    "forecast_pct_max": 100
+  }
+}

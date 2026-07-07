@@ -5,23 +5,25 @@
  * WHAT THIS IS
  *   A two-lane timeline of documented milestones of AI (top) and autonomy (bottom)
  *   entering the quantum stack. The x-domain is DATA-DRIVEN (min year - 0.5 to max
- *   year + 0.5) — no dead left rail. Every dot is a result CITED elsewhere in this
- *   dossier; hover/focus a dot for its one-line cite (live only). The 2026 A-Lab
- *   correction is an OPEN RING linked back to the 2023 A-Lab dot. A counted band
- *   beneath (Lens, via qmlbib) is NOT this dossier's tally. Argument: milestone
- *   DENSITY rising rightward.
+ *   year + 0.5). Every dot is a result CITED elsewhere in this dossier; hover/focus
+ *   a dot for its one-line cite (live only). The 2026 A-Lab correction is an OPEN
+ *   RING; its label rides its dashed link back to the 2023 A-Lab dot ("novelty
+ *   corrected (2026)"). A counted band beneath (Lens, via qmlbib) is NOT this
+ *   dossier's tally. Argument: milestone DENSITY rising rightward.
  *
  * HARD DATA DISCIPLINE
  *   Every plotted value is a LITERAL below with a source comment naming its cite
  *   key. Milestone dots are discrete published events — NO interpolated curve. The
  *   only connector is the correction link (same entity, 2023->2026).
  *
- * LAYOUT NOTE (edge-safe labels)
- *   Label anchor + rotation are computed in computeTimeline() (the shared step) so
- *   the live el() emitter AND the pure poster string emitter read ONE geometry:
- *   right-edge dots flip their labels INWARD (anchor end, mirrored rotation) so no
- *   text exits the viewBox. Text is sized by ROLE via tier classes only. Static
- *   figure: reduced motion is a no-op.
+ * LAYOUT (uniform-direction, collision-free by construction)
+ *   ALL milestone labels use ONE rotation direction per lane (AI up-right, autonomy
+ *   down-right) — no edge-flip. Labels are packed into non-colliding tiers by an
+ *   exact rotated-bbox test in the shared compute step, so the live el() emitter and
+ *   the pure poster string emitter read ONE geometry (floor == ceiling). The canvas
+ *   right/bottom margins are COMPUTED from the packed labels (not guessed); the axis
+ *   and data area never move. Deterministic label sizing (lf-scale-with-art) makes
+ *   the pack correct at any display width. Tier classes only; static figure.
  *
  * SUSTAINABILITY LAWS: zero deps, pure vanilla, vendored first-party; reader-side only.
  */
@@ -34,9 +36,10 @@
   var el = DossierFigures.el, r2 = DossierFigures.r2, escAttr = DossierFigures.escAttr,
       escTxt = DossierFigures.escTxt, dedupPoster = DossierFigures.dedupPoster;
 
-  var W = 980, H = 400;
   var XL = 70, XR = 945;                          // plot pixel range (headers are a top-left legend)
   var AXIS_Y = 210, AI_Y = 170, AUT_Y = 250;
+  var ROT = 18, CW = 7, FH = 17;                  // label rotation, est char width, font height (viewBox units, lf-scale-with-art)
+  var PAD_R = 16, PAD_B = 18;                     // computed-margin pads
   var COL = { ai: "#2f6f8f", aut: "#0c8f86", axis: "#5a6b70", grid: "#d7dee0", ring: "#c2562f", faint: "#9fb0b5" };
 
   // ---- DATA (literals; each dot's source comment names its cite key) ----
@@ -53,41 +56,74 @@
     { year: 2024, name: "cryogenic wafer prober",       cite: "neyens",     dx:-28, detail: "2024 · Neyens et al.: a cryogenic 300-mm prober measures hundreds of spin-qubit devices at 1.6 K." }, // [neyens]
     { year: 2024, name: "exploratory synthesis",        cite: "burger",     dx: 28, detail: "2024 · Burger-group successors: unattended exploratory synthesis (Dai et al., Nature 635)." },          // [burger]
     { year: 2025, name: "ChemAgents (on-board LLM)",    cite: "chemagents", dx:  0, detail: "2025 · ChemAgents: a multi-agent robotic chemist on an on-board Llama-3.1-70B." },                       // [chemagents]
-    { year: 2026, name: "A-Lab novelty corrected",      cite: "alab",       dx:  0, detail: "2026 · Formal correction: 'novel' meant new to the prediction platform, not necessarily to science.", ring: true, linkTo: 2023 } // [alab]
+    { year: 2026, name: "A-Lab novelty corrected",      cite: "alab",       dx:  0, detail: "2026 · Formal correction: 'novel' meant new to the prediction platform, not necessarily to science.", ring: true, linkTo: 2023, noLabel: true } // [alab] — ring; label on link
   ];
   var BAND = "QML literature: <50 papers/yr through 2009 · surge from 2015 · 9,493 cumulative by 2023 (Lens)";   // [qmlbib]
+  var CORR = "novelty corrected (2026)";   // the 2026 correction label, ridden on its link
 
-  // data-driven domain: min year - 0.5 to max year + 0.5 (no fixed 2014 start)
   var YEARS = AI.concat(AUT).map(function (d) { return d.year; });
   var DMIN = Math.min.apply(null, YEARS) - 0.5, DMAX = Math.max.apply(null, YEARS) + 0.5;
   function xForYear(y) { return XL + (y - DMIN) / (DMAX - DMIN) * (XR - XL); }
-  var EDGE = XR - 160;   // right band inside which labels flip inward
 
-  // ===== SHARED COMPUTE (incl. edge-aware label geometry) =====
+  // ---- exact axis-aligned bbox of a rotated text (anchor left/middle at (lx,ly)) ----
+  function bbox(lx, ly, w, rotDeg, mid) {
+    var a = rotDeg * Math.PI / 180, cs = Math.cos(a), sn = Math.sin(a), x0 = mid ? -w / 2 : 0;
+    var pts = [[x0, 0], [x0 + w, 0], [x0, -FH], [x0 + w, -FH]], xs = [], ys = [];
+    for (var i = 0; i < 4; i++) { xs.push(lx + pts[i][0] * cs - pts[i][1] * sn); ys.push(ly + pts[i][0] * sn + pts[i][1] * cs); }
+    return { x0: Math.min.apply(null, xs), x1: Math.max.apply(null, xs), y0: Math.min.apply(null, ys), y1: Math.max.apply(null, ys) };
+  }
+  function hit(a, b) { return a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1; }
+
+  // ===== SHARED COMPUTE (uniform direction + greedy non-colliding tier pack) =====
   function computeTimeline() {
-    function place(list, laneY, above) {
-      return list.map(function (d) {
-        var x = r2(xForYear(d.year) + d.dx);
-        var edge = x > EDGE;
-        // above (AI): up-right normally, up-left at the edge. below (AUT): down-right / down-left.
-        var lab = above
-          ? (edge ? { a: "end",   lx: r2(x - 4), ly: laneY - 9,  rot: 26 }  : { a: "start", lx: r2(x + 4), ly: laneY - 9,  rot: -26 })
-          : (edge ? { a: "end",   lx: r2(x - 4), ly: laneY + 14, rot: -26 } : { a: "start", lx: r2(x + 4), ly: laneY + 14, rot: 26 });
-        return { x: x, y: laneY, year: d.year, name: d.name, cite: d.cite, detail: d.detail,
-          ring: !!d.ring, anchor: !!d.anchor, linkTo: d.linkTo,
-          la: lab.a, lx: lab.lx, ly: lab.ly, lrot: lab.rot };
+    var boxes = [];                    // all placed label bboxes (collision universe)
+    var STEP = 15;
+    function pack(list, laneY, above) {
+      var rotDeg = above ? -ROT : ROT, base = above ? laneY - 9 : laneY + 14, dir = above ? -STEP : STEP;
+      // sort by x for stable left-to-right packing
+      var arr = list.map(function (d) { return { d: d, x: r2(xForYear(d.year) + d.dx) }; }).sort(function (p, q) { return p.x - q.x; });
+      var out = [];
+      arr.forEach(function (e) {
+        var d = e.d, x = e.x;
+        var base_out = { x: x, y: laneY, year: d.year, name: d.name, cite: d.cite, detail: d.detail, ring: !!d.ring, anchor: !!d.anchor, linkTo: d.linkTo, noLabel: !!d.noLabel };
+        if (d.noLabel) { out.push(base_out); return; }        // ring: no milestone label
+        var w = d.name.length * CW, lx = x + 4, t = 0, bb;
+        do { bb = bbox(lx, base + t * dir, w, rotDeg, false); t++; } while (t < 16 && boxes.some(function (o) { return hit(bb, o); }));
+        boxes.push(bb);
+        base_out.la = "start"; base_out.lx = lx; base_out.ly = base + (t - 1) * dir; base_out.lrot = rotDeg; base_out.bb = bb;
+        out.push(base_out);
       });
+      return out;
     }
-    var ai = place(AI, AI_Y, true), aut = place(AUT, AUT_Y, false);
-    var link = null, ringDot = aut.filter(function (d) { return d.ring; })[0];
+    var ai = pack(AI, AI_Y, true), aut = pack(AUT, AUT_Y, false);
+
+    // correction link + label: arc from the 2026 ring down BELOW the autonomy staircase, back to
+    // the 2023 dot; the label rides the dip midpoint, packed clear of everything.
+    var link = null, corr = null, ringDot = aut.filter(function (d) { return d.ring; })[0];
     if (ringDot && ringDot.linkTo != null) {
       var tgt = aut.filter(function (d) { return d.year === ringDot.linkTo && d.anchor; })[0];
-      if (tgt) link = { x1: ringDot.x, x2: tgt.x, y: AUT_Y, dip: AUT_Y + 40 };
+      if (tgt) {
+        var autBottom = Math.max.apply(null, aut.filter(function (d) { return d.bb; }).map(function (d) { return d.bb.y1; }).concat([AUT_Y + 20]));
+        var dip = r2(autBottom + 34), mx = r2((ringDot.x + tgt.x) / 2);
+        link = { x1: ringDot.x, x2: tgt.x, y: AUT_Y, ctrlY: r2(2 * dip - AUT_Y) };   // quad ctrl so the midpoint sits at dip
+        var cw = CORR.length * CW, cy = dip - 8, cb = bbox(mx, cy, cw, 0, true);      // horizontal, centered on the dip
+        corr = { x: mx, y: cy, str: CORR, bb: cb };
+        boxes.push(cb);
+      }
     }
+
     var ticks = [];
     for (var y = Math.ceil(DMIN); y <= Math.floor(DMAX); y++) ticks.push({ x: r2(xForYear(y)), label: String(y) });
-    return { W: W, H: H, ai: ai, aut: aut, link: link, ticks: ticks, band: BAND,
-      ariaLabel: "A two-lane timeline of documented milestones of AI and of autonomous labs and robotics entering the quantum-computing stack, roughly 2020 to 2026; the dots grow denser toward the right, and a 2026 open ring marks the A-Lab correction linked back to its 2023 result." };
+
+    // COMPUTED canvas: grow right for the widest label, grow bottom for the pack + link + band.
+    var maxRight = Math.max.apply(null, boxes.map(function (b) { return b.x1; }).concat([XR]));
+    var maxBottom = Math.max.apply(null, boxes.map(function (b) { return b.y1; }).concat([corr ? corr.bb.y1 : AUT_Y]));
+    var minTop = Math.min.apply(null, boxes.map(function (b) { return b.y0; }).concat([0]));
+    var W = Math.ceil(maxRight + PAD_R), bandY = r2(maxBottom + 22);
+    var vbTop = Math.min(0, Math.floor(minTop - 6)), H = Math.ceil(bandY + PAD_B - vbTop);
+
+    return { W: W, H: H, vbTop: vbTop, ai: ai, aut: aut, link: link, corr: corr, ticks: ticks, band: BAND, bandY: bandY,
+      ariaLabel: "A two-lane timeline of documented milestones of AI and of autonomous labs and robotics entering the quantum-computing stack, roughly 2020 to 2026; the dots grow denser toward the right, and a 2026 open ring marks the A-Lab correction, its label riding a dashed link back to its 2023 result." };
   }
 
   function fail(container, msg) {
@@ -109,31 +145,30 @@
     dedupPoster(container);
     var g = computeTimeline();
 
-    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: "100%", "class": "lf-svg", role: "img", "aria-label": g.ariaLabel });
+    var svg = el("svg", { viewBox: "0 " + g.vbTop + " " + g.W + " " + (g.H), width: "100%", "class": "lf-svg", role: "img", "aria-label": g.ariaLabel });
     var defs = el("defs", {});
     var mk = el("marker", { id: "adopt-arr", viewBox: "0 0 10 10", refX: "8", refY: "5", markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse" });
     mk.appendChild(el("path", { d: "M0 1L9 5L0 9z", fill: COL.ring })); defs.appendChild(mk); svg.appendChild(defs);
 
-    // top-left color legend (frees the left rail for data)
     svg.appendChild(el("circle", { cx: 20, cy: 22, r: "5", fill: COL.ai, stroke: "#fff", "stroke-width": "1.5" }));
-    svg.appendChild(txt(32, 26, "start", "lf-callout", COL.ai, "AI IN THE QUANTUM STACK"));
+    svg.appendChild(txt(32, 26, "start", "lf-callout lf-scale-with-art", COL.ai, "AI IN THE QUANTUM STACK"));
     svg.appendChild(el("circle", { cx: 20, cy: 44, r: "5", fill: COL.aut, stroke: "#fff", "stroke-width": "1.5" }));
-    svg.appendChild(txt(32, 48, "start", "lf-callout", COL.aut, "AUTONOMOUS LABS & ROBOTICS"));
+    svg.appendChild(txt(32, 48, "start", "lf-callout lf-scale-with-art", COL.aut, "AUTONOMOUS LABS & ROBOTICS"));
 
     svg.appendChild(el("line", { x1: XL, y1: AXIS_Y, x2: XR, y2: AXIS_Y, stroke: COL.axis, "stroke-width": "1.5" }));
     g.ticks.forEach(function (t) {
       svg.appendChild(el("line", { x1: t.x, y1: AXIS_Y - 4, x2: t.x, y2: AXIS_Y + 4, stroke: COL.axis, "stroke-width": "1" }));
-      svg.appendChild(txt(t.x, AXIS_Y + 18, "middle", "lf-tick", COL.axis, t.label));
+      svg.appendChild(txt(t.x, AXIS_Y + 18, "middle", "lf-tick lf-scale-with-art", COL.axis, t.label));
     });
 
     if (g.link) {
-      var d = "M" + g.link.x1 + " " + g.link.y + " Q" + r2((g.link.x1 + g.link.x2) / 2) + " " + g.link.dip + " " + g.link.x2 + " " + g.link.y;
+      var d = "M" + g.link.x1 + " " + g.link.y + " Q" + r2((g.link.x1 + g.link.x2) / 2) + " " + g.link.ctrlY + " " + g.link.x2 + " " + g.link.y;
       svg.appendChild(el("path", { d: d, fill: "none", stroke: COL.ring, "stroke-width": "1.4", "stroke-dasharray": "4 3", "marker-end": "url(#adopt-arr)" }));
+      svg.appendChild(txt(g.corr.x, g.corr.y, "middle", "lf-tick lf-scale-with-art", COL.ring, g.corr.str));
     }
 
     var readout = doc.createElement("span"); readout.className = "lf-readout"; readout.setAttribute("aria-live", "polite");
     var HINT = "Hover a milestone for its citation. Dots grow denser toward the right — the loop assembling.";
-
     function drawLane(dots, above) {
       dots.forEach(function (dd) {
         svg.appendChild(el("line", { x1: dd.x, y1: dd.y, x2: dd.x, y2: AXIS_Y, stroke: COL.grid, "stroke-width": "1" }));
@@ -141,7 +176,8 @@
           ? el("circle", { cx: dd.x, cy: dd.y, r: "6", fill: "none", stroke: COL.ring, "stroke-width": "2.5" })
           : el("circle", { cx: dd.x, cy: dd.y, r: "5.5", fill: above ? COL.ai : COL.aut, stroke: "#fff", "stroke-width": "1.5" });
         attachDetail(dot, dd.detail); svg.appendChild(dot);
-        var lab = txt(dd.lx, dd.ly, dd.la, "lf-axis lf-scale-with-art", dd.ring ? COL.ring : COL.axis, dd.name);
+        if (dd.noLabel) return;
+        var lab = txt(dd.lx, dd.ly, dd.la, "lf-axis lf-scale-with-art", COL.axis, dd.name);
         lab.setAttribute("transform", "rotate(" + dd.lrot + " " + dd.lx + " " + dd.ly + ")");
         attachDetail(lab, dd.detail); svg.appendChild(lab);
       });
@@ -153,7 +189,7 @@
       node.addEventListener("focus", show); node.addEventListener("blur", clear); node.addEventListener("click", show);
     }
     drawLane(g.ai, true); drawLane(g.aut, false);
-    svg.appendChild(txt(XL, 384, "start", "lf-tick", COL.axis, g.band));
+    svg.appendChild(txt(XL, g.bandY, "start", "lf-tick lf-scale-with-art", COL.axis, g.band));
 
     container.appendChild(svg);
     var controls = doc.createElement("div"); controls.className = "lf-controls";
@@ -172,21 +208,22 @@
   // ===== POSTER (pure string; full static view) =====
   function renderQCAdoptionPosterSVG() {
     var g = computeTimeline();
-    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" class="lf-svg" role="img" aria-label="' + escAttr(g.ariaLabel) + '">';
+    var s = '<svg viewBox="0 ' + g.vbTop + ' ' + g.W + ' ' + g.H + '" width="100%" class="lf-svg" role="img" aria-label="' + escAttr(g.ariaLabel) + '">';
     s += '<defs><marker id="adopt-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="' + COL.ring + '"></path></marker></defs>';
-    s += '<circle cx="20" cy="22" r="5" fill="' + COL.ai + '" stroke="#fff" stroke-width="1.5"></circle>' + textS(32, 26, "start", "lf-callout", COL.ai, "AI IN THE QUANTUM STACK");
-    s += '<circle cx="20" cy="44" r="5" fill="' + COL.aut + '" stroke="#fff" stroke-width="1.5"></circle>' + textS(32, 48, "start", "lf-callout", COL.aut, "AUTONOMOUS LABS & ROBOTICS");
+    s += '<circle cx="20" cy="22" r="5" fill="' + COL.ai + '" stroke="#fff" stroke-width="1.5"></circle>' + textS(32, 26, "start", "lf-callout lf-scale-with-art", COL.ai, "AI IN THE QUANTUM STACK");
+    s += '<circle cx="20" cy="44" r="5" fill="' + COL.aut + '" stroke="#fff" stroke-width="1.5"></circle>' + textS(32, 48, "start", "lf-callout lf-scale-with-art", COL.aut, "AUTONOMOUS LABS & ROBOTICS");
     s += '<line x1="' + XL + '" y1="' + AXIS_Y + '" x2="' + XR + '" y2="' + AXIS_Y + '" stroke="' + COL.axis + '" stroke-width="1.5"></line>';
     g.ticks.forEach(function (t) {
       s += '<line x1="' + t.x + '" y1="' + (AXIS_Y - 4) + '" x2="' + t.x + '" y2="' + (AXIS_Y + 4) + '" stroke="' + COL.axis + '" stroke-width="1"></line>';
-      s += textS(t.x, AXIS_Y + 18, "middle", "lf-tick", COL.axis, t.label);
+      s += textS(t.x, AXIS_Y + 18, "middle", "lf-tick lf-scale-with-art", COL.axis, t.label);
     });
     if (g.link) {
-      var d = "M" + g.link.x1 + " " + g.link.y + " Q" + r2((g.link.x1 + g.link.x2) / 2) + " " + g.link.dip + " " + g.link.x2 + " " + g.link.y;
+      var d = "M" + g.link.x1 + " " + g.link.y + " Q" + r2((g.link.x1 + g.link.x2) / 2) + " " + g.link.ctrlY + " " + g.link.x2 + " " + g.link.y;
       s += '<path d="' + d + '" fill="none" stroke="' + COL.ring + '" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#adopt-arr)"></path>';
+      s += textS(g.corr.x, g.corr.y, "middle", "lf-tick lf-scale-with-art", COL.ring, g.corr.str);
     }
     s += laneS(g.ai, true) + laneS(g.aut, false);
-    s += textS(XL, 384, "start", "lf-tick", COL.axis, g.band);
+    s += textS(XL, g.bandY, "start", "lf-tick lf-scale-with-art", COL.axis, g.band);
     s += '</svg>';
     return s;
   }
@@ -197,7 +234,8 @@
       s += dd.ring
         ? '<circle cx="' + dd.x + '" cy="' + dd.y + '" r="6" fill="none" stroke="' + COL.ring + '" stroke-width="2.5"></circle>'
         : '<circle cx="' + dd.x + '" cy="' + dd.y + '" r="5.5" fill="' + (above ? COL.ai : COL.aut) + '" stroke="#fff" stroke-width="1.5"></circle>';
-      s += '<text class="lf-axis lf-scale-with-art" x="' + dd.lx + '" y="' + dd.ly + '" text-anchor="' + dd.la + '" fill="' + (dd.ring ? COL.ring : COL.axis) + '" transform="rotate(' + dd.lrot + ' ' + dd.lx + ' ' + dd.ly + ')">' + escTxt(dd.name) + '</text>';
+      if (dd.noLabel) return;
+      s += '<text class="lf-axis lf-scale-with-art" x="' + dd.lx + '" y="' + dd.ly + '" text-anchor="' + dd.la + '" fill="' + COL.axis + '" transform="rotate(' + dd.lrot + ' ' + dd.lx + ' ' + dd.ly + ')">' + escTxt(dd.name) + '</text>';
     });
     return s;
   }

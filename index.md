@@ -73,7 +73,9 @@ The halves exist; the join does not. Intel's cryogenic prober measures hundreds 
 
 > **PROGNOSIS** — The United States needs to rethink its R&D — who does it, how it is funded, and at what scale — within this decade, or plan on reading about the closed loop in translation.
 
-**Which returns the chapter to its real question — the puck.** Everyone is skating to today's puck: superconducting incumbents and their roadmaps. Where the puck is going is the platform where the loop closes first, in the bloc whose results are believed, adopted by the incumbents that matter. The scope note in the bottleneck ledger already named the loop-nearest venue; the race analysis names the blocs. Triangulating those into a platform bet — where to stand before the puck arrives — is the next chapter's opening problem.
+*(figure: Three panels of cited figures from the race section: China's R&D reaching and passing the US on a purchasing-power-parity basis by 2024; the top-cited-scientist counts of China and the US crossing over between 2020 and 2024; and China's published quantum trajectories, Zuchongzhi qubit count and Jiuzhang detected-photon count, on a log scale. — Fig 3 — Rates, not stocks: the race section’s own cited numbers, drawn. Money: the PPP crossover. People: the top-cited-scientist flip. Quantum: China’s published trajectories, with the reported series labeled as reported. Points as published — no interpolated curves; dashed arrows are guides within a single source’s series, not data. [CITE + REPORTED · as labeled])*
+
+**Which returns the chapter to its real question — the puck.** Everyone is skating to today's puck: superconducting incumbents and their roadmaps. Where the puck is going is the platform where the loop closes first, in the bloc whose results are believed, adopted by the incumbents that matter. The scope note in the bottleneck ledger already named the loop-nearest venue; the race analysis names the blocs. Triangulating those into a platform bet — where to stand before the puck arrives — is the next chapter's opening problem. Fig 3 draws the rates this section argued.
 
 ## 06 THE DISSOLVING LAB
 

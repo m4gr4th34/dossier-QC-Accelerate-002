@@ -15,3 +15,6 @@ C13,"IQMP broke ground 2025-09-30: PsiQuantum anchor, DARPA proving ground, shar
 C14,NQI authorization lapsed 2023-09-30; S.3597 cleared Senate Commerce unanimously 2026-04-14; H.R.8462 reported out of House SST 2026-04-29; both await floor votes.,CITE,"congress.gov (S.3597, H.R.8462); aip.org FYI tracker",CITED
 C15,55% that NQI reauthorization is enacted by 2027-01-03 (end of the 119th Congress); 75% by 2027-12-31.,FORECAST,the dated signpost itself,OPEN
 C16,35% that loop infrastructure is funded as a named deliverable at IQMP or an equivalent allied co-located site by 2028-12-31.,FORECAST,the dated signpost itself,OPEN
+C17,"Zuchongzhi 3.0: 105-qubit superconducting processor, random-circuit sampling peer-published; the line's error-correction claims are program-reported.",CITE,"Phys. Rev. Lett. 134, 090601 (2025), DOI 10.1103/PhysRevLett.134.090601; arXiv 2412.11924",CITED
+C18,"The 24/7 Xiao Lai / ChemAgents robotic-chemist lineage runs at USTC / Hefei National Laboratory, co-located with fabrication and computing centers.",CITE,"J. Am. Chem. Soc. 147, 12534-12545 (2025), DOI 10.1021/jacs.4c17738",CITED
+C19,"China fielded 10+ domestic dilution-fridge makers within ~14 months of the 2024 controls, production near 10 mK — trade-press and interested-party figures.",CITE,rusi.org (2025); Rev. Sci. Instrum. (Dec 2025); trade press (2026),OPEN-CAVEATED

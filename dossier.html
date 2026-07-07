@@ -409,11 +409,11 @@
   <div class="statusbar">
     <span class="chip"><span class="dot t"></span>avenues&nbsp;<b>10 surveyed</b></span>
     <span class="chip"><span class="dot v"></span>forecasts&nbsp;<b>5 (all signposted)</b></span>
-    <span class="chip"><span class="dot g"></span>citations&nbsp;<b>17 verified · 6 flagged</b></span>
-    <span class="chip"><span class="dot o"></span>red team&nbsp;<b>3 resolved · 3 open</b></span>
+    <span class="chip"><span class="dot g"></span>citations&nbsp;<b>19 verified · 7 flagged</b></span>
+    <span class="chip"><span class="dot o"></span>red team&nbsp;<b>4 resolved · 3 open</b></span>
   </div>
 
-<p class="lede"><b>Chapter 3 places bets; this page shows the receipts.</b> Every avenue on the front door stands on the sources audited below — seventeen verified against primaries or triangulated, six carried at preprint or vendor grade and labeled so. The red-team section leads with the finding that stings most: this audit page itself shipped as unfilled template scaffolding in both sealed chapters. The seals are immutable; the miss is recorded here instead of hidden.</p>
+<p class="lede"><b>Chapter 3 places bets; this page shows the receipts.</b> Every avenue on the front door stands on the sources audited below — nineteen verified against primaries or triangulated, seven carried at preprint or vendor grade and labeled so. The red-team section leads with the finding that stings most: this audit page itself shipped as unfilled template scaffolding in both sealed chapters. The seals are immutable; the miss is recorded here instead of hidden.</p>
 
 <!-- ============================================================
      SURVEY-shaped audit trail. For a survey the citation audit is
@@ -450,6 +450,11 @@
   <details class="finding resolved">
     <summary><span class="tag res">RESOLVED</span>Recon corrected the working evidence bank before claims were carded</summary>
     <div class="body">Two precision errors were caught between note-taking and carding: the neutral-atom 96-logical result was dated by its announcement (Nov 2025) rather than its Nature publication (Jan 2026), and the trapped-ion "94/48" pair was being read as two corrected counts when it is 94 error-DETECTED versus 48 error-CORRECTED — a distinction trade press blurs and this chapter states explicitly. Both fixed before the cards were written.</div>
+  </details>
+
+  <details class="finding resolved">
+    <summary><span class="tag res">RESOLVED</span>A figure's "cited" tags outran the chapter's own citations — caught pre-commit</summary>
+    <div class="body">Fig 2's Hefei cells rested on three sources (the Zuchongzhi PRL line, the ChemAgents robotic chemist, the cryo supply chain) that were cited only in sealed Chapter 2 — so the cell tag "cited" would have been untrue within this chapter, against the readable-in-full rule. The executor caught it at the diff gate, before the commit; the fix cites all three fresh in this chapter's cards, audit table, and ledger. The review points up as well as down.</div>
   </details>
 
   <details class="finding">
@@ -531,6 +536,9 @@ const cites = [
   ["iceberg", "Quantinuum — company preprint (Mar 2026): 94 detected / 48 corrected logical", "R"],
   ["ionq99", "IonQ / Oxford Ionics — technical release + preprint (Oct 2025): 8.4e-5 two-qubit error", "R"],
   ["magne", "QuNorth / Microsoft / Atom Computing — vendor roadmap + acquisition records (2025-2026)", "R"],
+  ["zuchongzhi", "Gao et al. — Phys. Rev. Lett. 134, 090601 (2025), DOI 10.1103/PhysRevLett.134.090601", "V"],
+  ["chemagents", "ChemAgents, USTC / Hefei National Laboratory — J. Am. Chem. Soc. 147, 12534-12545 (2025), DOI 10.1021/jacs.4c17738", "V"],
+  ["supplychain", "RUSI; Rev. Sci. Instrum. (Dec 2025); trade press — domestic dilution-fridge build-out, reported grade", "R"],
 ];
 const lab = {
   V: ["VERIFIED — primary source", "v"],

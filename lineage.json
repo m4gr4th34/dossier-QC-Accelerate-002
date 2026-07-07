@@ -10,6 +10,17 @@
       "concept_doi": "",
       "path": "chapters/v1.0.0/",
       "doi_archived": false
+    },
+    {
+      "n": 2,
+      "tag": "v2.0.0",
+      "title": "v2.0.0 — Chapter 2: What works, what loops, what looms",
+      "summary": "Chapter 2 of dossier QC-Accelerate-002 — \"What works, what loops, what looms.\"",
+      "released": "2026-07-07",
+      "version_doi": "",
+      "concept_doi": "",
+      "path": "chapters/v2.0.0/",
+      "doi_archived": false
     }
   ]
 }

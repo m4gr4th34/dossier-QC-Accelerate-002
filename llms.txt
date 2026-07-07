@@ -1,6 +1,6 @@
 # Accelerating Quantum Computing Research Using AI and Robotics
 
-> Chapter 2 — What works, what loops, what looms.
+> Chapter 3 — where to stand before the puck arrives.
 
 ## Working draft
 

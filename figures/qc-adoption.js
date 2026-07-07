@@ -91,6 +91,10 @@
         do { bb = bbox(lx, base + t * dir, w, rotDeg, false); t++; } while (t < 16 && boxes.some(function (o) { return hit(bb, o); }));
         boxes.push(bb);
         base_out.la = "start"; base_out.lx = lx; base_out.ly = base + (t - 1) * dir; base_out.lrot = rotDeg; base_out.bb = bb;
+        // leader: from the dot's edge to THIS label's anchor (wherever the packer placed it)
+        var ux = lx - x, uy = base_out.ly - laneY, LL = Math.sqrt(ux * ux + uy * uy) || 1;
+        base_out.lead1x = r2(x + ux / LL * 7); base_out.lead1y = r2(laneY + uy / LL * 7);
+        base_out.lead2x = lx; base_out.lead2y = r2(base_out.ly);
         out.push(base_out);
       });
       return out;
@@ -171,7 +175,8 @@
     var HINT = "Hover a milestone for its citation. Dots grow denser toward the right — the loop assembling.";
     function drawLane(dots, above) {
       dots.forEach(function (dd) {
-        svg.appendChild(el("line", { x1: dd.x, y1: dd.y, x2: dd.x, y2: AXIS_Y, stroke: COL.grid, "stroke-width": "1" }));
+        if (dd.noLabel) svg.appendChild(el("line", { x1: dd.x, y1: dd.y, x2: dd.x, y2: AXIS_Y, stroke: COL.grid, "stroke-width": "1" }));
+        else svg.appendChild(el("line", { x1: dd.lead1x, y1: dd.lead1y, x2: dd.lead2x, y2: dd.lead2y, stroke: COL.grid, "stroke-width": "1", "stroke-opacity": "0.55" }));
         var dot = dd.ring
           ? el("circle", { cx: dd.x, cy: dd.y, r: "6", fill: "none", stroke: COL.ring, "stroke-width": "2.5" })
           : el("circle", { cx: dd.x, cy: dd.y, r: "5.5", fill: above ? COL.ai : COL.aut, stroke: "#fff", "stroke-width": "1.5" });
@@ -230,7 +235,9 @@
   function laneS(dots, above) {
     var s = "";
     dots.forEach(function (dd) {
-      s += '<line x1="' + dd.x + '" y1="' + dd.y + '" x2="' + dd.x + '" y2="' + AXIS_Y + '" stroke="' + COL.grid + '" stroke-width="1"></line>';
+      s += dd.noLabel
+        ? '<line x1="' + dd.x + '" y1="' + dd.y + '" x2="' + dd.x + '" y2="' + AXIS_Y + '" stroke="' + COL.grid + '" stroke-width="1"></line>'
+        : '<line x1="' + dd.lead1x + '" y1="' + dd.lead1y + '" x2="' + dd.lead2x + '" y2="' + dd.lead2y + '" stroke="' + COL.grid + '" stroke-width="1" stroke-opacity="0.55"></line>';
       s += dd.ring
         ? '<circle cx="' + dd.x + '" cy="' + dd.y + '" r="6" fill="none" stroke="' + COL.ring + '" stroke-width="2.5"></circle>'
         : '<circle cx="' + dd.x + '" cy="' + dd.y + '" r="5.5" fill="' + (above ? COL.ai : COL.aut) + '" stroke="#fff" stroke-width="1.5"></circle>';

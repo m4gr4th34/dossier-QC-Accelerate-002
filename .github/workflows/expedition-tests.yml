@@ -1,0 +1,23 @@
+name: expedition-tests
+# Chapter 4 expedition — deterministic ground-truth suites for the code-search
+# verifier stack. ADDITIVE to the stdlib verify floor (verify.yml untouched):
+# these tests need numpy, so they live in their own job. The stochastic
+# experiments (fom/arena/seeds) are author-local and fully documented in
+# expedition/NOTEBOOK.md with exact commands, seeds, and error bars.
+on:
+  push:
+  pull_request:
+jobs:
+  ground-truths:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numeric floor
+        run: pip install numpy
+      - name: Verifier ground truths (known codes + negative control)
+        run: python expedition/verify_code.py
+      - name: Hypergraph-product ground truths (incl. [[13,1,3]] surface code)
+        run: python expedition/hgp.py

@@ -4,26 +4,25 @@
  *
  * WHAT THIS IS
  *   Three small-multiple panels of the race section's OWN cited numbers, drawn.
- *   MONEY: China R&D as a share of the US on a PPP basis, to the 2024 crossover.
- *   PEOPLE: the top-cited-scientist flip, 2020-2024. QUANTUM: China's published
- *   trajectories (log y). All three always visible; the buttons FOCUS one (others
- *   dim, never hide); default MONEY. Points carry a tap/hover detail (live only).
+ *   MONEY: China R&D as a share of the US (PPP), to the 2024 crossover. PEOPLE: the
+ *   top-cited-scientist flip, 2020-2024. QUANTUM (log y): BOTH blocs' published
+ *   superconducting trajectories — Google (US) and Zuchongzhi (CN), same metric,
+ *   DIFFERENT verification — plus China's photonic Jiuzhang series (reported). All
+ *   three panels always visible; the buttons FOCUS one (others dim); default MONEY.
+ *   Points carry a tap/hover detail naming the MACHINE and BLOC (live only).
  *
  * HARD DATA DISCIPLINE
  *   Every plotted value is a LITERAL below with a source comment naming its cite
- *   key — NO interpolated curve. The dashed arrows are GUIDES between the two
- *   published points of a SINGLE source's series (a reading aid, not data), each
- *   with an arrowhead showing direction. The one REPORTED series (Jiuzhang) is
- *   labelled "(reported)"; the supply-chain marks are labelled "(trade press)".
+ *   key — NO interpolated curve. Dashed arrows are GUIDES between the published
+ *   points of a SINGLE source's series. The REPORTED series (Jiuzhang) is labelled
+ *   "(reported)"; the supply-chain marks "(trade press)". The verification contrast
+ *   is stated, not implied: Willow's below-threshold EC is peer-reviewed, the
+ *   Zuchongzhi-line EC claim is program-reported.
  *
- * THE COMPOSITION LAW (per qc-loop)
- *   General primitives from the runtime (el / r2 / escAttr / escTxt / dedupPoster).
- *   Geometry is computed ONCE in computeRace() as an OP LIST per panel, consumed by
- *   BOTH the live el() emitter AND the pure poster string emitter — floor == ceiling.
- *   Text sized by ROLE via tier classes only (lf-tick / lf-axis / lf-callout). Static
- *   figure: reduced motion is a no-op.
- *
- * SUSTAINABILITY LAWS: zero deps, pure vanilla, vendored first-party; reader-side only.
+ * THE COMPOSITION LAW (per qc-loop): general primitives from the runtime; geometry
+ *   computed ONCE as an OP LIST, consumed by BOTH the live el() and poster string
+ *   emitters (floor == ceiling); tier classes only. Long/legend text opts out of
+ *   text-fit counter-scale (lf-scale-with-art) so it never clips. Static figure.
  */
 (function (root) {
   "use strict";
@@ -33,19 +32,28 @@
   var el = DossierFigures.el, r2 = DossierFigures.r2, escAttr = DossierFigures.escAttr,
       escTxt = DossierFigures.escTxt, dedupPoster = DossierFigures.dedupPoster;
 
-  var W = 990, H = 400, DIM = "0.25";
-  var COL = { us: "#c2562f", cn: "#2f6f8f", axis: "#5a6b70", grid: "#d7dee0", mark: "#5a6b70", ref: "#9aa3a6", shade: "#0c8f86" };
-  var DEFAULT = 0;   // MONEY
+  var W = 990, H = 460, DIM = "0.25";
+  var COL = { us: "#c2562f", cn: "#2f6f8f", photon: "#8a6fb0", axis: "#5a6b70", grid: "#d7dee0", mark: "#5a6b70", ref: "#9aa3a6", shade: "#0c8f86" };
+  var DEFAULT = 0;
   function log10(x) { return Math.log(x) / Math.LN10; }
 
-  // ===== SHARED COMPUTE: each panel -> a list of drawing ops =====
   function computeRace() {
     var panels = [moneyPanel(70), peoplePanel(395), quantumPanel(720)];
-    return { W: W, H: H, panels: panels,
-      ariaLabel: "Three panels of cited figures from the race section: China's R&D reaching and passing the US on a purchasing-power-parity basis by 2024; the top-cited-scientist counts of China and the US crossing over between 2020 and 2024; and China's published quantum trajectories, Zuchongzhi qubit count and Jiuzhang detected-photon count, on a log scale." };
+    // figure-level QUANTUM key: bloc-explicit legend + verification-contrast note (always visible).
+    var key = [
+      { t: "circle", x: 76, y: 344, r: 5, fill: COL.cn },
+      { t: "text", x: 88, y: 348, anchor: "start", cls: "lf-tick", color: COL.axis, sa: 1, str: "Zuchongzhi (CN, superconducting processor) — qubits" },      // [zuchongzhi]
+      { t: "circle", x: 76, y: 362, r: 5, fill: COL.us },
+      { t: "text", x: 88, y: 366, anchor: "start", cls: "lf-tick", color: COL.axis, sa: 1, str: "Google (US, superconducting) — qubits" },                    // [google]
+      { t: "circle", x: 76, y: 380, r: 5, fill: COL.photon },
+      { t: "text", x: 88, y: 384, anchor: "start", cls: "lf-tick", color: COL.axis, sa: 1, str: "Jiuzhang (CN, photonic machine) — detected photons (reported)" }, // [talent, reported]
+      { t: "text", x: 70, y: 414, anchor: "start", cls: "lf-tick", color: COL.axis, sa: 1, str: "same scale, different verification — Willow below-threshold EC: peer-reviewed (Nature 2024) ·" },   // [google]
+      { t: "text", x: 70, y: 432, anchor: "start", cls: "lf-tick", color: COL.axis, sa: 1, str: "Zuchongzhi-line EC claim: program-reported · Zuchongzhi-3 sampling: 6 orders beyond SYC-67/70 (PRL 2025)" }  // [zuchongzhi]
+    ];
+    return { W: W, H: H, panels: panels, key: key,
+      ariaLabel: "Three panels of cited figures from the race section: China's R&D reaching and passing the US on a purchasing-power-parity basis by 2024; the top-cited-scientist counts of China and the US crossing over between 2020 and 2024; and, on a log scale, both blocs' published superconducting quantum trajectories — Google and Zuchongzhi qubit counts, same metric but Google's error-correction peer-reviewed and the Zuchongzhi line's program-reported — plus China's photonic Jiuzhang detected-photon count, labelled reported." };
   }
 
-  // ---- generic axis frame ----
   function frame(px, py, pw, ph) {
     return [
       { t: "line", x1: px, y1: py, x2: px, y2: py + ph, color: COL.axis, w: 1.5 },
@@ -55,24 +63,19 @@
 
   // ---- MONEY: China R&D as % of US (PPP). 72% (2013), 96% (2023), 102% (2024). [oecd/talent] ----
   function moneyPanel(px) {
-    var py = 100, pw = 200, ph = 175;
-    var yLo = 60, yHi = 110, xLo = 2012.5, xHi = 2024.5;
+    var py = 100, pw = 200, ph = 175, yLo = 60, yHi = 110, xLo = 2012.5, xHi = 2024.5;
     function X(y) { return r2(px + (y - xLo) / (xHi - xLo) * pw); }
     function Y(p) { return r2(py + (yHi - p) / (yHi - yLo) * ph); }
     var pts = [
-      { yr: 2013, v: 72,  d: "2013 · China R&D ≈ 72% of the US (PPP) — the trajectory the crossover sits on." },  // [oecd/talent] trajectory
-      { yr: 2023, v: 96,  d: "2023 · ≈ 96% of the US (PPP)." },                                                    // [oecd/talent] trajectory
+      { yr: 2013, v: 72,  d: "2013 · China R&D ≈ 72% of the US (PPP) — the trajectory the crossover sits on." },  // [oecd/talent]
+      { yr: 2023, v: 96,  d: "2023 · ≈ 96% of the US (PPP)." },                                                    // [oecd/talent]
       { yr: 2024, v: 102, d: "2024 · $1.03T vs $1.01T — China crosses the US on PPP." }                            // [oecd] $1.03T/$1.01T ≈ 102%
     ];
     var ops = frame(px, py, pw, ph);
-    // 100% reference line (the crossover threshold)
     ops.push({ t: "line", x1: px, y1: Y(100), x2: px + pw, y2: Y(100), color: COL.ref, w: 1.5, dash: "6 4" });
     ops.push({ t: "text", x: px + pw, y: Y(100) - 5, anchor: "end", cls: "lf-tick", color: COL.axis, str: "US = 100%" });
-    // y ticks
     [60, 80, 100].forEach(function (p) { ops.push({ t: "text", x: px - 6, y: Y(p) + 3, anchor: "end", cls: "lf-tick", color: COL.axis, str: p + "%" }); });
-    // x ticks
     [2013, 2024].forEach(function (y) { ops.push({ t: "text", x: X(y), y: py + ph + 16, anchor: "middle", cls: "lf-tick", color: COL.axis, str: String(y) }); });
-    // dashed guide-arrow through the 3 points (same source)
     ops.push({ t: "path", d: "M" + X(2013) + " " + Y(72) + "L" + X(2023) + " " + Y(96) + "L" + X(2024) + " " + Y(102), color: COL.cn, w: 2, dash: "5 4", marker: 1 });
     pts.forEach(function (p) { ops.push({ t: "circle", x: X(p.yr), y: Y(p.v), r: 5, fill: COL.cn, detail: p.d }); });
     ops.push({ t: "text", x: X(2024), y: Y(102) - 10, anchor: "end", cls: "lf-axis", color: COL.cn, str: "102% · crossover" });
@@ -82,22 +85,18 @@
 
   // ---- PEOPLE: top-cited scientists. US 36,599->31,781 ; China 18,805->32,511 (2020-2024). [talent] ----
   function peoplePanel(px) {
-    var py = 100, pw = 200, ph = 175;
-    var yLo = 15000, yHi = 38000, xLo = 2019.5, xHi = 2024.5;
+    var py = 100, pw = 200, ph = 175, yLo = 15000, yHi = 38000, xLo = 2019.5, xHi = 2024.5;
     function X(y) { return r2(px + (y - xLo) / (xHi - xLo) * pw); }
     function Y(v) { return r2(py + (yHi - v) / (yHi - yLo) * ph); }
     var ops = frame(px, py, pw, ph);
-    // crossover shade (where the two series cross, ~2022-2024 near ~32k)
     ops.push({ t: "rect", x: X(2022.4), y: Y(34000), w: X(2024) - X(2022.4), h: Y(30000) - Y(34000), fill: COL.shade, opacity: "0.08" });
     ops.push({ t: "text", x: X(2023.2), y: Y(35200), anchor: "middle", cls: "lf-tick", color: COL.axis, str: "flip, 2020-2024" });
     [20000, 30000].forEach(function (v) { ops.push({ t: "text", x: px - 6, y: Y(v) + 3, anchor: "end", cls: "lf-tick", color: COL.axis, str: (v / 1000) + "k" }); });
     [2020, 2024].forEach(function (y) { ops.push({ t: "text", x: X(y), y: py + ph + 16, anchor: "middle", cls: "lf-tick", color: COL.axis, str: String(y) }); });
-    // US series (down)
     ops.push({ t: "path", d: "M" + X(2020) + " " + Y(36599) + "L" + X(2024) + " " + Y(31781), color: COL.us, w: 2, dash: "5 4", marker: 1 });
     ops.push({ t: "circle", x: X(2020), y: Y(36599), r: 5, fill: COL.us, detail: "2020 · US top-cited scientists: 36,599." });
     ops.push({ t: "circle", x: X(2024), y: Y(31781), r: 5, fill: COL.us, detail: "2024 · US top-cited scientists: 31,781 (down)." });
     ops.push({ t: "text", x: X(2020) - 6, y: Y(36599) - 6, anchor: "start", cls: "lf-tick", color: COL.us, str: "US" });
-    // China series (up)
     ops.push({ t: "path", d: "M" + X(2020) + " " + Y(18805) + "L" + X(2024) + " " + Y(32511), color: COL.cn, w: 2, dash: "5 4", marker: 1 });
     ops.push({ t: "circle", x: X(2020), y: Y(18805), r: 5, fill: COL.cn, detail: "2020 · China top-cited scientists: 18,805." });
     ops.push({ t: "circle", x: X(2024), y: Y(32511), r: 5, fill: COL.cn, detail: "2024 · China top-cited scientists: 32,511 (up)." });
@@ -106,29 +105,36 @@
     return { key: "people", header: "PEOPLE — top-cited scientists", cx: px + pw / 2, ops: ops };
   }
 
-  // ---- QUANTUM (log y): Zuchongzhi 66->105 qubits (2021->2025) [zuchongzhi]; Jiuzhang 76->3,050 photons (2020->2025) [talent, REPORTED] ----
+  // ---- QUANTUM (log y): both blocs' superconducting lines + China photonic. ----
+  //   Google (US): 53 (2019) · 72 (2023) · 105 (2024, Willow)  [google]
+  //   Zuchongzhi (CN sc): 66 (2021) · 105 (2025)               [zuchongzhi]
+  //   Jiuzhang (CN photonic): 76 (2020) · 3,050 (2025)         [talent, REPORTED]
   function quantumPanel(px) {
-    var py = 100, pw = 200, ph = 175;
-    var eLo = 1, eHi = 4, xLo = 2019.5, xHi = 2025.5;   // log decades 10^1..10^4
+    var py = 100, pw = 200, ph = 175, eLo = 1, eHi = 4, xLo = 2018.5, xHi = 2025.5;
     function X(y) { return r2(px + (y - xLo) / (xHi - xLo) * pw); }
     function Y(v) { return r2(py + (eHi - log10(v)) / (eHi - eLo) * ph); }
     var ops = frame(px, py, pw, ph);
     [1, 2, 3, 4].forEach(function (e) { ops.push({ t: "text", x: px - 6, y: Y(Math.pow(10, e)) + 3, anchor: "end", cls: "lf-tick", color: COL.axis, str: "10^" + e }); });
-    [2020, 2025].forEach(function (y) { ops.push({ t: "text", x: X(y), y: py + ph + 16, anchor: "middle", cls: "lf-tick", color: COL.axis, str: String(y) }); });
-    // supply-chain marks (trade press): Sept 2024 controls -> ~14 months domestic production
+    [2019, 2022, 2025].forEach(function (y) { ops.push({ t: "text", x: X(y), y: py + ph + 16, anchor: "middle", cls: "lf-tick", color: COL.axis, str: String(y) }); });
+    // supply-chain marks (trade press)
     ops.push({ t: "line", x1: X(2024.7), y1: py, x2: X(2024.7), y2: py + ph, color: COL.mark, w: 1, dash: "3 3" });
-    ops.push({ t: "text", x: X(2024.7), y: py - 4, anchor: "middle", cls: "lf-tick", color: COL.mark, str: "Sept 2024 controls · ~14 mo → ~10 mK domestic (trade press)" });  // [supplychain]
-    // Zuchongzhi qubits (up)
+    ops.push({ t: "text", x: X(2024.7), y: py - 4, anchor: "end", cls: "lf-tick", color: COL.mark, sa: 1, str: "Sept 2024 controls · ~14 mo → ~10 mK domestic (trade press)" });  // [supplychain]
+    // Google (US superconducting): 53 -> 72 -> 105
+    ops.push({ t: "path", d: "M" + X(2019) + " " + Y(53) + "L" + X(2023) + " " + Y(72) + "L" + X(2024) + " " + Y(105), color: COL.us, w: 2, dash: "5 4", marker: 1 });
+    ops.push({ t: "circle", x: X(2019), y: Y(53),  r: 5, fill: COL.us, detail: "2019 · Google Sycamore (US, superconducting): 53-qubit quantum-supremacy experiment." });
+    ops.push({ t: "circle", x: X(2023), y: Y(72),  r: 5, fill: COL.us, detail: "2023 · Google (US, superconducting): 72-qubit surface-code scaling result." });
+    ops.push({ t: "circle", x: X(2024), y: Y(105), r: 5, fill: COL.us, detail: "2024 · Google Willow (US, superconducting): 105 qubits — first peer-reviewed below-threshold surface-code memory." });
+    ops.push({ t: "text", x: X(2024) + 4, y: Y(105) - 6, anchor: "end", cls: "lf-tick", color: COL.us, str: "Google" });
+    // Zuchongzhi (CN superconducting): 66 -> 105
     ops.push({ t: "path", d: "M" + X(2021) + " " + Y(66) + "L" + X(2025) + " " + Y(105), color: COL.cn, w: 2, dash: "5 4", marker: 1 });
-    ops.push({ t: "circle", x: X(2021), y: Y(66), r: 5, fill: COL.cn, detail: "2021 · Zuchongzhi 66 qubits." });
-    ops.push({ t: "circle", x: X(2025), y: Y(105), r: 5, fill: COL.cn, detail: "2025 · Zuchongzhi 3.0: 105 qubits; sampling 6 orders beyond SYC-67/70 (PRL 2025)." });
-    ops.push({ t: "text", x: X(2025), y: Y(105) - 9, anchor: "end", cls: "lf-tick", color: COL.cn, str: "Zuchongzhi (qubits)" });
-    // Jiuzhang photons (up) — REPORTED
-    ops.push({ t: "path", d: "M" + X(2020) + " " + Y(76) + "L" + X(2025) + " " + Y(3050), color: COL.us, w: 2, dash: "5 4", marker: 1 });
-    ops.push({ t: "circle", x: X(2020), y: Y(76), r: 5, fill: COL.us, detail: "2020 · Jiuzhang 76 detected photons (reported)." });
-    ops.push({ t: "circle", x: X(2025), y: Y(3050), r: 5, fill: COL.us, detail: "2025 · Jiuzhang ~3,050 detected photons — fortyfold in five years (reported)." });
-    ops.push({ t: "text", x: X(2020) + 4, y: Y(76) - 8, anchor: "start", cls: "lf-tick", color: COL.us, str: "Jiuzhang (photons, reported)" });
-    ops.push({ t: "text", x: px, y: py + ph + 36, anchor: "start", cls: "lf-tick", color: COL.axis, str: "sampling 6 orders beyond SYC-67/70 (PRL 2025)" });  // [zuchongzhi]
+    ops.push({ t: "circle", x: X(2021), y: Y(66),  r: 5, fill: COL.cn, detail: "2021 · Zuchongzhi (China, superconducting): 66 qubits." });
+    ops.push({ t: "circle", x: X(2025), y: Y(105), r: 5, fill: COL.cn, detail: "2025 · Zuchongzhi 3.0 (China, superconducting): 105 qubits; sampling 6 orders beyond SYC-67/70 (PRL 2025). EC claim program-reported." });
+    ops.push({ t: "text", x: X(2025), y: Y(105) + 16, anchor: "end", cls: "lf-tick", color: COL.cn, str: "Zuchongzhi" });
+    // Jiuzhang (CN photonic, REPORTED): 76 -> 3,050
+    ops.push({ t: "path", d: "M" + X(2020) + " " + Y(76) + "L" + X(2025) + " " + Y(3050), color: COL.photon, w: 2, dash: "5 4", marker: 1 });
+    ops.push({ t: "circle", x: X(2020), y: Y(76),   r: 5, fill: COL.photon, detail: "2020 · Jiuzhang (China, photonic): 76 detected photons (reported)." });
+    ops.push({ t: "circle", x: X(2025), y: Y(3050), r: 5, fill: COL.photon, detail: "2025 · Jiuzhang (China, photonic): ~3,050 detected photons — fortyfold in five years (reported)." });
+    ops.push({ t: "text", x: X(2025), y: Y(3050) - 8, anchor: "end", cls: "lf-tick", color: COL.photon, str: "Jiuzhang (rep.)" });
     return { key: "quantum", header: "QUANTUM — published trajectories (log)", cx: px + pw / 2, ops: ops };
   }
 
@@ -140,7 +146,6 @@
     }
     return null;
   }
-
   function injectToggleStyle(doc) {
     if (!doc || !doc.getElementById || doc.getElementById("qc-race-toggle-style")) return;
     var st = doc.createElement("style"); st.id = "qc-race-toggle-style";
@@ -167,13 +172,18 @@
     mk.appendChild(el("path", { d: "M0 1L9 5L0 9z", fill: COL.axis })); defs.appendChild(mk); svg.appendChild(defs);
 
     var readout = doc.createElement("span"); readout.className = "lf-readout"; readout.setAttribute("aria-live", "polite");
+    var HINT = "Focus a panel; hover a point for its figure. Points as published — dashed arrows are reading guides, not data.";
     var groups = [];
     g.panels.forEach(function (P) {
       var gp = el("g", { "class": "lf-panel", "data-panel": P.key });
-      gp.appendChild(mkText(P.cx, 72, "middle", "lf-callout", COL.axis, P.header));
-      P.ops.forEach(function (op) { drawOp(gp, op, readout); });
+      gp.appendChild(mkText(P.cx, 72, "middle", "lf-callout lf-scale-with-art", COL.axis, P.header));
+      P.ops.forEach(function (op) { drawOp(gp, op, readout, HINT); });
       svg.appendChild(gp); groups.push(gp);
     });
+    // figure-level quantum key (always visible)
+    var gk = el("g", { "class": "lf-key" });
+    g.key.forEach(function (op) { drawOp(gk, op, readout, HINT); });
+    svg.appendChild(gk);
     container.appendChild(svg);
 
     var controls = doc.createElement("div"); controls.className = "lf-controls";
@@ -182,7 +192,6 @@
     var resetBtn = doc.createElement("button"); resetBtn.type = "button"; resetBtn.className = "lf-btn"; resetBtn.textContent = "Reset"; controls.appendChild(resetBtn);
     controls.appendChild(readout); container.appendChild(controls);
 
-    var HINT = "Focus a panel; hover a point for its figure. Points as published — dashed arrows are reading guides, not data.";
     var current = DEFAULT;
     function setMode(i) {
       current = (i < 0 || i > 2) ? DEFAULT : i;
@@ -194,24 +203,19 @@
     resetBtn.addEventListener("click", function () { setMode(DEFAULT); });
     setMode(DEFAULT);
 
-    var handle = { runtimeVersion: DossierFigures.FIGURES_RUNTIME_VERSION,
-      getState: function () { return { panel: current }; }, setMode: setMode };
+    var handle = { runtimeVersion: DossierFigures.FIGURES_RUNTIME_VERSION, getState: function () { return { panel: current }; }, setMode: setMode };
     container.__lfHandle = handle;
     return handle;
 
-    function mkText(x, y, anchor, cls, fill, str, rot) {
-      var t = el("text", { x: x, y: y, "text-anchor": anchor, fill: fill, "class": cls });
-      if (rot) t.setAttribute("transform", "rotate(" + rot + " " + x + " " + y + ")");
-      t.textContent = str; return t;
-    }
-    function drawOp(parent, op, readout) {
+    function mkText(x, y, anchor, cls, fill, str) { var t = el("text", { x: x, y: y, "text-anchor": anchor, fill: fill, "class": cls }); t.textContent = str; return t; }
+    function drawOp(parent, op, readout, HINT) {
       if (op.t === "line") { var l = el("line", { x1: op.x1, y1: op.y1, x2: op.x2, y2: op.y2, stroke: op.color, "stroke-width": String(op.w || 1) }); if (op.dash) l.setAttribute("stroke-dasharray", op.dash); parent.appendChild(l); }
       else if (op.t === "path") { var pa = el("path", { d: op.d, fill: "none", stroke: op.color, "stroke-width": String(op.w || 1) }); if (op.dash) pa.setAttribute("stroke-dasharray", op.dash); if (op.marker) pa.setAttribute("marker-end", "url(#race-arr)"); parent.appendChild(pa); }
       else if (op.t === "rect") { parent.appendChild(el("rect", { x: op.x, y: op.y, width: op.w, height: op.h, fill: op.fill, "fill-opacity": op.opacity })); }
-      else if (op.t === "circle") { var c = el("circle", { cx: op.x, cy: op.y, r: String(op.r), fill: op.fill, stroke: "#fff", "stroke-width": "1.5" }); if (op.detail) attachDetail(c, op.detail, readout); parent.appendChild(c); }
-      else if (op.t === "text") { parent.appendChild(mkText(op.x, op.y, op.anchor, op.cls, op.color, op.str, op.rot)); }
+      else if (op.t === "circle") { var c = el("circle", { cx: op.x, cy: op.y, r: String(op.r), fill: op.fill, stroke: "#fff", "stroke-width": "1.5" }); if (op.detail) attachDetail(c, op.detail, readout, HINT); parent.appendChild(c); }
+      else if (op.t === "text") { var t = el("text", { x: op.x, y: op.y, "text-anchor": op.anchor, fill: op.color, "class": op.cls + (op.sa ? " lf-scale-with-art" : "") }); t.textContent = op.str; parent.appendChild(t); }
     }
-    function attachDetail(node, detail, readout) {
+    function attachDetail(node, detail, readout, HINT) {
       node.setAttribute("tabindex", "0"); node.setAttribute("role", "img"); node.setAttribute("aria-label", detail); node.style.cursor = "pointer";
       var show = function () { readout.textContent = detail; }, clear = function () { readout.textContent = HINT; };
       node.addEventListener("mouseenter", show); node.addEventListener("mouseleave", clear);
@@ -219,17 +223,18 @@
     }
   }
 
-  // ===== POSTER (pure string; all three panels full opacity, static) =====
+  // ===== POSTER (pure string; all panels + key, static) =====
   function renderQCRacePosterSVG() {
     var g = computeRace();
     var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" class="lf-svg" role="img" aria-label="' + escAttr(g.ariaLabel) + '">';
     s += '<defs><marker id="race-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="' + COL.axis + '"></path></marker></defs>';
     g.panels.forEach(function (P) {
       s += '<g class="lf-panel" data-panel="' + P.key + '">';
-      s += textS(P.cx, 72, "middle", "lf-callout", COL.axis, P.header);
+      s += textS(P.cx, 72, "middle", "lf-callout", COL.axis, P.header, 1);
       P.ops.forEach(function (op) { s += opS(op); });
       s += '</g>';
     });
+    s += '<g class="lf-key">'; g.key.forEach(function (op) { s += opS(op); }); s += '</g>';
     s += '</svg>';
     return s;
   }
@@ -238,11 +243,11 @@
     if (op.t === "path") return '<path d="' + op.d + '" fill="none" stroke="' + op.color + '" stroke-width="' + (op.w || 1) + '"' + (op.dash ? ' stroke-dasharray="' + op.dash + '"' : '') + (op.marker ? ' marker-end="url(#race-arr)"' : '') + '></path>';
     if (op.t === "rect") return '<rect x="' + op.x + '" y="' + op.y + '" width="' + op.w + '" height="' + op.h + '" fill="' + op.fill + '" fill-opacity="' + op.opacity + '"></rect>';
     if (op.t === "circle") return '<circle cx="' + op.x + '" cy="' + op.y + '" r="' + op.r + '" fill="' + op.fill + '" stroke="#fff" stroke-width="1.5"></circle>';
-    if (op.t === "text") return textS(op.x, op.y, op.anchor, op.cls, op.color, op.str, op.rot);
+    if (op.t === "text") return textS(op.x, op.y, op.anchor, op.cls, op.color, op.str, op.sa);
     return "";
   }
-  function textS(x, y, anchor, cls, fill, str, rot) {
-    return '<text class="' + cls + '" x="' + r2(x) + '" y="' + r2(y) + '" text-anchor="' + anchor + '" fill="' + fill + '"' + (rot ? ' transform="rotate(' + rot + ' ' + r2(x) + ' ' + r2(y) + ')"' : '') + '>' + escTxt(str) + '</text>';
+  function textS(x, y, anchor, cls, fill, str, sa) {
+    return '<text class="' + cls + (sa ? " lf-scale-with-art" : "") + '" x="' + r2(x) + '" y="' + r2(y) + '" text-anchor="' + anchor + '" fill="' + fill + '">' + escTxt(str) + '</text>';
   }
 
   DossierFigures.renderQCRace = renderQCRace;

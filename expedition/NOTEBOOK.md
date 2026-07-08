@@ -247,3 +247,14 @@ k1/k2=1e-03: p_idle=1.10e-02 p_cx_ctrl=2.55e-02 p_cx_tgt=5.50e-03 p_zz=5.50e-03
 
 All grid points inside the same-order corridor on the canonical stack -> OPEN-6 PASS.
 Calibration protocol steps 1-4 complete; the evaluator is cleared to referee candidate codes.
+
+## Day 2 (continued) -- Campaign 1 pre-registration (BEFORE any search run)
+
+Priors and signposts for the first circuit-level search campaign are frozen in
+expedition/PREREG_search1.md and committed before the search harness runs any
+candidate -- the Ch3 pattern applied to the expedition itself: the bets provably
+predate the findings. Author-judged priors: P1 (Day-1 [[42,3]] survives circuit
+level) 35%; P2 (some code beats repetition >= 2x at matched budget, w <= 4) 55%;
+P3 (LLM seed family reaches leaderboard top-3) 40%; P4 (stretch: <= 10 q/logical
+at eps_L <= 1e-8, beating Ruiz CA overhead at lower weight) 20%. All resolve by
+2026-07-31 against the campaign's own published outputs, hits and misses alike.

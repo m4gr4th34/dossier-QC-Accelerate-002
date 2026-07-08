@@ -6,13 +6,13 @@ active: dossier.html
 -->
 <!--slot:body-->
 <div class="statusbar">
-    <span class="chip"><span class="dot t"></span>avenues&nbsp;<b>10 surveyed</b></span>
-    <span class="chip"><span class="dot v"></span>forecasts&nbsp;<b>5 (all signposted)</b></span>
-    <span class="chip"><span class="dot g"></span>citations&nbsp;<b>19 verified · 7 flagged</b></span>
-    <span class="chip"><span class="dot o"></span>red team&nbsp;<b>5 resolved · 3 open</b></span>
+    <span class="chip"><span class="dot t"></span>avenues&nbsp;<b>7 (4 scored · 3 forecast)</b></span>
+    <span class="chip"><span class="dot v"></span>forecasts&nbsp;<b>3 (all signposted)</b></span>
+    <span class="chip"><span class="dot g"></span>citations&nbsp;<b>6 verified · 5 preprint</b></span>
+    <span class="chip"><span class="dot o"></span>red team&nbsp;<b>5 resolved · 4 open</b></span>
   </div>
 
-<p class="lede"><b>Chapter 3 places bets; this page shows the receipts.</b> Every avenue on the front door stands on the sources audited below — nineteen verified against primaries or triangulated, seven carried at preprint or vendor grade and labeled so. The red-team section leads with the finding that stings most: this audit page itself shipped as unfilled template scaffolding in both sealed chapters. The seals are immutable; the miss is recorded here instead of hidden.</p>
+<p class="lede"><b>Chapter 4 runs the loop; this page shows the receipts.</b> The front door's result rests on a circuit-level evaluator calibrated to published hardware, eleven sources audited below, and twenty-nine machine-checked consistency numbers. The red-team section leads with the caveat that matters most — every number here grades a validated model, not a chip — and then publishes the ten errors the machinery caught while building itself, because a loop that cannot catch its own mistakes cannot be trusted to catch nature's.</p>
 
 <!-- ============================================================
      SURVEY-shaped audit trail. For a survey the citation audit is
@@ -36,44 +36,49 @@ active: dossier.html
   <h2>Red-team findings</h2>
   <p class="lede">A hostile pass over the finished survey, published with it. Resolved findings were fixed before launch; open findings are stated as caveats in the avenues themselves.</p>
 
-  <details class="finding resolved">
-    <summary><span class="tag res">RESOLVED</span>This audit page shipped as template scaffolding — twice</summary>
-    <div class="body">The sealed v1.0.0 and v2.0.0 audit trails carry literal placeholder count chips, the template's example findings, and placeholder citation rows. The honesty gate never fired because those strings are not sentinel tokens — a gate gap now flagged upstream to the template. The seals are immutable and stay as they are; this working draft is the first edition whose audit trail is real, and the miss is published here as the lead finding. Armor, not embarrassment.</div>
+  <details class="finding resolved" open>
+    <summary><span class="tag res">RESOLVED</span>Every number here grades a model, not a chip</summary>
+    <div class="body">The winning code, the one-quarter error ratio, the whole severity map — all are measured inside a circuit-level simulator calibrated to Amazon's Ocelot chip, not on hardware. The label "a model-level result, not a hardware demonstration" rides with the claim on the front door, in the figures, and in the ledger. The evaluator earned that license: it closes on three independently measured Ocelot numbers with no fitting, and matches an independent group's published simulation at twelve of twelve grid points, within about 25% at the operating point. But a validated model is still a model. Stated as the lead finding, not buried at the bottom.</div>
   </details>
 
   <details class="finding resolved">
-    <summary><span class="tag res">RESOLVED</span>Catches from the first two cycles, recorded here for the first time</summary>
-    <div class="body">Because this page was scaffolding, earlier catches were never published on it. For the record: eq. 1's exponent (the coherent-state overlap is e^(-2n-bar), not the squared form) was caught at review before the Chapter 1 seal; a jq default-operator bug that silently swallowed a boolean false in the freeze workflow was found here and fixed upstream (template 8090ff5); the frozen-page DOI chip was clobbering an honest "not DOI-archived" with a generic fallback, caught by the author and fixed upstream (template 6cfdf37); and the v2.0.0 release title leaked verbatim into the lineage title, corrected in-place. The gates caught the authors as often as the sources.</div>
+    <summary><span class="tag res">RESOLVED</span>The instrument reads 1.2-2x optimistic in absolute terms — disclosed, and cancelled in ratios</summary>
+    <div class="body">Against the same independent published fit, the evaluator sits 1.2-2x low on absolute logical error. Every quantitative conclusion in the chapter is therefore a same-instrument ratio, where the shared optimism cancels; absolute numbers are labeled as such. The tilt is disclosed on the front door and here rather than smoothed away.</div>
   </details>
 
   <details class="finding resolved">
-    <summary><span class="tag res">RESOLVED</span>Recon corrected the working evidence bank before claims were carded</summary>
-    <div class="body">Two precision errors were caught between note-taking and carding: the neutral-atom 96-logical result was dated by its announcement (Nov 2025) rather than its Nature publication (Jan 2026), and the trapped-ion "94/48" pair was being read as two corrected counts when it is 94 error-DETECTED versus 48 error-CORRECTED — a distinction trade press blurs and this chapter states explicitly. Both fixed before the cards were written.</div>
+    <summary><span class="tag res">RESOLVED</span>The loop turned once — a proof of principle, not a search</summary>
+    <div class="body">This chapter ran a single propose-refute-repair pass over a small, hand-seeded candidate bank: the scoring is automated, the proposals were human/LLM-guided. It shows the loop closes and yields a checkable result; it does not exhaust the code space or claim optimality. Framed as a proof of principle in the chapter's first section, with an automated many-generation search named as the next chapter's work — so the reach of the claim matches what was actually run.</div>
   </details>
 
   <details class="finding resolved">
-    <summary><span class="tag res">RESOLVED</span>A figure's "cited" tags outran the chapter's own citations — caught pre-commit</summary>
-    <div class="body">Fig 2's Hefei cells rested on three sources (the Zuchongzhi PRL line, the ChemAgents robotic chemist, the cryo supply chain) that were cited only in sealed Chapter 2 — so the cell tag "cited" would have been untrue within this chapter, against the readable-in-full rule. The executor caught it at the diff gate, before the commit; the fix cites all three fresh in this chapter's cards, audit table, and ledger. The review points up as well as down.</div>
+    <summary><span class="tag res">RESOLVED</span>Ten of the machinery's own errors — caught, credited, published (E1-E10)</summary>
+    <div class="body">E1 a phantom build environment; E2 reading the published logical error as a sum when the paper defines it as an average; E3 an amplitude-pinned fit biased about 2x low; E4 a corridor observable taken before the n-th root; E5 a fetch-summarizer's wrong arithmetic on a quoted formula; E6 an evaluator that tracked only one of several logical observables; E7 an imprecise pre-run preview sentence; E8 a cross-depth comparison flattered by boundary effects (below); E9 a one-character drift in a handoff, caught by a byte guard; E10 a straight apostrophe that broke a figure caption's JSON on the first bake. Each was caught by the discipline built for exactly that failure, each is credited to its catcher in the expedition notebook. The errors are half the value.</div>
   </details>
 
   <details class="finding resolved">
-    <summary><span class="tag res">RESOLVED</span>The chapter’s red team ran — two transcription-grade catches, both the author’s</summary>
-    <div class="body">A hostile pass swept every percentage, date, and headline literal across prose, cards, ledger, and both figures — consistent throughout — and audited the six cite cards restated from the sealed record against the sealed bytes. Two catches, both introduced in restatement: the incumbent-line card had dropped the 2023 paper’s DOI carried by the sealed, verified identity (restored); and section 04’s nine-billion-dollar figure for the park rode without card or ledger backing (now pinned — Bloomberg, Apr 2025; groundbreaking coverage — and carried in the iqmp card and ledger C13). The mechanical checker also produced one false positive of its own (hunting digits where the prose spells numbers out), recorded here so the tooling’s limits stay on the page too.</div>
+    <summary><span class="tag res">RESOLVED</span>A depth artifact nearly produced a wrong verdict — now a standing rule</summary>
+    <div class="body">An early cross-code comparison put a sixteen-round candidate against an eight-round comparator. Boundary effects flatter shorter runs (measured: repetition-7 at 16 rounds vs 8 rounds = 1.23), which would have inflated the win. Caught, diagnosed, and closed by re-running depth-matched — and promoted to a standing rule: every cross-code comparison in this chapter runs both codes at matched depth on the same instrument. The verdict that survived is the depth-matched one.</div>
   </details>
 
   <details class="finding">
-    <summary><span class="tag open">OPEN</span>Six sources ride at preprint or vendor grade, tracked by name</summary>
-    <div class="body">The ML-synthesis result (arXiv 2510.22121), the silicon-modeling counterweight (arXiv 2501.17240), and the Helios system paper (arXiv 2511.05465) are preprints; the iceberg logical-qubit result, the four-nines gate, and the Magne roadmap are company-authored. All six are labeled at their provenance grade on the cards and in the ledger; several entry signposts are keyed precisely to their peer-reviewed publication. Closes as each publishes — or fails to.</div>
+    <summary><span class="tag open">OPEN</span>The GM gate-channel constants are not yet byte-verified against the source PDF</summary>
+    <div class="body">The high-bias gate model uses the CNOT error channel from Guillaud &amp; Mirrahimi (PRX 9, 041053); the numerical constants are carried from the published form but not yet re-derived against the PDF byte-for-byte (OPEN-7). The chapter's comparative conclusions rest on same-instrument ratios and are insensitive to a constant prefactor, but the absolute high-bias numbers would move if a constant is off. Closes on the PDF verification pass.</div>
   </details>
 
   <details class="finding">
-    <summary><span class="tag open">OPEN</span>Nord Quantique's bosonic line is unpinned and therefore absent</summary>
-    <div class="body">The beyond-break-even single-mode claim and the multimode GKP work are known to the author only through secondaries. Rather than card them at a grade they haven't earned, the bosonic card carries Ocelot alone until a primary is pinned. Deliberate exclusion, not oversight.</div>
+    <summary><span class="tag open">OPEN</span>kappa-2 is not yet pinned from the Ocelot appendices</summary>
+    <div class="body">The high-bias operating point uses the theory loss-to-stabilization ratio kappa-1/kappa-2 = 1e-4; the chip's own two-photon stabilization rate has not yet been extracted from the Ocelot supplementary material (OPEN-1). The operating point is labeled as the search target, not a measured chip value — stated, not hidden.</div>
   </details>
 
   <details class="finding">
-    <summary><span class="tag open">OPEN</span>The private-funding figure stays out of the chapter</summary>
-    <div class="body">A widely repeated ~$4B raised across 1-3Q 2025 for quantum companies remains unpinned to a checkable source and is deliberately absent from prose, cards, and ledger. Enters only when pinned.</div>
+    <summary><span class="tag open">OPEN</span>Five 2026-era code-search papers ride at preprint grade</summary>
+    <div class="body">He &amp; Liu, the IBM LLM-guided search, Liu &amp; Marquardt, the Bayesian-optimization search, and Benito et al. are arXiv preprints, flagged in the citation table. They establish the prior-art landscape — that published AI code search grades at code capacity — rather than carrying any load-bearing number here; each closes as it peer-reviews, or fails to.</div>
+  </details>
+
+  <details class="finding">
+    <summary><span class="tag open">OPEN</span>One prior-art noise-model quote is not yet verbatim-confirmed</summary>
+    <div class="body">The Bayesian-optimization paper's noise-model statement is summarized, not yet quoted verbatim from the source; its cite card carries this as open. The seam claim it supports — that AI search and honest circuit-level grading had not previously met — is triangulated across the other four preprints and the one circuit-level counterexample (Benito et al.), not resting on this one source alone.</div>
   </details>
 </section>
 
@@ -88,7 +93,7 @@ active: dossier.html
     <li><b>Mechanical verification</b><span>Consistency checks recomputed by script; every citation checked. Fail = fix the paper, never the tolerance.</span></li>
     <li><b>Adversarial review</b><span>Fresh AI sessions briefed as hostile referees. Findings published RESOLVED or OPEN.</span></li>
     <li><b>Human review</b><span>Consistency and reality checks on end results. Per-claim waiver allowed — at exactly one price: the label tells the truth.</span></li>
-    <li><b>Publication</b><span>Repo live → GitHub Pages → OpenTimestamps anchor (auto) → sealed no-DOI by choice: doi_archived false, empty DOI strings, honest absence → community review via issues.</span></li>
+    <li><b>Publication</b><span>Repo live → GitHub Pages → OpenTimestamps anchor (auto) on every release → archival milestones additionally Zenodo-DOI'd (this chapter is the dossier's first) → community review via issues.</span></li>
   </ol>
 </section>
 
@@ -156,37 +161,22 @@ active: dossier.html
 //               not independently reproduced — provenance, not a pass)
 // ---------------------------------------------------------------
 const cites = [
-  ["jiang", "Jiang et al. — Adv. Intelligent Systems (2026), DOI 10.1002/aisy.202501082", "V"],
-  ["laserwrite", "Chen et al. — Optica 6, 662-667 (2019)", "V"],
-  ["jhuria", "Jhuria et al. — Nat. Commun. 15, 4497 (2024), DOI 10.1038/s41467-024-48714-2", "V"],
-  ["abobeih", "Abobeih et al. — Nature 606, 884-889 (2022), DOI 10.1038/s41586-022-04819-6", "V"],
-  ["deleon", "de Leon et al. — Science 372, eabb2823 (2021)", "V"],
-  ["tls", "Mueller, Cole & Lisenfeld — Rep. Prog. Phys. 82, 124501 (2019)", "V"],
-  ["place", "Place et al. — Nat. Commun. 12, 1779 (2021)", "T"],
-  ["burger", "Burger et al. — Nature 583, 237-241 (2020)", "V"],
-  ["queraqldpc", "Harvard / MIT / QuEra — Nature (2026), DOI 10.1038/s41586-025-09848-5", "V"],
-  ["queramsd", "Harvard / MIT / QuEra — Nature (2025), DOI 10.1038/s41586-025-09367-3", "V"],
-  ["bluvstein", "Bluvstein et al. — Nature 626, 58-65 (2024)", "V"],
-  ["ocelot", "Putterman et al. — Nature 638, 927-934 (2025), DOI 10.1038/s41586-025-08642-7", "V"],
-  ["ch1v1", "This dossier, Chapter 1 — v1.0.0, OpenTimestamped, not DOI-archived (2026)", "V"],
-  ["google", "Arute et al.; Google Quantum AI — Nature 574, 505 (2019); 614, 676 (2023); 638, 920 (2024)", "V"],
-  ["majorana", "Microsoft Azure Quantum — Nature 638, 651-655 (2025); Legg critique + Reply — Nature (2026)", "V"],
-  ["nqi", "congress.gov S.3597 / H.R.8462; AIP FYI tracker (2026)", "V"],
-  ["iqmp", "Illinois EPA IQMP record; Commerce Dept. (May 2026); Capitol News Illinois (2024-2026)", "T"],
-  ["mldiamond", "ML-steered diamond synthesis — arXiv 2510.22121 (2025), publication status tracked", "F"],
-  ["siliconmodel", "Laser-activated Si color centers, end-to-end modeling — arXiv 2501.17240 (2025)", "F"],
-  ["helios", "Ransford et al., Quantinuum — arXiv 2511.05465 (2025)", "F"],
-  ["iceberg", "Quantinuum — company preprint (Mar 2026): 94 detected / 48 corrected logical", "R"],
-  ["ionq99", "IonQ / Oxford Ionics — technical release + preprint (Oct 2025): 8.4e-5 two-qubit error", "R"],
-  ["magne", "QuNorth / Microsoft / Atom Computing — vendor roadmap + acquisition records (2025-2026)", "R"],
-  ["zuchongzhi", "Gao et al. — Phys. Rev. Lett. 134, 090601 (2025), DOI 10.1103/PhysRevLett.134.090601", "V"],
-  ["chemagents", "ChemAgents, USTC / Hefei National Laboratory — J. Am. Chem. Soc. 147, 12534-12545 (2025), DOI 10.1021/jacs.4c17738", "V"],
-  ["supplychain", "RUSI; Rev. Sci. Instrum. (Dec 2025); trade press — domestic dilution-fridge build-out, reported grade", "R"],
+  ["ocelot", "Putterman et al. — Nature 638, 927-934 (2025), DOI 10.1038/s41586-025-08642-7; data DOI 10.5281/zenodo.14257632 — the noise-model anchor", "V"],
+  ["gm2019", "Guillaud & Mirrahimi — PRX 9, 041053 (2019), arXiv 1904.09474 — the high-bias gate channel (constants pending byte-check, OPEN-7)", "V"],
+  ["ruiz", "Ruiz et al. — Nat. Commun. 16, 1040 (2025), DOI 10.1038/s41467-025-56298-8 — the frontier benchmark and corridor fit", "V"],
+  ["nautrup", "Nautrup et al. — Quantum 3, 215 (2019), arXiv 1812.08451 — RL code search, code-capacity", "V"],
+  ["olle", "Olle et al. — npj Quantum Information 10 (2024), DOI 10.1038/s41534-024-00920-y, arXiv 2311.04750 — noise-aware RL, error-free encoding assumed", "V"],
+  ["roffe", "Roffe et al. — Quantum 7, 1005 (2023), arXiv 2202.01702 — bias-tailored qLDPC theory context", "V"],
+  ["heliu", "He & Liu — arXiv 2502.14372 (2025) — weight-constrained RL code search, code-capacity", "F"],
+  ["ibmllm", "Cruz-Benito et al., IBM — arXiv 2606.02418 (2026) — LLM-guided bicycle-code search, code-capacity", "F"],
+  ["liumarq", "Liu & Marquardt — arXiv 2606.24808 (2026) — LLM qLDPC discovery, code-capacity depolarizing", "F"],
+  ["bayesopt", "Bayesian-optimization code discovery — arXiv 2601.18562 (2026) — identity verified; noise-model quote pending", "F"],
+  ["benito", "Benito, Velazquez-Resendiz & Bermudez — arXiv 2606.17709 (2026) — circuit-level bias-tailored codes; independent corroboration of the first miss", "F"],
 ];
 const lab = {
   V: ["VERIFIED — primary source", "v"],
   T: ["VERIFIED — triangulated \u00d73", "v"],
-  F: ["FLAGGED — check before submission", "fl"],
+  F: ["FLAGGED — preprint, closes on peer review", "fl"],
   R: ["REPORTED — interested party, not independent", "rp"]
 };
 document.getElementById('cites').innerHTML = cites.map((c, i) =>

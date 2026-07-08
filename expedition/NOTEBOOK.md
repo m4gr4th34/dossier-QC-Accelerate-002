@@ -322,3 +322,25 @@ S1 OCELOT LEG (calibrated reality check) -- transmon mode, p_m=0.0478 (FITTED), 
 
 S1 complete. P1 adjudication happens in the strategy room against PREREG_search1.md; hits and misses both publish.
 ```
+
+## Day 2 (continued) -- P1 resolved: FALSE (published miss)
+
+P1 (prior 35%, frozen at commit 3255fb9) resolves FALSE against its criterion:
+at the S1 primary point the Day-1 [[42,3]] headline sits ~1.1e5 above the
+matched-budget repetition comparator -- not within 2x. Full resolution text in
+PREREG_search1.md's resolution log; canonical numbers in the S1 entry above.
+
+Forecaster calibration, on the record: the 35% prior overweighted the
+code-capacity signal and underweighted the operating-point mismatch (the
+headline was found at eta = 30-100; the primary point is effectively eta ~
+1e7). The information was available at prereg time in Day-1's own R3 bias map;
+the forecast failed to propagate it. Noted for the next round of priors.
+
+What the miss bought: the expensive referee's first two durable findings --
+X-only extraction is the only sane mode at high bias (full-CSS pays ~54x for
+guarding a ~1e-9 bit floor), and the Day-1 headline now carries its honest
+circuit-level label (moderate-bias, code-capacity grade; not a high-bias
+architecture candidate). S2 proceeds with X-only extraction first-class and
+classical-LDPC-seeded candidates in the arena, per the pre-run note. The
+dossier's loop thesis worked as designed: cheap model proposes, expensive
+model disposes, and pre-registration makes the disposal creditable.

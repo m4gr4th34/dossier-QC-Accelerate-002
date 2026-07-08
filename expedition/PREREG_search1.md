@@ -61,3 +61,26 @@ is tighter and our search space smaller. P3 -- Day-1 evidence mixed: referee
 rejected 2 of 4 LLM hypotheses, champion was handcrafted. P4 -- a real long
 shot; the weight cap is the hard constraint; a TRUE here is a publishable
 structural result.
+
+## Resolution log
+
+**P1 -- RESOLVED FALSE (2026-07-07; canonical S1 run at commit 721a9b4).**
+Criterion: [[42,3]] per-logical error within 2x of the best matched-budget k=1
+comparator at the S1 primary point (GM, kappa_1/kappa_2 = 1e-4, nbar = 11; point
+clarified pre-run in the anti-self-serving direction, NOTEBOOK Day-2). Measured:
+[[42,3]] X-only (22 q/logical) = 2.92e-4 vs rep-11 (21 q/logical,
+corridor-validated FIT) = 2.74e-9 -> ratio ~1.1e5. FALSE by five orders of
+magnitude; the disclosed ~1.2-2x instrument optimism is immaterial at this gap.
+The Ocelot calibrated leg is directionally consistent: no matched-budget
+advantage at today's measured hardware either, once the FITTED p_m = 0.0478 and
+the bit sector are priced in. The prior was 35%; the miss publishes with the
+same prominence a hit would have received.
+
+What the miss established: (1) the Day-1 [[42,3]] headline is a MODERATE-BIAS,
+code-capacity artifact -- found at eta = 30-100, correct there, drowned at the
+GM point's effective bias ~1e7 where repetition thrives. This is Day-1's own R3
+lesson (optimal dx -> 1 as eta rises) writ large, now measured at circuit level.
+(2) Full-CSS extraction is crushed under GM gates (~54x for [[42,3]]; the
+Z-check-on-data non-adiabatic tax), so X-only extraction is promoted to
+first-class in S2 -- a consequence flagged in the NOTEBOOK before the canonical
+run. P2, P3, and P4 remain OPEN pending S2/S3.

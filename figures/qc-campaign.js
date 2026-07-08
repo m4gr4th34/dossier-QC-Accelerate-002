@@ -66,7 +66,7 @@
     function ci(x, y, r, fill) { d.push({ k: "circle", x: x, y: y, r: r, fill: fill }); }
 
     tx(W / 2, 40, "middle", "lf-callout lf-scale-with-art", COL.ink, "FOUR PUBLIC BETS, TWO HITS, TWO MISSES");
-    tx(W / 2, 64, "middle", "lf-tick lf-scale-with-art", COL.axis, "all frozen before the search ran; all scored the same day against the frozen criteria; misses published like hits");
+    tx(W / 2, 64, "middle", "lf-tick lf-scale-with-art", COL.axis, "read left to right: each bet starts hollow with its pre-registered probability, and ends filled — green if it came true, coral if it did not");
 
     // column headers
     tx(LX, 108, "middle", "lf-axis lf-scale-with-art", COL.ink, "FROZEN 2026-07-07");
@@ -102,10 +102,10 @@
     });
 
     // ledger strip: E1-E9
-    var ly = 470, lx0 = 250;
+    var ly = 470, lx0 = 190;
     for (var i = 0; i < 9; i++) ci(lx0 + i * 26, ly, 5, COL.ink);               // [ledger E1-E9, NOTEBOOK @ cac735c]
     tx(lx0 + 9 * 26 + 8, ly + 4, "start", "lf-tick lf-scale-with-art", COL.ink,
-       "E1-E9: nine of the machinery's own errors — caught, credited, published. Half the value.");
+       "E1-E9: nine of the machinery's own errors — caught, credited, published.");
     tx(lx0 - 12, ly + 4, "end", "lf-tick lf-scale-with-art", COL.axis, "the error ledger:");
 
     return { W: W, H: H, list: d,

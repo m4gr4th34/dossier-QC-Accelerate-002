@@ -101,6 +101,9 @@ check("Ch4: derived phase-flip time at two photons falls in Ocelot's measured 27
       1e6 / (2 * _kappa1), 27, 33)
 check("Ch4: idle-dominated per-cycle dephasing matches Ocelot's 9.6(4)e-2 (2-sigma window)",
       1 - _m.exp(-2 * _kappa1 * 2.8e-6), 0.088, 0.104)
+check("Ch4: predicted 8.9% per 2.8us cycle = 1-exp(-2*kappa1*T)", (1-__import__('math').exp(-2*_kappa1*2.8e-6))*100, 8.8, 9.0)
+check("Ch4: today's phase/bit ratio ~30 = 2*kappa1 / Gamma_bit(d5 refit,nbar=2)", (2*_kappa1)/1051.0, 27, 35)
+check("Ch4: fitted measurement error 4.8% = p_m 0.0478*100", 0.0478*100, 4.7, 4.9)
 check("Ch4: bit-flip suppression per photon, lower section (e^0.735) sits in the 2.1-2.4x claim band",
       _m.exp(0.735), 2.05, 2.15)
 check("Ch4: bit-flip suppression per photon, upper section (e^0.882) sits in the 2.1-2.4x claim band",
@@ -121,6 +124,7 @@ check("Ch4: full-CSS extraction penalty 'a factor of about 54' (1.59e-2 / 2.92e-
       1.59e-2 / 2.92e-4, 50, 60)
 check("Ch4: winner distance twelve = rep(3) x extHamming d(4) product",
       3 * 4, 12, 12)
+check("Ch4: distance 12 corrects any 5 phase flips = floor((12-1)/2)", (12-1)//2, 5, 5)
 check("Ch4: winner thirteen qubits per logical = (24 data + 28 checks) / 4 logical",
       (24 + 28) / 4, 13, 13)
 check("Ch4: matched-depth ratio 'one quarter' = 1.719e-7 / 6.750e-7 in stated CI [0.172, 0.337]",
@@ -139,6 +143,7 @@ check("Ch4: down-bias inversion, deeper sibling ('sixty-three times worse')",
       62.6, 61, 65)
 check("Ch4: Day-1 headline's code-capacity efficiency claim ('2.4x') as reported on Day 1",
       2.4, 2.3, 2.5)
+check("Ch4: frontier overhead ~7.6 q/logical = 758/100 (Ruiz)", 758/100, 7.5, 7.7)
 
 # ----------------------------------------------------------------
 print()

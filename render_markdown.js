@@ -244,7 +244,14 @@ function renderMarkdown() {
         return /^<p class="punch"/.test(blk.html) ? '*' + txt + '*' : txt;
       }
       case 'details': return renderDetails(blk.html);
-      case 'div': return renderCallout(blk.html);
+      case 'div': {
+        // A top-level display equation (<div class="eq" data-tex="...">) projects to a fenced
+        // ```math block with the LaTeX body verbatim — same emission as the in-<details> eq path,
+        // so verify_projection's math atom (the data-tex) is present in the markdown haystack too.
+        const eqm = blk.html.match(/^<div class="eq" data-tex="([^"]*)"/);
+        if (eqm) return '```math\n' + decodeEntities(eqm[1]) + '\n```';
+        return renderCallout(blk.html);
+      }
       case 'figure': return renderFigure(blk.html);
     }
     return die('unhandled block type ' + blk.t);

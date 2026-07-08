@@ -1,0 +1,6 @@
+# Canonical expedition stack (NOTEBOOK.md reproducibility policy). Python 3.12.13.
+# Rebuild: python3.12 -m venv <dir> && pip install -r expedition/requirements-canonical.txt
+numpy==2.5.1
+ldpc==2.4.1
+stim==1.16.0
+pymatching==2.4.0

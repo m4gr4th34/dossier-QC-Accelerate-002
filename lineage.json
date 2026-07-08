@@ -32,6 +32,17 @@
       "concept_doi": "",
       "path": "chapters/v3.0.0/",
       "doi_archived": false
+    },
+    {
+      "n": 4,
+      "tag": "v4.0.0",
+      "title": "Chapter 4 -- The loop eats first",
+      "summary": "An AI-driven search for cat-qubit outer codes, refereed at circuit level against Amazon's published Ocelot chip. Four pre-registered bets: two hit, two missed. The measured, model-level lesson -- codes must match their bias regime -- plus the explicit winning [24,4,12] code, a reproducibility section, and a ten-entry ledger of the machinery's own caught errors. A proof of principle (the loop turned once), not a hardware demonstration.",
+      "released": "2026-07-08",
+      "version_doi": "",
+      "concept_doi": "",
+      "path": "chapters/v4.0.0/",
+      "doi_archived": false
     }
   ]
 }

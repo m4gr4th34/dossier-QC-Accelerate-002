@@ -1,0 +1,67 @@
+{
+  "avenues": [
+    {
+      "name": "Scored: the Day-1 headline survives circuit level",
+      "thesis": "Frozen at 35% before the search ran: the best code-capacity discovery ([[42,3]] hypergraph product, 2.4x qubit-efficient at moderate bias) survives the circuit-level referee within 2x of budget-matched repetition. It lost by five orders of magnitude -- a moderate-bias code drowned at the high-bias operating point. The miss is the chapter's first structural lesson.",
+      "status": "SCORED: FALSE",
+      "forecast": null,
+      "signpost": "resolved 2026-07-07 against the frozen criterion (PREREG_search1.md), 24 days ahead of the 2026-07-31 signpost date",
+      "cites": ["ocelot", "ruiz"]
+    },
+    {
+      "name": "Scored: a searched code beats repetition 2x",
+      "thesis": "Frozen at 55%: some searched code beats strict budget-matched repetition by 2x per logical under circuit-level noise at weight-4 checks. Resolved TRUE by rep3 x extended-Hamming [24,4,12] -- 13 qubits per logical, matched-depth same-instrument ratio 0.255 (CI 0.172-0.337) -- surviving fresh-seed, adversarial-decoder, and depth re-checks. Model-level result, not a hardware demonstration.",
+      "status": "SCORED: TRUE",
+      "forecast": null,
+      "signpost": "resolved 2026-07-07 against the frozen criterion; scope label carried in-sentence wherever stated",
+      "cites": ["ruiz", "gm2019"]
+    },
+    {
+      "name": "Scored: the LLM layer earns a podium place",
+      "thesis": "Frozen at 40%: an LLM-layer seed reaches the final leaderboard's top three. Resolved TRUE -- the winner itself is LLM-layer, with footnotes carried: the proposing agent played against its own mechanical referee, and the winning family was built from the referee's kill of the proposer's first family (a one-line structural distance ceiling, caught before any Monte-Carlo).",
+      "status": "SCORED: TRUE",
+      "forecast": null,
+      "signpost": "resolved 2026-07-07; footnotes published with the claim, not beneath it",
+      "cites": ["ibmllm", "liumarq"]
+    },
+    {
+      "name": "Scored: the stretch target",
+      "thesis": "Frozen at 20%: a searched weight-4 code matches the published cellular-automaton overhead (10 or fewer qubits per logical at 1e-8). Resolved FALSE -- the winning family's overhead grows with distance and nothing found approaches the bar. The stretch was a stretch; the frontier's overhead stands unmatched at this weight cap.",
+      "status": "SCORED: FALSE",
+      "forecast": null,
+      "signpost": "resolved 2026-07-07 against the frozen criterion; no labeled extrapolation could rescue it and none was used",
+      "cites": ["ruiz"]
+    },
+    {
+      "name": "Forward: low-weight codes reach the frontier overhead",
+      "thesis": "Someone publishes a weight-4-or-less cat outer code matching the cellular-automaton overhead (8 or fewer qubits per logical at 1e-8, circuit-level). Our own campaign says the weight cap is the hard constraint -- but one campaign's search space is not the field's.",
+      "status": "FORECAST",
+      "forecast": 30,
+      "signpost": "a published, independently checkable construction meeting the bar by 2027-12-31",
+      "cites": ["ruiz", "heliu"]
+    },
+    {
+      "name": "Forward: the field crosses the noise seam",
+      "thesis": "An external group publishes an AI-in-the-loop code search evaluated under circuit-level noise (faulty syndrome extraction), not code capacity. The 2026 LLM flurry plus the frontier's own beyond-code-capacity finding make this the obvious next move; this chapter is evidence it is tractable.",
+      "status": "FORECAST",
+      "forecast": 55,
+      "signpost": "a published external AI-driven code search with circuit-level evaluation by 2027-06-30",
+      "cites": ["ibmllm", "benito"]
+    },
+    {
+      "name": "Forward: a multi-logical outer cat code on hardware",
+      "thesis": "A hardware demonstration of any k>1 outer code on cat qubits -- beyond the repetition codes demonstrated to date. The bias-regime map says today's devices want moderate-bias codes with both check types; whether any lab ships one is a hardware bet, not a theory bet.",
+      "status": "FORECAST",
+      "forecast": 25,
+      "signpost": "a peer-reviewed multi-logical-qubit outer-cat-code demonstration by 2028-12-31",
+      "cites": ["ocelot", "ruiz"]
+    }
+  ],
+  "checks": {
+    "_comment": "Single source of truth for the consistency-check RULES. Both index.html's console and verification/verify_numbers.py read these, so a threshold can never drift between the page and the verifier. Change a rule HERE and both sides enforce it on next run. (The check LOGIC is still written in each language -- see AUTHORING.md -- but the rules it enforces live only here.)",
+    "min_avenues": 1,
+    "forecast_signpost_required": true,
+    "forecast_pct_min": 0,
+    "forecast_pct_max": 100
+  }
+}

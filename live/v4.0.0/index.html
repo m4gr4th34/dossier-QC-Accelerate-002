@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accelerating Quantum Computing Research Using AI and Robotics (Open Dossier)</title>
+<meta name="description" content="Working draft — an Open Dossier survey of how AI and robotics could accelerate quantum-computing research. A survey that explains itself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../katex/katex.min.css">
+<style>
+  :root{
+    --ink:#17262c;--ink2:#586a6f;--paper:#f3f6f5;--card:#ffffff;
+    --teal:#0c8f86;--teal-soft:#e2efed;--coral:#cf5d36;--coral-soft:#fbe9e3;--violet:#6b4e9b;--violet-soft:#efe9f6;
+    --pass:#1d9b62;--fail:#cf3a2c;--open:#bd861d;--open-soft:#fdf6e9;--line:rgba(23,38,44,.085);
+    --serif:'Spectral',Georgia,serif;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --r-lg:16px; --r-sm:10px; --r-pill:999px;
+    --shadow-soft:0 2px 12px rgba(23,38,44,.05);
+    --shadow-lift:0 16px 44px rgba(23,38,44,.09);
+    --teal-glow:rgba(12,143,134,.30);
+  }
+  @supports (color: oklch(0 0 0)){
+    @media (color-gamut: p3){
+      :root{
+        --teal: oklch(0.585 0.15 187);
+        --pass: oklch(0.665 0.19 156);
+        --open: oklch(0.725 0.175 73);
+        --fail: oklch(0.625 0.245 27);
+        --coral: oklch(0.685 0.205 41);
+        --teal-glow: oklch(0.59 0.15 187 / .5);
+      }
+    }
+  }
+  ::selection{background:var(--teal-soft);color:var(--ink)}
+  a,button{-webkit-tap-highlight-color:transparent}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
+    opacity:.05;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  *{box-sizing:border-box}
+  /* Reserve the scrollbar gutter on every page so the centering axis never moves
+     between scrolling and non-scrolling editions — the body (720, reading measure)
+     and chrome (820, nav width) both margin:0 auto onto a now-immovable midpoint,
+     so nav/provenance/eyebrow sit at identical x on all four editions. */
+  html{scrollbar-gutter:stable}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  /* paper's reading column is 720; its chrome is 820 — the narrowest width that keeps
+     the 4-button nav AND the 4-item provenance bar single-row (measured: nav needs
+     >=818, bar >=769). With the eyebrow now identity-only (identical text on every
+     edition) and the scrollbar gutter reserved above, the chrome is geometrically
+     identical across all four editions: no wrap-bounce on the eyebrow, nav, or bar. */
+  .chrome{max-width:820px;margin:0 auto;padding:0 20px}
+  a{color:var(--teal)}
+  header{padding:54px 0 26px;border-bottom:3px solid var(--ink)}
+  .eyebrow{font-family:var(--mono);font-size:12px;line-height:1.65;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+  .eyebrow b{color:var(--coral)}
+  h1{font-family:var(--serif);font-weight:800;font-size:clamp(27px,4.6vw,44px);line-height:1.12;margin:.4em 0 .25em;letter-spacing:-.014em}
+  .byline{font-family:var(--serif);font-style:italic;color:var(--ink2)}
+  .byline-updated{font-family:var(--mono);font-style:normal;font-size:12.5px;color:var(--ink2);letter-spacing:.01em}
+  .byline-status{display:block;font-family:var(--mono);font-style:normal;font-size:12.5px;color:var(--ink2);letter-spacing:.01em;margin-top:5px}
+  .byline-utc{text-decoration:underline dotted;text-underline-offset:2px;cursor:help;border:0}
+  .howto{background:var(--card);border:1.5px solid var(--ink);padding:14px 16px;font-size:15px;margin:18px 0 8px}
+  .howto .mono{font-family:var(--mono);font-size:13px}
+  h2{font-family:var(--serif);font-weight:600;font-size:27px;margin:48px 0 6px;line-height:1.2}
+  h2 .num{color:var(--coral);font-family:var(--mono);font-size:15px;font-weight:600;vertical-align:middle;margin-right:10px}
+  h3{font-family:var(--serif);font-weight:600;font-size:20px;margin:26px 0 2px}
+  p{margin:14px 0;max-width:68ch}
+
+  /* tappable terms */
+  .term{background:linear-gradient(transparent 70%, var(--teal-soft) 70%);border:none;border-bottom:1.5px dashed var(--teal);
+        padding:0 1px;font:inherit;color:inherit;cursor:pointer;text-align:left}
+  .term:focus-visible{outline:2.5px solid var(--coral);outline-offset:2px}
+  /* citation chips */
+  .cite{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--violet);background:var(--violet-soft);
+        border:1px solid var(--violet);border-radius:10px;padding:1px 8px;cursor:pointer;vertical-align:2px}
+  .cite:focus-visible{outline:2.5px solid var(--coral);outline-offset:2px}
+  /* the expansion card both produce */
+  .popcard{display:block;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);
+           padding:12px 14px;margin:10px 0;font-size:15px;color:var(--ink2);max-width:68ch;animation:open .18s ease-out}
+  .popcard.citecard{border-left-color:var(--violet)}
+  .popcard b{color:var(--ink)}
+  .popcard .src{font-family:var(--mono);font-size:11.5px;color:var(--ink2);display:block;margin-top:6px}
+  @keyframes open{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.popcard{animation:none}}
+
+  /* go-deeper layers */
+  details.deeper{background:var(--card);border:1px solid var(--line);margin:16px 0}
+  details.deeper summary{cursor:pointer;padding:12px 15px;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--violet);list-style:none}
+  details.deeper summary::-webkit-details-marker{display:none}
+  details.deeper summary::before{content:'\25B8 ';color:var(--violet)}
+  details.deeper[open] summary::before{content:'\25BE '}
+  details.deeper .body{padding:0 15px 14px;font-size:15px;color:var(--ink2)}
+  .eq{
+    font-size:15px; margin:14px 0; padding:16px 18px;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:var(--r-lg); box-shadow:var(--shadow-soft);
+    overflow-x:auto; overflow-y:hidden;
+  }
+  .eq .katex{color:var(--ink); font-size:1.05em}
+  .eq .katex-display{margin:0}              /* container already provides spacing */
+  span.math .katex{color:var(--ink)}        /* inline math inherits ink */
+
+  /* ===== honest-label callouts at the claim site =====
+     One per survey status that needs a visible home in prose:
+       .openclaim  amber   OPEN-UNVERIFIED  (the author's own open claim)
+       .forecast   violet  FORECAST         (labeled estimate + dated signpost)
+       .reported   coral   REPORTED         (interested-party / not independently reproduced)
+     ESTABLISHED needs no box — it is asserted plainly, with citations. */
+  .openclaim,.forecast,.reported{padding:14px 16px;margin:18px 0;font-size:15.5px;border:1px solid;border-left-width:5px}
+  .openclaim{background:var(--open-soft);border-color:var(--open)}
+  .forecast{background:var(--violet-soft);border-color:var(--violet)}
+  .reported{background:var(--coral-soft);border-color:var(--coral)}
+  .openclaim .tag,.forecast .tag,.reported .tag{font-family:var(--mono);font-size:11px;padding:2px 7px;margin-right:8px;border:1px solid}
+  .openclaim .tag{color:var(--open);border-color:var(--open)}
+  .forecast .tag{color:var(--violet);border-color:var(--violet)}
+  .reported .tag{color:var(--coral);border-color:var(--coral)}
+
+  .punch{font-family:var(--serif);font-style:italic;font-size:20px;border-left:4px solid var(--coral);padding:6px 0 6px 16px;margin:26px 0;max-width:60ch}
+  footer{margin-top:56px;padding:22px 0 60px;border-top:3px solid var(--ink);font-size:14px;color:var(--ink2)}
+  .mono{font-family:var(--mono)}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+  .btn{font-family:var(--mono);font-size:13.5px;line-height:1.65;font-weight:600;text-decoration:none;padding:11px 16px;border:1.5px solid var(--ink);color:var(--ink);background:var(--card);white-space:nowrap}
+  .btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+  .cta{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 4px}
+  .btn:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.provenance{display:flex;flex-wrap:wrap;gap:0;margin:18px 0 4px;border:1.5px solid var(--ink);background:var(--card);font-family:var(--mono);font-size:12px;overflow:hidden;min-height:46px}
+.provenance .pv-item{flex:1 1 0;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:9px 14px;border-right:1px solid var(--line);text-decoration:none;color:var(--ink);min-width:0}
+.provenance .pv-item:last-child{border-right:none}
+.provenance a.pv-item:hover{background:var(--teal-soft,#e3f0f0)}
+.provenance .pv-k{font-size:9.5px;line-height:1.65;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.provenance .pv-v{font-size:12.5px;line-height:1.65;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.provenance a.pv-item .pv-v{color:var(--teal)}
+#pv-state{color:var(--open,#b07d1f)}
+@media(max-width:560px){.provenance .pv-item{flex:1 1 45%;border-bottom:1px solid var(--line)}}
+.publish-cta{margin:46px 0 8px;padding:22px 24px;border:1.5px solid var(--teal);background:var(--teal-soft,#e3f0f0);
+  display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;justify-content:space-between}
+.publish-cta .pc-text{flex:1 1 320px;min-width:0}
+.publish-cta .pc-h{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--ink);margin:0 0 3px}
+.publish-cta .pc-sub{font-size:14px;color:var(--ink2);margin:0}
+.publish-cta a.pc-btn{flex:0 0 auto;font-family:var(--mono);font-size:14px;font-weight:600;text-decoration:none;
+  background:var(--teal);color:#fff;padding:12px 20px;white-space:nowrap;
+  border-radius:var(--r-sm);
+  background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+  box-shadow:0 4px 14px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.32);
+  transition:filter .2s ease, box-shadow .2s ease, transform .12s ease}
+.publish-cta a.pc-btn:hover{
+  background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+  box-shadow:0 8px 22px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.36);
+  transform:translateY(-1px);
+  filter:brightness(1.04);
+}
+
+  /* ===== elevated-light "instrument" surface treatment ===== */
+  .howto,.popcard,details.deeper,.provenance{
+    border-radius:var(--r-lg); overflow:hidden;
+    background:linear-gradient(180deg,#ffffff,#f4f8f7);
+    box-shadow:var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.85);
+  }
+  /* status callouts keep their honest-label colour; only round + lift */
+  .openclaim,.forecast,.reported{
+    border-radius:var(--r-lg);
+    box-shadow:var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .openclaim .tag,.forecast .tag,.reported .tag{border-radius:var(--r-pill)}
+  .btn{border-radius:var(--r-sm); transition:box-shadow .2s ease, transform .2s ease}
+  .btn:not(.primary):hover{ box-shadow:var(--shadow-soft); transform:translateY(-2px); }
+  .btn.primary{
+    background:var(--teal);
+    background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+    box-shadow:0 4px 14px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.32);
+  }
+  .btn.primary:hover{
+    background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+    box-shadow:0 8px 22px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.36);
+  }
+  .publish-cta{border-radius:var(--r-lg)}
+  h1{font-weight:500; letter-spacing:-.014em}
+
+  /* ===== instrument-surface polish for the merged landscape (avenue grid + console) ===== */
+  .av-card,.console{
+    border-radius:var(--r-lg); overflow:hidden;
+    background:linear-gradient(180deg,#ffffff,#f4f8f7);
+    box-shadow:var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.85);
+    transition:box-shadow .2s ease, transform .2s ease;
+  }
+  .av-card:hover{
+    box-shadow:var(--shadow-lift), inset 0 1px 0 rgba(255,255,255,.85); transform:translateY(-3px);
+  }
+  .s-chip{border-radius:var(--r-pill)}
+  button#run{
+    border-radius:var(--r-sm);
+    background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+    box-shadow:0 4px 14px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.32);
+    transition:box-shadow .2s ease, transform .2s ease;
+  }
+  button#run:hover{
+    background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+    box-shadow:0 8px 22px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.36);
+    transform:translateY(-1px);
+  }
+
+  /* ===== figures + dependency-free lightbox (inert with no figures) ===== */
+  figure{
+    margin:28px 0; padding:0;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:var(--r-lg); overflow:hidden;
+    box-shadow:var(--shadow-soft);
+  }
+  figure img{
+    display:block; width:100%; height:auto; cursor:zoom-in;
+  }
+  /* figure.living-figure.wide — break a data-dense figure out of the paper column to a
+     page-wide, viewport-capped width. Body-safe transform breakout (the lightbox appends to
+     the document body, so the figure's own transform can't trap the fixed overlay). The counter-scale keys
+     off rendered width, so wider = more drawable art at the SAME tier text sizes. min()
+     collapses the breakout to exactly column width on narrow viewports — degrades to a normal
+     figure. */
+  figure.living-figure.wide{
+    width:min(1140px, calc(100vw - 48px));
+    max-width:none;
+    margin-left:50%;
+    transform:translateX(-50%);
+  }
+  figcaption{
+    font-family:var(--mono); font-size:12.5px; line-height:1.5;
+    color:var(--ink2); text-align:center;
+    padding:11px 16px 13px; border-top:1px solid var(--line);
+  }
+  /* lightbox — overlay must clear the grain overlay at z-index:9999 */
+  .lbx{
+    position:fixed; inset:0; z-index:10000;
+    display:none; align-items:center; justify-content:center;
+    background:rgba(23,38,44,.78); padding:24px; cursor:zoom-out;
+    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+  }
+  .lbx.open{display:flex}
+  .lbx img{
+    max-width:min(1100px,94vw); max-height:92vh; width:auto; height:auto;
+    border-radius:var(--r-lg); box-shadow:var(--shadow-lift);
+    background:var(--card);
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .lbx img{transition:transform .2s ease}
+  }
+
+  /* ===== lineage strip (hidden until lineage.json has chapters) ===== */
+  .lineage-strip{
+    display:none;                      /* revealed by script when chapters>0 */
+    align-items:center; flex-wrap:wrap; gap:8px 16px;
+    margin:14px 0 0; padding:11px 16px;
+    background:linear-gradient(180deg,#ffffff,#f4f8f7);
+    border:1px solid var(--line); border-radius:var(--r-lg);
+    box-shadow:var(--shadow-soft);
+    font-family:var(--mono); font-size:12.5px; color:var(--ink2);
+  }
+  .lineage-strip.show{display:flex}
+  .lineage-strip b{color:var(--ink); font-weight:600}
+  .lineage-strip a{color:var(--teal)}
+  .lineage-strip .sep{color:var(--line); }
+  .lineage-strip .ls-all{margin-left:auto; font-weight:500}
+
+  /* ===== merged from the landscape (index.html): abstract + kicker/lede ===== */
+  .abstract{font-family:var(--serif);font-size:17.5px;max-width:70ch;margin-top:18px}
+  .abstract b{color:var(--teal)}
+  .kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+  .kicker.teal{color:var(--teal)}.kicker.coral{color:var(--coral)}.kicker.violet{color:var(--violet)}
+  p.lede{color:var(--ink2);max-width:66ch;margin-top:6px}
+  /* region-spacing system — a heading relates to what FOLLOWS, not what precedes. The kickers had
+     margin below but none above (glued to the previous region, floating 48px from their own h2 —
+     the footnote effect). Fix: a uniform region PAUSE above the kicker (2x the 26px paragraph gap,
+     exceeding the 48px sub-section h2 rhythm), and the kicker set tight above its h2 so the eyebrow
+     OWNS its title. Rhythm: region pause (52) > paragraph gap (26) > kicker->title (8). */
+  .kicker{margin-top:52px}
+  .kicker + h2{margin-top:8px}
+  /* seam reconciliation: when the essay-first seam below fires, ITS 64+border+30 IS the boundary --
+     zero the kicker's pause so they don't double-stack (prototyped: 147px crater -> 95px). */
+  h2 ~ #landscape .kicker{margin-top:0}
+  /* inter-register seam — fires ONLY when the landscape follows essay sections (an h2 sibling
+     precedes it); inert when the apparatus opens the page. A section-break marker belongs between
+     registers, not before the first one. */
+  h2 ~ #landscape{margin-top:64px;padding-top:30px;border-top:1px solid var(--line)}
+
+  /* ===== survey landscape — card grid (survey-default keystone) ===== */
+  .av-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:18px}
+  .av-card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--line);padding:15px 16px 16px;display:flex;flex-direction:column;gap:9px}
+  .av-card.t-est{border-top-color:var(--pass)}
+  .av-card.t-open{border-top-color:var(--open)}
+  .av-card.t-forecast{border-top-color:var(--violet)}
+  .av-card.t-reported{border-top-color:var(--coral)}
+  .av-card .av-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .av-card .av-name{font-family:var(--serif);font-weight:600;font-size:18px;line-height:1.2}
+  .av-card .av-thesis{color:var(--ink2);font-size:14.5px;margin:0}
+  .av-card .av-meta{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:4px}
+  .av-card .fc{font-family:var(--mono);font-size:13px}
+  .av-card .fc .pct{font-weight:600}
+  .av-card .fc .by{color:var(--ink2)}
+  .av-card .fc.missing{color:var(--fail)}
+  .av-card .srcs{display:flex;flex-wrap:wrap;gap:5px}
+  .av-card .srcs .ref{font-family:var(--mono);font-size:11px;color:var(--violet);background:var(--violet-soft);border:1px solid var(--violet);border-radius:9px;padding:0 7px}
+  .av-card .srcs .none{color:var(--ink2);font-size:12px;font-family:var(--mono)}
+
+  /* ===== status chips — one home per honest label (incl. new REPORTED token #4) ===== */
+  .s-chip{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.05em;padding:2px 8px;border:1px solid;white-space:nowrap;display:inline-block;flex:0 0 auto}
+  .s-est{color:var(--pass);border-color:var(--pass)}
+  .s-open{color:var(--open);border-color:var(--open)}
+  .s-forecast{color:var(--violet);border-color:var(--violet)}
+  .s-reported{color:var(--coral);border-color:var(--coral);background:var(--coral-soft)}
+  .s-default{color:var(--ink2);border-color:var(--line)}
+  .legend{display:flex;flex-wrap:wrap;gap:14px 18px;margin-top:14px;font-size:13px;color:var(--ink2)}
+  .legend span.item{display:inline-flex;align-items:center;gap:7px}
+
+  /* verification/consistency console */
+  .console{background:var(--card);border:1.5px solid var(--ink);margin-top:18px}
+  .console-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .console-head .label{font-family:var(--mono);font-size:12.5px;color:var(--ink2)}
+  button#run{font-family:var(--mono);font-size:14px;font-weight:600;background:var(--teal);color:#fff;border:none;padding:10px 18px;cursor:pointer}
+  button#run[disabled]{background:var(--ink2);cursor:default}
+  #log{font-family:var(--mono);font-size:13px;padding:10px 16px 14px;min-height:80px}
+  .row{display:flex;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line);align-items:baseline}
+  .row:last-child{border-bottom:none}
+  .badge{flex:0 0 auto;font-weight:600;padding:1px 7px;font-size:11.5px}
+  .badge.p{color:var(--pass);border:1px solid var(--pass)}
+  .badge.f{color:var(--fail);border:1px solid var(--fail)}
+  .row .what{flex:1 1 auto;min-width:0}
+  .row .nums{flex:0 0 auto;color:var(--ink2)}
+  .tally{margin-top:10px;padding-top:10px;border-top:2px solid var(--ink);font-weight:600}
+  @media(max-width:560px){.row{flex-wrap:wrap}.row .nums{width:100%;padding-left:46px}}
+  /* Chrome width is UNIVERSAL and skin-owned: this rule is injected AFTER the head_extra slot so no
+     edition's head_extra can widen the nav/provenance/eyebrow chrome (an edition may set its own
+     .wrap body width, but the chrome stays identical on every page -> no cross-edition shift). */
+  .chrome{max-width:820px}
+</style>
+</head>
+<body data-chrome="reading">
+<header>
+  <div class="chrome">
+    <div class="eyebrow">An Open Dossier · <b>QC-Accelerate-002</b></div>
+    <div class="cta">
+      <a class="btn primary" href="index.html">The paper</a>
+      <a class="btn" href="dossier.html">Audit trail</a>
+      <a class="btn" href="../../lineage.html">Chapters</a>
+      <a class="btn" href="https://github.com/m4gr4th34/dossier-QC-Accelerate-002/issues" target="_blank" rel="noopener">Contribute ↗</a>
+    </div>
+    <div class="provenance" role="contentinfo" aria-label="Provenance and verification">
+      <span class="pv-item"><span class="pv-k">Reading</span><span class="pv-v" id="pv-state">release v4.0.0</span></span>
+      <a class="pv-item" id="pv-doi" href="verify.html" data-doi-baked="1" target="_blank" rel="noopener"><span class="pv-k">Archived DOI</span><span class="pv-v" id="pv-doi-v">not DOI-archived ↗</span></a>
+      <a class="pv-item" href="verify.html" target="_blank" rel="noopener"><span class="pv-k">Bitcoin timestamp</span><span class="pv-v">verify proof ↗</span></a>
+      <a class="pv-item" href="https://github.com/m4gr4th34/dossier-QC-Accelerate-002" target="_blank" rel="noopener"><span class="pv-k">Source</span><span class="pv-v">full history ↗</span></a>
+    </div>
+    <div class="lineage-strip" id="lineageStrip" aria-label="Lineage"></div>
+    <h1>Accelerating Quantum Computing Research Using AI and Robotics</h1>
+    <div class="byline" id="byline">Irfan Ali-Khan — Independent Researcher</div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="record-note" role="note" style="margin:18px 0;padding:13px 16px;border:1px solid var(--line);border-left:4px solid var(--open);border-radius:var(--r-lg);background:var(--open-soft);color:var(--ink2);font-size:14px;line-height:1.55"><div><b style="color:var(--open)">Reading the current edition.</b> A current-skin reading view of a sealed chapter (released 2026-07-08) — not the version of record.</div><div style="margin-top:6px"><b>Cite this chapter:</b> the version of record (no DOI registered yet)</div><div style="margin-top:4px"><a href="../../chapters/v4.0.0/index.html" target="_blank" rel="noopener">View the version of record ↗</a> <span style="opacity:.85">— the immutable, DOI'd bytes (chapters/v4.0.0/index.html).</span></div></div>
+  <p class="abstract"><b>Chapter 4 — the loop eats first.</b> <em>Chapter 3 placed bets on where the closed discovery loop closes first; this chapter runs the loop's cheapest case — the one with no fabrication step — on ourselves: an AI-driven search for cat-qubit error-correcting codes, refereed under circuit-level noise calibrated to a published chip. Four predictions were frozen and committed before the search ran; two came true, two did not, twenty-four days ahead of their signpost date, and every miss is published at the size of a hit. The payload is a measured principle — a code must match its noise regime, and the price of mismatch is orders of magnitude in both directions — plus a nine-entry ledger of the machinery catching its own mistakes, which is half the result. Nothing here scores Chapter 3's hardware bets; those resolve on their own dates.</em></p>
+
+  <div class="howto">
+    <b>How to read this:</b> the whole survey is on this one page, written to explain itself.
+    Tap any <button class="term" data-d="Like this! Underlined-dashed words expand in place with a plain-language explanation. Tap again to close. You never leave the page.">underlined term</button>
+    for a plain-language explanation. Tap any <button class="cite" data-c="demo">ref</button> to see what that source actually showed, in two sentences. Each avenue carries an honest label — <span class="mono">established, open, forecast, or reported</span> — colored to match the <a href="#landscape">landscape</a>. <span class="mono">No rabbit holes. No prerequisites.</span>
+  </div>
+
+<section id="landscape">
+  <div class="kicker teal">THE LANDSCAPE · SURVEY</div>
+  <h2>Avenues at a glance</h2>
+  <p class="lede">Every avenue in this survey, each with its honest status label and — where the avenue is a forward bet — a dated forecast. <span class="mono">The labels are the verification here: each is exactly as strong as its evidence.</span></p>
+  <div class="av-grid" id="av-grid" data-baked="1"><div class="av-card "><div class="av-top"><span class="av-name">Scored: the Day-1 headline survives circuit level</span><span class="s-chip s-default">SCORED: FALSE</span></div><p class="av-thesis">Frozen at 35% before the search ran: the best code-capacity discovery ([[42,3]] hypergraph product, 2.4x qubit-efficient at moderate bias) survives the circuit-level referee within 2x of budget-matched repetition. It lost by five orders of magnitude -- a moderate-bias code drowned at the high-bias operating point. The miss is the chapter's first structural lesson.</p><div class="av-meta"><span class="srcs"><span class="ref">ocelot</span><span class="ref">ruiz</span></span></div></div><div class="av-card "><div class="av-top"><span class="av-name">Scored: a searched code beats repetition 2x</span><span class="s-chip s-default">SCORED: TRUE</span></div><p class="av-thesis">Frozen at 55%: some searched code beats strict budget-matched repetition by 2x per logical under circuit-level noise at weight-4 checks. Resolved TRUE by rep3 x extended-Hamming [24,4,12] -- 13 qubits per logical, matched-depth same-instrument ratio 0.255 (CI 0.172-0.337) -- surviving fresh-seed, adversarial-decoder, and depth re-checks. Model-level result, not a hardware demonstration.</p><div class="av-meta"><span class="srcs"><span class="ref">ruiz</span><span class="ref">gm2019</span></span></div></div><div class="av-card "><div class="av-top"><span class="av-name">Scored: the LLM layer earns a podium place</span><span class="s-chip s-default">SCORED: TRUE</span></div><p class="av-thesis">Frozen at 40%: an LLM-layer seed reaches the final leaderboard's top three. Resolved TRUE -- the winner itself is LLM-layer, with footnotes carried: the proposing agent played against its own mechanical referee, and the winning family was built from the referee's kill of the proposer's first family (a one-line structural distance ceiling, caught before any Monte-Carlo).</p><div class="av-meta"><span class="srcs"><span class="ref">ibmllm</span><span class="ref">liumarq</span></span></div></div><div class="av-card "><div class="av-top"><span class="av-name">Scored: the stretch target</span><span class="s-chip s-default">SCORED: FALSE</span></div><p class="av-thesis">Frozen at 20%: a searched weight-4 code matches the published cellular-automaton overhead (10 or fewer qubits per logical at 1e-8). Resolved FALSE -- the winning family's overhead grows with distance and nothing found approaches the bar. The stretch was a stretch; the frontier's overhead stands unmatched at this weight cap.</p><div class="av-meta"><span class="srcs"><span class="ref">ruiz</span></span></div></div><div class="av-card t-forecast"><div class="av-top"><span class="av-name">Forward: low-weight codes reach the frontier overhead</span><span class="s-chip s-forecast">FORECAST</span></div><p class="av-thesis">Someone publishes a weight-4-or-less cat outer code matching the cellular-automaton overhead (8 or fewer qubits per logical at 1e-8, circuit-level). Our own campaign says the weight cap is the hard constraint -- but one campaign's search space is not the field's.</p><div class="av-meta"><span class="fc"><span class="pct">~30%</span> <span class="by">by a published, independently checkable construction meeting the bar by 2027-12-31</span></span><span class="srcs"><span class="ref">ruiz</span><span class="ref">heliu</span></span></div></div><div class="av-card t-forecast"><div class="av-top"><span class="av-name">Forward: the field crosses the noise seam</span><span class="s-chip s-forecast">FORECAST</span></div><p class="av-thesis">An external group publishes an AI-in-the-loop code search evaluated under circuit-level noise (faulty syndrome extraction), not code capacity. The 2026 LLM flurry plus the frontier's own beyond-code-capacity finding make this the obvious next move; this chapter is evidence it is tractable.</p><div class="av-meta"><span class="fc"><span class="pct">~55%</span> <span class="by">by a published external AI-driven code search with circuit-level evaluation by 2027-06-30</span></span><span class="srcs"><span class="ref">ibmllm</span><span class="ref">benito</span></span></div></div><div class="av-card t-forecast"><div class="av-top"><span class="av-name">Forward: a multi-logical outer cat code on hardware</span><span class="s-chip s-forecast">FORECAST</span></div><p class="av-thesis">A hardware demonstration of any k>1 outer code on cat qubits -- beyond the repetition codes demonstrated to date. The bias-regime map says today's devices want moderate-bias codes with both check types; whether any lab ships one is a hardware bet, not a theory bet.</p><div class="av-meta"><span class="fc"><span class="pct">~25%</span> <span class="by">by a peer-reviewed multi-logical-qubit outer-cat-code demonstration by 2028-12-31</span></span><span class="srcs"><span class="ref">ocelot</span><span class="ref">ruiz</span></span></div></div></div>
+  <div class="legend">
+    <span class="item"><span class="s-chip s-est">ESTABLISHED</span> documented, cited</span>
+    <span class="item"><span class="s-chip s-open">OPEN-UNVERIFIED</span> the author's open claim</span>
+    <span class="item"><span class="s-chip s-forecast">FORECAST</span> labeled estimate + dated signpost</span>
+    <span class="item"><span class="s-chip s-reported">REPORTED</span> interested-party / not independently reproduced</span>
+  </div>
+</section>
+
+<div class="kicker teal">THE CHAPTER · THE EXPEDITION</div>
+
+<h2><span class="num">01</span>THE LOOP, AND THE CHEAP WAY TO TEST IT</h2>
+
+<p>Strip science to its skeleton and it is a cycle: decide what to try next, make the thing, measure what you made, learn from the result, go around again. Most of this dossier asks one question about that cycle — how much of it can machines run on their own, for quantum computing? Chapter 2 found labs where machines hold one or two stations — robots that grow crystals, algorithms that pick the growth recipe — but nowhere on Earth does the full circle run unattended for quantum hardware. Chapter 3 put money-where-mouth-is percentages on where it will close first.</p>
+
+<p>This chapter does something more direct: it runs the loop. Not on hardware — we own no lab — but on the one problem in quantum computing where the make step is free, because making the thing means simulating it. That problem is the search for error-correcting codes, and run concretely it has five stations (Fig 1). <b>PROPOSE</b>: an AI drafts a candidate code, which — as the next section explains — is literally a small grid of 0s and 1s, so a draft is cheap to write down. <b>VERIFY</b>: cheap algebra grades the draft's vital statistics before a single simulation, and kills the hopeless ones on the spot. <b>SIMULATE</b>: software builds the full error-correction machine the code implies — qubits, helper qubits, every gate and measurement, cycle after cycle — then poisons it with random errors at rates copied from a real, published chip, millions of runs. <b>SCORE</b>: a decoding algorithm tries to catch every error; each time it loses the stored information is one logical failure, counted and compared against the boring baseline everyone already uses. <b>LEARN</b>: keep the winners, kill the losers, and — this is the part that matters — write down why each loser lost, so the next PROPOSE is smarter.</p>
+
+<p>One more discipline, borrowed from clinical medicine: before the loop ran at all, we wrote four predictions about how it would go, attached a probability to each, and committed them to a public, cryptographically timestamped record. Pre-registration means nobody — including us — can quietly move the goalposts after seeing the results. Two of the four came true; the other two are published at the same size as the wins. And one boundary, stated up front: this chapter does not score Chapter 3's hardware bets, which resolve on their own dates against the outside world.</p>
+
+<p>One limit, stated plainly and up front: this chapter turns the loop <em>once</em>. It is a proof of principle, not a finished search — a single propose-refute-repair pass over a small, hand-seeded set of candidate codes, with the scoring fully automated but the proposals human-guided. Nobody here ground through thousands of generations; the aim was to show the loop closes and yields a real, checkable result, not to exhaust the space. Code space is effectively unbounded, so such a search never truly finishes — it converges or plateaus, and the ceiling is compute, since each honest evaluation costs seconds to minutes and a thorough run costs hours to days. What an <em>automated</em> proposer turns up when the loop is left to run for hours rather than minutes is the question the next chapter takes up.</p>
+
+<figure class="living-figure" data-figure='{"type":"qc-degenloop","stage":"#ffffff","caption":"Fig 1 — The discovery loop, run on itself: five stations played clockwise. PROPOSE (an AI drafts a candidate code, a small grid of 0s and 1s), VERIFY (cheap algebra grades it before any simulation), SIMULATE (the full checking circuit, poisoned with chip-calibrated errors), SCORE (count decoder failures against budget-matched repetition), LEARN (autopsy every loser to feed the next proposal). The loop is the degenerate case — its make step is free, because making a candidate means simulating it. The campaign’s two decisive events are marked where they landed on the ring: the referee’s kill at VERIFY, the win at SCORE. [SCHEMATIC]"}'>
+    <style class="lf-tier-style">.lf-svg text{font-size:13px}.lf-svg .lf-tick{font-size:11px}.lf-svg .lf-axis{font-size:13px}.lf-svg .lf-callout{font-size:15px}.lf-caption{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#586a6f;margin:10px 14px 0;max-width:78ch;}</style>
+    <svg data-poster="1" viewBox="0 0 960 520" width="100%" class="lf-svg" role="img" aria-label="The five-station discovery loop drawn as a ring played clockwise: PROPOSE (an AI drafts a candidate code), VERIFY (cheap algebra grades it before any simulation), SIMULATE (the full checking circuit poisoned with chip-calibrated errors), SCORE (count decoder failures against budget-matched repetition), and LEARN (autopsy every loser to feed the next proposal). The referee's kill is marked at VERIFY and the campaign's win at SCORE; the loop is degenerate because the make step is free — making a candidate means simulating it."><text class="lf-callout lf-scale-with-art" x="480" y="40" text-anchor="middle" fill="#3a474b">THE DISCOVERY LOOP, RUN ON ITSELF</text><text class="lf-tick lf-scale-with-art" x="480" y="64" text-anchor="middle" fill="#5a6b70">five stations, clockwise — the degenerate case, because here MAKE is free: making a candidate means simulating it</text><line x1="514.59" y1="179.98" x2="750.41" y2="248.02" stroke="#d7dee0" stroke-width="1.6"></line><polygon points="750.41,248.02 736.53,249.22 739.31,239.61" fill="#5a6b70"></polygon><line x1="763.13" y1="286.6" x2="676.87" y2="399.4" stroke="#d7dee0" stroke-width="1.6"></line><polygon points="676.87,399.4 680.79,386.04 688.74,392.11" fill="#5a6b70"></polygon><line x1="619" y1="428" x2="341" y2="428" stroke="#d7dee0" stroke-width="1.6"></line><polygon points="341,428 354,423 354,433" fill="#5a6b70"></polygon><line x1="283.13" y1="399.4" x2="196.87" y2="286.6" stroke="#d7dee0" stroke-width="1.6"></line><polygon points="196.87,286.6 208.74,293.89 200.79,299.96" fill="#5a6b70"></polygon><line x1="209.59" y1="248.02" x2="445.41" y2="179.98" stroke="#d7dee0" stroke-width="1.6"></line><polygon points="445.41,179.98 434.31,188.39 431.53,178.78" fill="#5a6b70"></polygon><text class="lf-tick lf-scale-with-art" x="480" y="298" text-anchor="middle" fill="#5a6b70">no fabrication step to run —</text><text class="lf-tick lf-scale-with-art" x="480" y="314" text-anchor="middle" fill="#5a6b70">the simulator is the lab</text><circle cx="480" cy="170" r="36" fill="#ffffff" stroke="#3a474b" stroke-width="2.2"></circle><text class="lf-axis lf-scale-with-art" x="480" y="174" text-anchor="middle" fill="#3a474b">PROPOSE</text><text class="lf-tick lf-scale-with-art" x="480" y="228" text-anchor="middle" fill="#3a474b">an AI drafts a candidate code:</text><text class="lf-tick lf-scale-with-art" x="480" y="244" text-anchor="middle" fill="#3a474b">a small grid of 0s and 1s</text><circle cx="785" cy="258" r="36" fill="#ffffff" stroke="#c2562f" stroke-width="2.2"></circle><text class="lf-axis lf-scale-with-art" x="785" y="262" text-anchor="middle" fill="#c2562f">VERIFY</text><text class="lf-tick lf-scale-with-art" x="785" y="302" text-anchor="middle" fill="#3a474b">cheap algebra grades the draft</text><text class="lf-tick lf-scale-with-art" x="785" y="318" text-anchor="middle" fill="#3a474b">(n,k,d) before any simulation</text><circle cx="655" cy="428" r="36" fill="#ffffff" stroke="#3a474b" stroke-width="2.2"></circle><text class="lf-axis lf-scale-with-art" x="655" y="432" text-anchor="middle" fill="#3a474b">SIMULATE</text><text class="lf-tick lf-scale-with-art" x="655" y="470" text-anchor="middle" fill="#3a474b">the full checking circuit, poisoned</text><text class="lf-tick lf-scale-with-art" x="655" y="486" text-anchor="middle" fill="#3a474b">with chip-calibrated errors</text><circle cx="305" cy="428" r="36" fill="#ffffff" stroke="#0c8f86" stroke-width="2.2"></circle><text class="lf-axis lf-scale-with-art" x="305" y="432" text-anchor="middle" fill="#0c8f86">SCORE</text><text class="lf-tick lf-scale-with-art" x="305" y="470" text-anchor="middle" fill="#3a474b">count decoder failures; compare</text><text class="lf-tick lf-scale-with-art" x="305" y="486" text-anchor="middle" fill="#3a474b">to budget-matched repetition</text><circle cx="175" cy="258" r="36" fill="#ffffff" stroke="#3a474b" stroke-width="2.2"></circle><text class="lf-axis lf-scale-with-art" x="175" y="262" text-anchor="middle" fill="#3a474b">LEARN</text><text class="lf-tick lf-scale-with-art" x="175" y="302" text-anchor="middle" fill="#3a474b">autopsy every loser; the lesson</text><text class="lf-tick lf-scale-with-art" x="175" y="318" text-anchor="middle" fill="#3a474b">feeds the next PROPOSE</text><text class="lf-axis lf-scale-with-art" x="785" y="214" text-anchor="middle" fill="#c2562f">THE KILL HAPPENED HERE</text><text class="lf-axis lf-scale-with-art" x="305" y="506" text-anchor="middle" fill="#0c8f86">THE WIN WAS SCORED HERE</text></svg>
+    <figcaption class="lf-caption">Fig 1 — The discovery loop, run on itself: five stations played clockwise. PROPOSE (an AI drafts a candidate code, a small grid of 0s and 1s), VERIFY (cheap algebra grades it before any simulation), SIMULATE (the full checking circuit, poisoned with chip-calibrated errors), SCORE (count decoder failures against budget-matched repetition), LEARN (autopsy every loser to feed the next proposal). The loop is the degenerate case — its make step is free, because making a candidate means simulating it. The campaign’s two decisive events are marked where they landed on the ring: the referee’s kill at VERIFY, the win at SCORE. [SCHEMATIC]</figcaption></figure>
+
+<h2><span class="num">02</span>THE GAME: WHAT A CODE IS, AND WHAT KILLS ONE</h2>
+
+<p>A qubit is a physical object that stores quantum information, and physical objects forget. The information can be corrupted two distinct ways: a <b>bit flip</b> (the 0-part and 1-part of the state swap) and a <b>phase flip</b> (the sign between them silently reverses). Both are lethal; a useful quantum memory has to survive both.</p>
+
+<p>The oldest trick against forgetting is repetition. Store a classical bit three times — 000 or 111 — and if one copy flips, majority vote restores it. Quantum mechanics forbids the obvious version (you cannot copy a qubit, and looking at one directly destroys it) but permits something subtler: you can ask a group of qubits a <b>parity question</b> — "do qubits 1 and 2 currently agree?" — without asking what either one holds. Helper qubits extract these parities one gate at a time; a pattern of disagreements is a fingerprint, and a decoding algorithm reads the fingerprint to infer which qubit flipped. That is quantum error correction: parity questions, asked over and over, forever.</p>
+
+<p>A <b>code</b> is a recipe for which parity questions to ask. It is written as a grid of 0s and 1s — each row a parity check, each column a qubit, a 1 where a check touches a qubit. Three numbers grade the recipe, written [n, k, d]: n physical qubits store k logical (useful) qubits, and the distance d says how much abuse the code survives — any combination of up to floor((d-1)/2) simultaneous errors is corrected with certainty. Repetition on n qubits is the code [n, 1, n]: superb protection, terrible economy — one useful qubit no matter how many you spend. The whole craft of code design is buying more k per n without letting d collapse.</p>
+
+<p>Now the hardware this chapter searches for. <b>Cat qubits</b> — the technology of Amazon's Ocelot chip <button class="cite" data-c="ocelot">Nature 2025</button>, the lineage this dossier has tracked since Chapter 1 — store a qubit in two laser-like states of a microwave cavity. Their signature property, the reason anyone tolerates their complexity, is lopsided noise: make the cat "bigger" (more photons, n-bar) and bit flips become exponentially rare while phase flips get only modestly worse.</p>
+
+<div class="eq" data-tex="\Gamma_{\text{bit}} \propto e^{-2\bar{n}} \tag{eq.\ 1}"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable width="100%"><mtr><mtd width="50%"></mtd><mtd><mrow><msub><mi mathvariant="normal">Γ</mi><mtext>bit</mtext></msub><mo>∝</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>2</mn><mover accent="true"><mi>n</mi><mo>ˉ</mo></mover></mrow></msup></mrow></mtd><mtd width="50%"></mtd><mtd><mtext>(eq. 1)</mtext></mtd></mtr></mtable><annotation encoding="application/x-tex">\Gamma_{\text{bit}} \propto e^{-2\bar{n}} \tag{eq.\ 1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">Γ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">bit</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">2</span><span class="mord accent mtight"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.5678em;"><span style="top:-2.7em;"><span class="pstrut" style="height:2.7em;"></span><span class="mord mathnormal mtight">n</span></span><span style="top:-2.7em;"><span class="pstrut" style="height:2.7em;"></span><span class="accent-body" style="left:-0.25em;"><span class="mord mtight">ˉ</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="tag"><span class="strut" style="height:1.1141em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(</span><span class="mord"><span class="mord">eq. 1</span></span><span class="mord">)</span></span></span></span></span></span></div>
+
+<div class="eq" data-tex="\Gamma_{\text{phase}} = \bar{n}\,\kappa_1 \tag{eq.\ 2}"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable width="100%"><mtr><mtd width="50%"></mtd><mtd><mrow><msub><mi mathvariant="normal">Γ</mi><mtext>phase</mtext></msub><mo>=</mo><mover accent="true"><mi>n</mi><mo>ˉ</mo></mover><mtext> </mtext><msub><mi>κ</mi><mn>1</mn></msub></mrow></mtd><mtd width="50%"></mtd><mtd><mtext>(eq. 2)</mtext></mtd></mtr></mtable><annotation encoding="application/x-tex">\Gamma_{\text{phase}} = \bar{n}\,\kappa_1 \tag{eq.\ 2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord">Γ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">phase</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7178em;vertical-align:-0.15em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.5678em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">n</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;"><span class="mord">ˉ</span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">κ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span><span class="tag"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord text"><span class="mord">(</span><span class="mord"><span class="mord">eq. 2</span></span><span class="mord">)</span></span></span></span></span></span></div>
+
+<p>Here kappa-1 is the cavity's photon-loss rate (equation 1 is the same exponential law that opened Chapter 1). At the sizes Ocelot runs, bit flips happen thousands of times less often than phase flips, so the code mostly has one job — catch phase flips — and can be lighter and cheaper than a code fighting both enemies at once <button class="cite" data-c="gm2019">PRX 2019</button>.</p>
+
+<p>Here is the seam this chapter lives on. Checking parities is itself physical work — gates, helper qubits, measurements — and every one of those can fail. There are two honesty grades for evaluating a code. <b>Code capacity</b> grade: pretend the checking machinery is perfect and only the stored qubits err — cheap to simulate, flattering to clever codes. <b>Circuit level</b> grade: every gate, every helper, every measurement fails at its own measured rate — slow, unflattering, honest. Checked sentence by sentence, every AI-driven code search ever published grades itself at code capacity — reinforcement learning since 2019 <button class="cite" data-c="nautrup">Quantum 2019</button>, noise-aware RL whose noise is channel bias, not faulty extraction ("the encoding circuit is assumed to be error-free," in the authors' words) <button class="cite" data-c="olle">npj QI 2024</button>, RL under weight constraints <button class="cite" data-c="heliu">arXiv 2025</button>, and a 2026 flurry of LLM-guided searches <button class="cite" data-c="ibmllm">arXiv 2026</button> scored "under code-capacity depolarizing noise" <button class="cite" data-c="liumarq">arXiv 2026</button> and Bayesian optimization <button class="cite" data-c="bayesopt">arXiv 2026</button>. Meanwhile the one group that graded bias-tailored codes at circuit level found the flattery evaporates — "the substantial advantages predicted... under code-capacity noise are strongly reduced" <button class="cite" data-c="benito">arXiv 2026</button> — but nobody runs a search at that grade. AI search exists; honest grading exists; the intersection was empty. This chapter fills it.</p>
+
+<h2><span class="num">03</span>THE SIMULATION, EXACTLY</h2>
+
+<p>What one "measurement" in the loop actually is, start to finish. Build a circuit: n cat qubits prepared in a known state; each cycle, helper qubits ask every parity question in the code's grid (one two-qubit gate per 1 in the grid), then get measured and reset; eight to sixteen cycles; a final readout of every qubit. Then poison it: at every location — every idle moment, every gate, every measurement — flip a biased coin and, with the appropriate probability, insert an error. Run the poisoned circuit millions of times (it is a stabilizer circuit, so a classical computer simulates it exactly — the standard "stim" framework), hand each run's fingerprints to a decoder (belief propagation with ordered-statistics post-processing, the field's workhorse), and count the runs where the guess was wrong in a way that corrupted the stored information. Divide. That is eps-L, the logical failure rate per cycle per stored qubit — the one number a memory is graded on.</p>
+
+<p>Every coin's bias comes from a real place, and this is the part we are most careful about. The probability of an error over a time t follows from a rate,</p>
+
+<div class="eq" data-tex="p(t) = 1 - e^{-\Gamma t} \tag{eq.\ 3}"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable width="100%"><mtr><mtd width="50%"></mtd><mtd><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mrow><mo>−</mo><mi mathvariant="normal">Γ</mi><mi>t</mi></mrow></msup></mrow></mtd><mtd width="50%"></mtd><mtd><mtext>(eq. 3)</mtext></mtd></mtr></mtable><annotation encoding="application/x-tex">p(t) = 1 - e^{-\Gamma t} \tag{eq.\ 3}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8913em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">Γ</span><span class="mord mathnormal mtight">t</span></span></span></span></span></span></span></span></span></span><span class="tag"><span class="strut" style="height:1.1413em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(</span><span class="mord"><span class="mord">eq. 3</span></span><span class="mord">)</span></span></span></span></span></span></div>
+
+<p>and each rate traces to Amazon's published Ocelot results <button class="cite" data-c="ocelot">Nature 2025</button> or their released raw data. <b>Phase flips:</b> the photon-loss rate is kappa-1 = 1/(60 microseconds), from the paper's storage lifetime; equation 2 then predicts the phase-flip time at cat size n-bar = 2 as 30 microseconds (Amazon measured 27–33), and the phase-error probability per 2.8-microsecond cycle as 8.9% (Amazon measured 9.6 ± 0.4%). Two independent bullseyes from one untuned number — that closure is what licensed the model. <b>Bit flips:</b> refit from Amazon's released shot-level data using their own convention — suppression grows 2.1–2.4x per added photon, saturating above n-bar of about 3; measured, not assumed. <b>Measurement error:</b> the one number we could not derive — how often a parity readout simply lies — fit to exactly one published number (the distance-5 result, 1.65% per cycle) at 4.8%, then tested against two published numbers it had never seen; both landed within 30%. One fitted parameter, honestly labeled, tested out-of-sample. <b>Gates in the high-bias regime:</b> for the future-hardware operating point the gate error model comes from the founding cat-qubit theory <button class="cite" data-c="gm2019">PRX 2019</button>, whose key term is the price of a two-qubit gate of duration T on a cat of size n-bar with two-photon stabilization rate kappa-2:</p>
+
+<div class="eq" data-tex="p_Z(\text{control}) = \bar{n}\,\kappa_1 T + \frac{1}{2\pi\,\bar{n}\,\kappa_2 T} \tag{eq.\ 4}"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable width="100%"><mtr><mtd width="50%"></mtd><mtd><mrow><msub><mi>p</mi><mi>Z</mi></msub><mo stretchy="false">(</mo><mtext>control</mtext><mo stretchy="false">)</mo><mo>=</mo><mover accent="true"><mi>n</mi><mo>ˉ</mo></mover><mtext> </mtext><msub><mi>κ</mi><mn>1</mn></msub><mi>T</mi><mo>+</mo><mfrac><mn>1</mn><mrow><mn>2</mn><mi>π</mi><mtext> </mtext><mover accent="true"><mi>n</mi><mo>ˉ</mo></mover><mtext> </mtext><msub><mi>κ</mi><mn>2</mn></msub><mi>T</mi></mrow></mfrac></mrow></mtd><mtd width="50%"></mtd><mtd><mtext>(eq. 4)</mtext></mtd></mtr></mtable><annotation encoding="application/x-tex">p_Z(\text{control}) = \bar{n}\,\kappa_1 T + \frac{1}{2\pi\,\bar{n}\,\kappa_2 T} \tag{eq.\ 4}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0715em;">Z</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord text"><span class="mord">control</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.5678em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">n</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;"><span class="mord">ˉ</span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">κ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.1389em;">T</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.1574em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span><span class="mord mathnormal" style="margin-right:0.0359em;">π</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.5678em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">n</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;"><span class="mord">ˉ</span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">κ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.1389em;">T</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span><span class="tag"><span class="strut" style="height:2.1574em;vertical-align:-0.836em;"></span><span class="mord text"><span class="mord">(</span><span class="mord"><span class="mord">eq. 4</span></span><span class="mord">)</span></span></span></span></span></span></div>
+
+<p>The first term is ordinary decay; the second is the gate's own quantum clumsiness — a non-adiabatic error, the cost of rushing. At the frontier operating point that second term dominates everything else, which is exactly why lazy grading flatters and honest grading kills. A final calibration check pointed the finished instrument at a code family another group had already simulated by independent methods <button class="cite" data-c="ruiz">Nat. Commun. 2025</button>: twelve of twelve grid points landed inside the agreement band, within about 25% at the operating point. The instrument's two known flaws are printed on it — it reads 1.2–2x optimistic in absolute terms (so every conclusion uses same-instrument ratios, where the optimism cancels), and short simulations flatter both codes near their start and end (so every comparison runs both codes at matched depth — a rule adopted after that exact effect nearly produced a wrong verdict, which we caught).</p>
+
+<h2><span class="num">04</span>THE CAMPAIGN: FOUR BETS, ONE KILL, ONE WIN</h2>
+
+<p><b>Bet 1 (35%): Day 1's discovery is real.</b> On Day 1, under cheap code-capacity grading, the search had found a hypergraph-product code that looked 2.4x more qubit-efficient than anything comparable. Bet 1 said it would survive honest grading. It did not — it lost to plain repetition by a factor of one hundred thousand. The autopsy is instructive: that code needs both kinds of parity check, and under cat-qubit gate physics the bit-flip checks put their worst errors directly onto the stored qubits — a factor-of-about-54 penalty — to guard against bit flips that equation 1 had already made a thousand times rarer than the checks' own cost. Paying 54x to insure against almost nothing. At high bias you check phase only, which is exactly the architecture the frontier proposal already uses <button class="cite" data-c="ruiz">Nat. Commun. 2025</button>. Miss, published, lesson banked.</p>
+
+<p><b>Bet 2 (55%): the search beats repetition anyway.</b> The first family the AI proposed for the honest-grading campaign died before a single simulation — the mechanical verifier proved in one line that it had a hidden ceiling, its error-survival could never exceed d = 4 no matter the size. That is the loop working, not failing: the kill was cheap, immediate, and explained. The repair bred the winner: take 3x repetition, cross it with a classic 8-bit code (the extended Hamming code — four parity checks, each touching four qubits), and the product is a [24, 4, 12] code — 24 cat qubits storing 4 logical qubits, 13 per logical including helpers, surviving any 5 simultaneous phase flips. At the frontier operating point, graded honestly, depth-matched on the same instrument, it fails at one quarter the rate of budget-matched repetition (ratio 0.255; 95% confidence interval 0.17–0.34). Then we tried to kill it three ways — fresh random seeds, a stronger decoder, doubled circuit depth — and it survived all three. Hit. One label rides with it everywhere: this is a result about a validated model of hardware, not about hardware.</p>
+
+<p>Here is that winner written out, because the whole point of a search is a recipe you can use. Its two ingredients are the 3-bit repetition check and the [8,4,4] extended Hamming check — each a small grid of 0s and 1s, exactly the "code" of Section 02:</p>
+
+<div class="eq" data-tex="H_{\text{rep}} = \begin{bmatrix} 1 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 \end{bmatrix}, \qquad H_{\text{eH}} = \begin{bmatrix} 1 &amp; 1 &amp; 1 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 &amp; 1 &amp; 0 &amp; 0 &amp; 1 &amp; 1 \\ 0 &amp; 1 &amp; 0 &amp; 1 &amp; 0 &amp; 1 &amp; 0 &amp; 1 \\ 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 1 &amp; 1 &amp; 1 \end{bmatrix} \tag{eq.\ 5}"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable width="100%"><mtr><mtd width="50%"></mtd><mtd><mrow><msub><mi>H</mi><mtext>rep</mtext></msub><mo>=</mo><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center center center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mo separator="true">,</mo><mspace width="2em"/><msub><mi>H</mi><mtext>eH</mtext></msub><mo>=</mo><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center center center center center center center center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow></mrow></mtd><mtd width="50%"></mtd><mtd><mtext>(eq. 5)</mtext></mtd></mtr></mtable><annotation encoding="application/x-tex">H_{\text{rep}} = \begin{bmatrix} 1 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 \end{bmatrix}, \qquad H_{\text{eH}} = \begin{bmatrix} 1 &amp; 1 &amp; 1 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 &amp; 1 &amp; 0 &amp; 0 &amp; 1 &amp; 1 \\ 0 &amp; 1 &amp; 0 &amp; 1 &amp; 0 &amp; 1 &amp; 0 &amp; 1 \\ 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 1 &amp; 1 &amp; 1 \end{bmatrix} \tag{eq.\ 5}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0813em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">rep</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0813em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">eH</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:4.8em;vertical-align:-2.15em;"></span><span class="minner"><span class="mopen"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.65em;"><span style="top:-4.65em;"><span class="pstrut" style="height:6.8em;"></span><span style="width:0.667em;height:4.8em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.667em" height="4.8em" viewBox="0 0 667 4800"><path d="M403 1759 V84 H666 V0 H319 V1759 v1200 v1759 v84 h347 v-84
+H403z M403 1759 V0 H319 V1759 v1200 v1759 v84 h84z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.65em;"><span style="top:-4.81em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-1.21em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.15em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.65em;"><span style="top:-4.81em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-1.21em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.15em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.65em;"><span style="top:-4.81em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-1.21em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.15em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.65em;"><span style="top:-4.81em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-1.21em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.15em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.65em;"><span style="top:-4.81em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-1.21em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.15em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.65em;"><span style="top:-4.81em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-1.21em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.15em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.65em;"><span style="top:-4.81em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-1.21em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.15em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.65em;"><span style="top:-4.81em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-1.21em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.15em;"><span></span></span></span></span></span></span></span><span class="mclose"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.65em;"><span style="top:-4.65em;"><span class="pstrut" style="height:6.8em;"></span><span style="width:0.667em;height:4.8em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.667em" height="4.8em" viewBox="0 0 667 4800"><path d="M347 1759 V0 H0 V84 H263 V1759 v1200 v1759 H0 v84 H347z
+M347 1759 V0 H263 V1759 v1200 v1759 h84z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.15em;"><span></span></span></span></span></span></span></span></span><span class="tag"><span class="strut" style="height:4.8em;vertical-align:-2.15em;"></span><span class="mord text"><span class="mord">(</span><span class="mord"><span class="mord">eq. 5</span></span><span class="mord">)</span></span></span></span></span></span></div>
+
+<p>The winner is their classical product: one copy of the repetition check for every extended-Hamming bit, stacked on one copy of the extended-Hamming check for every repetition bit. That gives a 28-row, 24-column parity-check matrix — the phase-check code — of distance twelve, storing 4 logical qubits (24 data qubits plus 28 helper checks, thirteen physical per logical):</p>
+
+<div class="eq" data-tex="H = \begin{bmatrix} H_{\text{rep}} \otimes I_8 \\ I_3 \otimes H_{\text{eH}} \end{bmatrix} \;\Rightarrow\; [24, 4, 12] \tag{eq.\ 6}"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable width="100%"><mtr><mtd width="50%"></mtd><mtd><mrow><mi>H</mi><mo>=</mo><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><msub><mi>H</mi><mtext>rep</mtext></msub><mo>⊗</mo><msub><mi>I</mi><mn>8</mn></msub></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><msub><mi>I</mi><mn>3</mn></msub><mo>⊗</mo><msub><mi>H</mi><mtext>eH</mtext></msub></mrow></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mtext>  </mtext><mo>⇒</mo><mtext>  </mtext><mo stretchy="false">[</mo><mn>24</mn><mo separator="true">,</mo><mn>4</mn><mo separator="true">,</mo><mn>12</mn><mo stretchy="false">]</mo></mrow></mtd><mtd width="50%"></mtd><mtd><mtext>(eq. 6)</mtext></mtd></mtr></mtable><annotation encoding="application/x-tex">H = \begin{bmatrix} H_{\text{rep}} \otimes I_8 \\ I_3 \otimes H_{\text{eH}} \end{bmatrix} \;\Rightarrow\; [24, 4, 12] \tag{eq.\ 6}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0813em;">H</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.0813em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">rep</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⊗</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0785em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">8</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.0785em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⊗</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0813em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">eH</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇒</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">24</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">4</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">12</span><span class="mclose">]</span></span><span class="tag"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="mord text"><span class="mord">(</span><span class="mord"><span class="mord">eq. 6</span></span><span class="mord">)</span></span></span></span></span></span></div>
+
+<p>In code the whole recipe is three lines — build the repetition check, build the extended-Hamming check, take their product — and the exact functions (<span class="mono">rep_H(3)</span>, <span class="mono">ext_hamming8()</span>, <span class="mono">product_code()</span>) are committed in the expedition record that Section 06 points to. The bit-flip logical operators are weight-1 and left unprotected by design — at high bias equation 1 has already made bit flips rare — so only these phase checks are ever extracted, which is exactly the phase-only architecture the frontier proposal uses <button class="cite" data-c="ruiz">Nat. Commun. 2025</button>.</p>
+
+<p><b>Bet 3 (40%): the AI's own proposal reaches the podium.</b> It did — the winner is the AI-layer proposal, with the footnote printed at equal size: the proposing agent and the strategy running this dossier are the same system, refereed by its own mechanical verifier, and the win exists only because that verifier killed the first attempt. Hit, footnotes attached.</p>
+
+<p><b>Bet 4 (20%): match the frontier's overhead.</b> The published frontier architecture reaches about 7.6 qubits per logical at error rates of one in a hundred million <button class="cite" data-c="ruiz">Nat. Commun. 2025</button>. Bet 4 asked our weight-limited search to match it. Nothing came close — the winning family's overhead grows with protection, the wrong direction entirely. Miss: the stretch was a stretch. Final score: two hits, two misses, twenty-four days ahead of the signpost date.</p>
+
+<figure class="living-figure" data-figure='{"type":"qc-campaign","stage":"#ffffff","caption":"Fig 2 — The campaign arc: four bets frozen in public before the search ran (35% / 55% / 40% / 20%), resolved the same day against the frozen criteria — two hits (green), two misses (coral), every verdict published at equal prominence. Beneath the resolved pair, the referee story: the mechanical verifier killed the first proposed family before any Monte-Carlo, and the repair became the winner. Right rail: three forward bets, hollow until a later edition scores them (30% by end 2027, 55% by mid 2027, 25% by end 2028). Bottom: the nine-entry error ledger E1-E9, every catch credited and published. Dates, percentages, and verdicts are taken directly from the committed record; no interpolation. [SCORED + FORECAST · as carded]"}'>
+    <style class="lf-tier-style">.lf-svg text{font-size:13px}.lf-svg .lf-tick{font-size:11px}.lf-svg .lf-axis{font-size:13px}.lf-svg .lf-callout{font-size:15px}.lf-caption{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#586a6f;margin:10px 14px 0;max-width:78ch;}</style>
+    <svg data-poster="1" viewBox="0 0 960 520" width="100%" class="lf-svg" role="img" aria-label="Chapter 4's campaign arc: four bets frozen before the search (35, 55, 40, 20 percent), resolved the same day — two hits, two misses — with the referee's kill-then-repair story, three hollow forward bets, and the nine-entry error ledger."><text class="lf-callout lf-scale-with-art" x="480" y="40" text-anchor="middle" fill="#3a474b">FOUR PUBLIC BETS, TWO HITS, TWO MISSES</text><text class="lf-tick lf-scale-with-art" x="480" y="64" text-anchor="middle" fill="#5a6b70">read left to right: each bet starts hollow with its pre-registered probability, and ends filled — green if it came true, coral if it did not</text><text class="lf-axis lf-scale-with-art" x="205" y="108" text-anchor="middle" fill="#3a474b">FROZEN 2026-07-07</text><text class="lf-tick lf-scale-with-art" x="205" y="126" text-anchor="middle" fill="#5a6b70">before the search ran</text><text class="lf-axis lf-scale-with-art" x="560" y="108" text-anchor="middle" fill="#3a474b">RESOLVED — SAME DAY</text><text class="lf-tick lf-scale-with-art" x="560" y="126" text-anchor="middle" fill="#5a6b70">hollow diamond -&gt; filled: green hit, coral miss</text><text class="lf-axis lf-scale-with-art" x="865" y="108" text-anchor="middle" fill="#3a474b">NEXT BETS</text><text class="lf-tick lf-scale-with-art" x="865" y="126" text-anchor="middle" fill="#5a6b70">hollow until scored</text><line x1="770" y1="92" x2="770" y2="440" stroke="#d7dee0" stroke-width="1"></line><polygon points="55,141 64,150 55,159 46,150" fill="#ffffff" stroke="#3a474b" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="55" y="134" text-anchor="middle" fill="#3a474b">35%</text><text class="lf-tick lf-scale-with-art" x="77" y="154" text-anchor="start" fill="#3a474b">the Day-1 headline survives circuit level</text><line x1="410" y1="150" x2="428" y2="150" stroke="#d7dee0" stroke-width="1.4"></line><polygon points="428,145 438,150 428,155" fill="#5a6b70"></polygon><polygon points="452,141 461,150 452,159 443,150" fill="#c2562f" stroke="#c2562f" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="472" y="154" text-anchor="start" fill="#c2562f">FALSE — lost by five orders of magnitude</text><polygon points="55,219 64,228 55,237 46,228" fill="#ffffff" stroke="#3a474b" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="55" y="212" text-anchor="middle" fill="#3a474b">55%</text><text class="lf-tick lf-scale-with-art" x="77" y="232" text-anchor="start" fill="#3a474b">a searched code beats repetition 2x</text><line x1="410" y1="228" x2="428" y2="228" stroke="#d7dee0" stroke-width="1.4"></line><polygon points="428,223 438,228 428,233" fill="#5a6b70"></polygon><polygon points="452,219 461,228 452,237 443,228" fill="#0c8f86" stroke="#0c8f86" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="472" y="232" text-anchor="start" fill="#0c8f86">TRUE — [24,4,12] wins ~4x; survived 3 re-checks</text><polygon points="55,297 64,306 55,315 46,306" fill="#ffffff" stroke="#3a474b" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="55" y="290" text-anchor="middle" fill="#3a474b">40%</text><text class="lf-tick lf-scale-with-art" x="77" y="310" text-anchor="start" fill="#3a474b">an LLM-layer seed makes the podium</text><line x1="410" y1="306" x2="428" y2="306" stroke="#d7dee0" stroke-width="1.4"></line><polygon points="428,301 438,306 428,311" fill="#5a6b70"></polygon><polygon points="452,297 461,306 452,315 443,306" fill="#0c8f86" stroke="#0c8f86" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="472" y="310" text-anchor="start" fill="#0c8f86">TRUE — the winner itself, born from the kill</text><polygon points="55,375 64,384 55,393 46,384" fill="#ffffff" stroke="#3a474b" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="55" y="368" text-anchor="middle" fill="#3a474b">20%</text><text class="lf-tick lf-scale-with-art" x="77" y="388" text-anchor="start" fill="#3a474b">match the frontier overhead at weight 4</text><line x1="410" y1="384" x2="428" y2="384" stroke="#d7dee0" stroke-width="1.4"></line><polygon points="428,379 438,384 428,389" fill="#5a6b70"></polygon><polygon points="452,375 461,384 452,393 443,384" fill="#c2562f" stroke="#c2562f" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="472" y="388" text-anchor="start" fill="#c2562f">FALSE — the stretch was a stretch</text><text class="lf-tick lf-scale-with-art" x="390" y="432" text-anchor="middle" fill="#5a6b70">the verifier killed the first proposed family before any Monte-Carlo — the repair became the winner</text><polygon points="803,177 811,185 803,193 795,185" fill="#ffffff" stroke="#3a474b" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="803" y="170" text-anchor="middle" fill="#3a474b">30%</text><text class="lf-tick lf-scale-with-art" x="819" y="183" text-anchor="start" fill="#3a474b">low-weight codes reach</text><text class="lf-tick lf-scale-with-art" x="819" y="198" text-anchor="start" fill="#3a474b">the frontier overhead</text><text class="lf-tick lf-scale-with-art" x="819" y="214" text-anchor="start" fill="#5a6b70">by end 2027</text><polygon points="803,260 811,268 803,276 795,268" fill="#ffffff" stroke="#3a474b" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="803" y="253" text-anchor="middle" fill="#3a474b">55%</text><text class="lf-tick lf-scale-with-art" x="819" y="266" text-anchor="start" fill="#3a474b">the field crosses</text><text class="lf-tick lf-scale-with-art" x="819" y="281" text-anchor="start" fill="#3a474b">the noise seam</text><text class="lf-tick lf-scale-with-art" x="819" y="297" text-anchor="start" fill="#5a6b70">by mid 2027</text><polygon points="803,343 811,351 803,359 795,351" fill="#ffffff" stroke="#3a474b" stroke-width="1.6"></polygon><text class="lf-tick lf-scale-with-art" x="803" y="336" text-anchor="middle" fill="#3a474b">25%</text><text class="lf-tick lf-scale-with-art" x="819" y="349" text-anchor="start" fill="#3a474b">an outer cat code</text><text class="lf-tick lf-scale-with-art" x="819" y="364" text-anchor="start" fill="#3a474b">on real hardware</text><text class="lf-tick lf-scale-with-art" x="819" y="380" text-anchor="start" fill="#5a6b70">by end 2028</text><circle cx="190" cy="470" r="5" fill="#3a474b"></circle><circle cx="216" cy="470" r="5" fill="#3a474b"></circle><circle cx="242" cy="470" r="5" fill="#3a474b"></circle><circle cx="268" cy="470" r="5" fill="#3a474b"></circle><circle cx="294" cy="470" r="5" fill="#3a474b"></circle><circle cx="320" cy="470" r="5" fill="#3a474b"></circle><circle cx="346" cy="470" r="5" fill="#3a474b"></circle><circle cx="372" cy="470" r="5" fill="#3a474b"></circle><circle cx="398" cy="470" r="5" fill="#3a474b"></circle><text class="lf-tick lf-scale-with-art" x="432" y="474" text-anchor="start" fill="#3a474b">E1-E9: nine of the machinery's own errors — caught, credited, published.</text><text class="lf-tick lf-scale-with-art" x="178" y="474" text-anchor="end" fill="#5a6b70">the error ledger:</text></svg>
+    <figcaption class="lf-caption">Fig 2 — The campaign arc: four bets frozen in public before the search ran (35% / 55% / 40% / 20%), resolved the same day against the frozen criteria — two hits (green), two misses (coral), every verdict published at equal prominence. Beneath the resolved pair, the referee story: the mechanical verifier killed the first proposed family before any Monte-Carlo, and the repair became the winner. Right rail: three forward bets, hollow until a later edition scores them (30% by end 2027, 55% by mid 2027, 25% by end 2028). Bottom: the nine-entry error ledger E1-E9, every catch credited and published. Dates, percentages, and verdicts are taken directly from the committed record; no interpolation. [SCORED + FORECAST · as carded]</figcaption></figure>
+
+<h2><span class="num">05</span>THE MAP, AND WHAT A LOOP IS GOOD FOR</h2>
+
+<p>Put the win under a moving spotlight and the chapter's real finding appears (Fig 3). Make the gates ten times dirtier and the winner does not merely shrink — it inverts, losing twelve times to repetition (its deeper sibling, sixty-three times): sophisticated codes drown first when the checking machinery degrades, because they lean on it hardest. Move to today's actual measured hardware and neither code matters — both drown in unprotected bit flips at percent-per-cycle rates, because at today's cat sizes equation 1 has not yet pushed bit flips low enough to ignore. Only at the future high-bias operating point — the regime the search was aimed at — does the win exist. Independent circuit-level work on other biased-noise platforms reports the same cliff from the other side <button class="cite" data-c="benito">arXiv 2026</button>.</p>
+
+<figure class="living-figure" data-figure='{"type":"qc-severitymap","stage":"#ffffff","caption":"Fig 3 — One AI-found code, three noise regimes: the campaign winner (rep3 x extended-Hamming [24,4,12], weight-4 checks, 13 qubits per logical) against budget-matched repetition, on a log advantage axis. Dirty gates (kappa1/kappa2 = 1e-3): it loses 12x and its deeper sibling loses 63x. Today’s hardware (Ocelot-calibrated, bias ~30): nobody wins — both architectures drown in the unprotected bit-flip floor at ~2-5% per cycle. High bias (1e-4, the regime the search was aimed at): it wins ~3.9x, 95% CI 3.0-5.8, depth-matched on the same instrument. Ratios taken directly from the committed campaign record; a model-level result, not a hardware demonstration. [SCORED · numbers as committed]"}'>
+    <style class="lf-tier-style">.lf-svg text{font-size:13px}.lf-svg .lf-tick{font-size:11px}.lf-svg .lf-axis{font-size:13px}.lf-svg .lf-callout{font-size:15px}.lf-caption{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#586a6f;margin:10px 14px 0;max-width:78ch;}</style>
+    <svg data-poster="1" viewBox="0 0 960 520" width="100%" class="lf-svg" role="img" aria-label="The campaign's winning code compared to plain repetition across three measured noise regimes: it loses 12x under dirty gates, nobody wins at today's hardware (both drown in the bit-flip floor), and it wins about 4x at the high-bias operating point it was searched for."><defs><pattern id="qcsev-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#eef1f2"></rect><line x1="0" y1="0" x2="0" y2="8" stroke="#d7dee0" stroke-width="2"></line></pattern></defs><text class="lf-callout lf-scale-with-art" x="480" y="40" text-anchor="middle" fill="#3a474b">ONE AI-FOUND CODE, THREE NOISE REGIMES</text><text class="lf-tick lf-scale-with-art" x="480" y="64" text-anchor="middle" fill="#5a6b70">the searched-for regime is the only one it wins — codes must match their bias regime</text><line x1="150" y1="120" x2="150" y2="420" stroke="#5a6b70" stroke-width="1.4"></line><line x1="144" y1="120" x2="150" y2="120" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="140" y="124" text-anchor="end" fill="#5a6b70">10x</text><line x1="150" y1="120" x2="910" y2="120" stroke="#d7dee0" stroke-width="1"></line><line x1="144" y1="220" x2="150" y2="220" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="140" y="224" text-anchor="end" fill="#5a6b70">even</text><line x1="144" y1="320" x2="150" y2="320" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="140" y="324" text-anchor="end" fill="#5a6b70">0.1x</text><line x1="150" y1="320" x2="910" y2="320" stroke="#d7dee0" stroke-width="1"></line><line x1="144" y1="420" x2="150" y2="420" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="140" y="424" text-anchor="end" fill="#5a6b70">0.01x</text><line x1="150" y1="420" x2="910" y2="420" stroke="#d7dee0" stroke-width="1"></line><line x1="150" y1="220" x2="910" y2="220" stroke="#5a6b70" stroke-width="1.2" stroke-dasharray="5,4"></line><text class="lf-tick lf-scale-with-art" x="912" y="214" text-anchor="end" fill="#5a6b70">even with plain repetition</text><text class="lf-axis lf-scale-with-art lf-yaxis-label" x="96" y="270" text-anchor="middle" fill="#5a6b70" transform="rotate(-90 96 270)">advantage over repetition</text><line x1="420" y1="120" x2="420" y2="420" stroke="#d7dee0" stroke-width="1"></line><line x1="660" y1="120" x2="660" y2="420" stroke="#d7dee0" stroke-width="1"></line><text class="lf-axis lf-scale-with-art" x="290" y="96" text-anchor="middle" fill="#c2562f">LOSES 12x</text><circle cx="290" cy="328.28" r="8" fill="#c2562f"></circle><text class="lf-tick lf-scale-with-art" x="306" y="332.28" text-anchor="start" fill="#c2562f">12x worse</text><circle cx="230" cy="399.66" r="5" fill="#ffffff" stroke="#c2562f" stroke-width="1.6"></circle><text class="lf-tick lf-scale-with-art" x="244" y="403.66" text-anchor="start" fill="#5a6b70">deeper code: 63x worse</text><text class="lf-axis lf-scale-with-art" x="290" y="452" text-anchor="middle" fill="#3a474b">DIRTY GATES</text><text class="lf-tick lf-scale-with-art" x="290" y="472" text-anchor="middle" fill="#5a6b70">kappa1/kappa2 = 1e-3</text><rect x="438" y="128" width="204" height="284" fill="url(#qcsev-hatch)" stroke="#d7dee0"></rect><text class="lf-axis lf-scale-with-art" x="540" y="96" text-anchor="middle" fill="#8a8f93">NOBODY WINS</text><text class="lf-tick lf-scale-with-art" x="540" y="260" text-anchor="middle" fill="#3a474b">both architectures drown in the</text><text class="lf-tick lf-scale-with-art" x="540" y="278" text-anchor="middle" fill="#3a474b">unprotected bit-flip floor</text><text class="lf-tick lf-scale-with-art" x="540" y="296" text-anchor="middle" fill="#5a6b70">(~2-5% per cycle; the contest is irrelevant)</text><text class="lf-axis lf-scale-with-art" x="540" y="452" text-anchor="middle" fill="#3a474b">TODAY'S HARDWARE</text><text class="lf-tick lf-scale-with-art" x="540" y="472" text-anchor="middle" fill="#5a6b70">Ocelot-calibrated, bias ~30</text><text class="lf-axis lf-scale-with-art" x="790" y="96" text-anchor="middle" fill="#0c8f86">WINS ~4x</text><line x1="790" y1="143.55" x2="790" y2="172.76" stroke="#0c8f86" stroke-width="2"></line><line x1="782" y1="143.55" x2="798" y2="143.55" stroke="#0c8f86" stroke-width="2"></line><line x1="782" y1="172.76" x2="798" y2="172.76" stroke="#0c8f86" stroke-width="2"></line><circle cx="790" cy="160.65" r="8" fill="#0c8f86"></circle><text class="lf-tick lf-scale-with-art" x="806" y="164.65" text-anchor="start" fill="#0c8f86">3.9x better (95% CI 3.0-5.8)</text><text class="lf-tick lf-scale-with-art" x="806" y="182.65" text-anchor="start" fill="#5a6b70">depth-matched, same instrument</text><text class="lf-axis lf-scale-with-art" x="790" y="452" text-anchor="middle" fill="#3a474b">HIGH BIAS — THE TARGET</text><text class="lf-tick lf-scale-with-art" x="790" y="472" text-anchor="middle" fill="#5a6b70">kappa1/kappa2 = 1e-4</text><text class="lf-tick lf-scale-with-art" x="480" y="504" text-anchor="middle" fill="#5a6b70">winner: rep3 x extended-Hamming [24,4,12], weight-4 checks, 13 qubits/logical — model-level result, not a hardware demonstration</text></svg>
+    <figcaption class="lf-caption">Fig 3 — One AI-found code, three noise regimes: the campaign winner (rep3 x extended-Hamming [24,4,12], weight-4 checks, 13 qubits per logical) against budget-matched repetition, on a log advantage axis. Dirty gates (kappa1/kappa2 = 1e-3): it loses 12x and its deeper sibling loses 63x. Today’s hardware (Ocelot-calibrated, bias ~30): nobody wins — both architectures drown in the unprotected bit-flip floor at ~2-5% per cycle. High bias (1e-4, the regime the search was aimed at): it wins ~3.9x, 95% CI 3.0-5.8, depth-matched on the same instrument. Ratios taken directly from the committed campaign record; a model-level result, not a hardware demonstration. [SCORED · numbers as committed]</figcaption></figure>
+
+<p>Codes are like tires: the racing slick that wins on a dry track loses on gravel and kills you on ice. Today's cat hardware wants moderate-bias codes with both check types; tomorrow's high-bias hardware wants phase-only classical structure <button class="cite" data-c="roffe">Quantum 2023</button> <button class="cite" data-c="ruiz">Nat. Commun. 2025</button>; and a code search that does not know what weather it is designing for will win the wrong race. That is this dossier's science-versus-scale-up spine, measured three ways inside one chapter.</p>
+
+<p>So what is an AI-driven discovery loop actually good for, today, on this evidence? It can build its own honest referee from published data — the calibration chain above is machine work end to end. It can propose, be refuted, and grow from the refutation — the winner is literally made of its predecessor's autopsy. It can produce a real, checkable, model-level result at the field's own frontier operating point. What it cannot do is skip the expensive referee: every cheap-grade promise this campaign tested shrank or died under honest grading, exactly what the field's own frontier reports <button class="cite" data-c="benito">arXiv 2026</button>. The dossier's boldest claim — that AI materially shortens the road to fault tolerance — gains a small, honest data point: the loop produced one model-level structural result and nine caught errors in one day, and the errors were half the value.</p>
+
+<p>Three new bets go on the board, hollow until scored: someone publishes a low-weight cat code matching the frontier's overhead by end of 2027 (30%); an outside group runs an AI code search under honest circuit-level grading by mid-2027 (55%); someone demonstrates a multi-logical cat code on real hardware by end of 2028 (25%). Misses will publish like hits — they always do here.</p>
+
+<p>The error ledger is the chapter's second result. Nine entries: a phantom environment, a misread definition, a biased fit, a wrong corridor, a tool's bad arithmetic, a missing observable, an imprecise preview, a depth-biased comparison, and a one-character drift in the machinery's own handoff — each caught by the discipline built for exactly that failure, each credited to its catcher, each published in the expedition notebook. A loop that cannot catch its own errors cannot be trusted to catch nature's. This one, on one day's evidence, catches both.</p>
+
+<h2><span class="num">06</span>REPRODUCE THIS</h2>
+
+<p>Everything the central result rests on is committed and public, so a third party can rebuild it without contacting us. <b>The noise model:</b> photon-loss rate kappa-1 = 1/(60 microseconds), correction cycle 2.8 microseconds, fitted measurement error 4.8%; the high-bias operating point is cat size n-bar = 11 at loss-to-stabilization ratio kappa-1/kappa-2 = 1e-4, and the two-qubit gate channel is equation 4 from the founding theory <button class="cite" data-c="gm2019">PRX 2019</button>, every rate anchored to Amazon's published Ocelot numbers and released shot data <button class="cite" data-c="ocelot">Nature 2025</button>. <b>The code:</b> the explicit [24, 4, 12] construction of Section 04 (equations 5 and 6). <b>The decoder:</b> belief propagation with ordered-statistics post-processing on the circuit-level detector error model — min-sum belief propagation, thirty iterations, OSD order 4 — with exact matching used only for the repetition baseline. <b>The experiment:</b> depth-matched at sixteen cycles on the same instrument, about 4x10^5 shots for the winner and 2x10^6 for the repetition comparator, the per-logical rate taken as one minus (one minus the any-logical rate) raised to the one-over-k. <b>The artifacts:</b> the evaluator and campaign scripts (<span class="mono">evaluator_v1.py</span>, <span class="mono">gm_css.py</span>, and the staged runners) sit in the expedition record beside the frozen pre-registration, the noise derivation, and a pinned software stack (Python 3.12 with numpy, ldpc, stim, and pymatching at exact versions); the Ocelot data itself is public at DOI 10.5281/zenodo.14257632. <b>The honest scope:</b> this reproduces a model-level result — a validated model of cat-qubit hardware — not a hardware measurement, and the model carries its disclosed 1.2-2x optimism throughout.</p>
+
+<section id="verify">
+  <div class="kicker teal">CONSISTENCY · EXECUTABLE</div>
+  <h2>Run the checks</h2>
+  <p class="lede">A survey's verification weight sits mostly in the <a href="dossier.html">citation audit</a>; the console here runs the <em>consistency</em> checks — cross-avenue totals, internal arithmetic, and the rule that every forecast carries a dated signpost. Same arithmetic as <span class="mono">verification/verify_numbers.py</span>, which CI reruns on every commit.</p>
+  <div class="console">
+    <div class="console-head">
+      <span class="label">consistency console · <span id="ncheck">29</span> checks</span>
+      <button id="run">Run all checks</button>
+    </div>
+    <div id="log" aria-live="polite" data-baked="1">
+      <div class="row"><span class="badge p">PASS</span><span class="what">01 · Consistency: at least one avenue in the landscape</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">02 · Consistency: every FORECAST has a dated signpost</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">03 · Consistency: all forecast probabilities lie in [0,100]</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">04 · Ch4: derived phase-flip time at two photons falls in Ocelot's measured 27-33 us</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">05 · Ch4: idle-dominated per-cycle dephasing matches Ocelot's 9.6(4)e-2 (2-sigma window)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">06 · Ch4: predicted 8.9% per 2.8us cycle = 1-exp(-2*kappa1*T)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">07 · Ch4: today's phase/bit ratio ~30 = 2*kappa1 / Gamma_bit(d5 refit,nbar=2)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">08 · Ch4: fitted measurement error 4.8% = p_m 0.0478*100</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">09 · Ch4: bit-flip suppression per photon, lower section (e^0.735) sits in the 2.1-2.4x claim band</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">10 · Ch4: bit-flip suppression per photon, upper section (e^0.882) sits in the 2.1-2.4x claim band</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">11 · Ch4: out-of-sample d3 holdouts within the claimed 30% (worst of +22.5%/+28.4%)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">12 · Ch4: corridor grid points inside the same-order band (twelve of twelve)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">13 · Ch4: corridor agreement at the operating point ~25% (worst |1-ratio| of 0.86..0.94 grid)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">14 · Ch4: disclosed instrument optimism 1.2-2x (same-instrument rep-7 MC/FIT = 0.57 -> 1/0.57)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">15 · Ch4: P1 loss 'five orders of magnitude' (2.92e-4 / 2.74e-9)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">16 · Ch4: full-CSS extraction penalty 'a factor of about 54' (1.59e-2 / 2.92e-4)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">17 · Ch4: winner distance twelve = rep(3) x extHamming d(4) product</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">18 · Ch4: distance 12 corrects any 5 phase flips = floor((12-1)/2)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">19 · Ch4: winner thirteen qubits per logical = (24 data + 28 checks) / 4 logical</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">20 · Ch4: winner parity matrix has 24 columns = 3 (rep) x 8 (extHamming)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">21 · Ch4: winner parity matrix has 28 rows = 2*8 (rep-check (x) I8) + 3*4 (I3 (x) extHam-check)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">22 · Ch4: matched-depth ratio 'one quarter' = 1.719e-7 / 6.750e-7 in stated CI [0.172, 0.337]</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">23 · Ch4: matched-depth CI upper bound clears the frozen 0.5 bar</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">24 · Ch4: scoreboard -- two hits + two misses = four frozen priors</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">25 · Ch4: 'twenty-four days ahead' (2026-07-31 minus 2026-07-07)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">26 · Ch4: down-bias inversion, winner vs repetition ('twelve times worse')</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">27 · Ch4: down-bias inversion, deeper sibling ('sixty-three times worse')</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">28 · Ch4: Day-1 headline's code-capacity efficiency claim ('2.4x') as reported on Day 1</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">29 · Ch4: frontier overhead ~7.6 q/logical = 758/100 (Ruiz)</span></div>
+      <div class="tally">TOTAL: 29 checks · 29 pass · 0 fail — All checks pass — the survey is internally consistent.</div>
+    </div>
+  </div>
+</section>
+
+<div class="publish-cta">
+  <div class="pc-text">
+    <p class="pc-h">Want to publish like this?</p>
+    <p class="pc-sub">You just read a survey that explains itself. You can publish one too — Open Dossier is a free template, and an AI agent does the drafting, typesetting, citations, and verification. Idea to live publication in an afternoon.</p>
+  </div>
+  <a class="pc-btn" href="https://github.com/m4gr4th34/open-dossier-template/blob/main/GETTING-STARTED.md">Publish your own →</a>
+</div>
+
+<footer>
+  <b>About this edition:</b> this page is the complete survey in self-explaining form — the avenue <a href="#landscape">landscape</a> and the consistency console up top, the narrative below. This live edition is the paper. The <a href="dossier.html">audit trail</a> carries the citation audit and the receipts. A quiet secondary purpose: these early chapters double as a live shakedown of the Open Dossier template itself — the machinery is tested by being used, and several of its fixes were found here.
+  <br><br><span class="mono">An Open Dossier · CC BY 4.0 · AI-assistance: extremely heavy AI use, with human guidance and final review · every verification label is true</span>
+</footer>
+
+<script src="../../figures/figures.js"></script>
+<script src="../../figures/qc-degenloop.js"></script>
+<script src="../../figures/qc-severitymap.js"></script>
+<script src="../../figures/qc-campaign.js"></script>
+<script>
+(function () {
+  if (!window.DossierFigures) return;
+  var figs = document.querySelectorAll("figure[data-figure]");
+  for (var i = 0; i < figs.length; i++) {
+    var fig = figs[i], spec;
+    try { spec = JSON.parse(fig.getAttribute("data-figure")); } catch (e) { continue; }
+    var fn = spec && window.DossierFigures.renderers[spec.type];
+    if (typeof fn === "function") fn(fig, spec);
+  }
+})();
+</script>
+
+</div>
+
+<!-- cite fields. who: "Author et al. (Year)". what: 1-2 sentence plain-language summary of what it showed + why it matters. src: "Journal Vol, Page (Year), DOI/arXiv". Re-state fresh per chapter; never back-reference. -->
+<script type="application/json" id="cites-data">
+{
+"ocelot": {
+"who": "Putterman et al. (2025)",
+"what": "Amazon's Ocelot chip: measured concatenated cat-qubit error correction -- distance-5 repetition code at 1.65% logical error per cycle, with released shot-level data. This chapter's noise-model anchor: every hardware-mode rate traces to its published or released numbers.",
+"src": "Nature 638, 927-934 (2025), DOI 10.1038/s41586-025-08642-7; data DOI 10.5281/zenodo.14257632"
+},
+"gm2019": {
+"who": "Guillaud & Mirrahimi (2019)",
+"what": "The founding repetition-cat architecture theory; source of the CNOT error channel used in this chapter's high-bias gate model (channel constants pending PDF byte-check, carried as open verification work on the audit page).",
+"src": "PRX 9, 041053 (2019), arXiv 1904.09474"
+},
+"ruiz": {
+"who": "Ruiz et al. (2025)",
+"what": "LDPC-cat codes: the frontier proposal this chapter's search is benchmarked against -- phase-only extraction, 758 cat qubits for 100 logical at 1e-8 -- and the source of the published repetition fit our evaluator's corridor validates against.",
+"src": "Nat. Commun. 16, 1040 (2025), DOI 10.1038/s41467-025-56298-8"
+},
+"nautrup": {
+"who": "Nautrup et al. (2019)",
+"what": "The reinforcement-learning code-search origin point: RL agents optimizing surface-code layouts. Code-capacity setting -- part of the seam this chapter crosses.",
+"src": "Quantum 3, 215 (2019), arXiv 1812.08451"
+},
+"olle": {
+"who": "Olle et al. (2024)",
+"what": "Noise-aware RL discovery of codes and encoders, where noise-aware means channel-bias-aware: in the authors' own words, 'the encoding circuit is assumed to be error-free (non fault-tolerant encoding)' -- the prior art stating the seam in its own words.",
+"src": "npj Quantum Information 10 (2024), DOI 10.1038/s41534-024-00920-y, arXiv 2311.04750"
+},
+"heliu": {
+"who": "He & Liu (2025)",
+"what": "RL discovery of low-weight quantum codes under weight constraints -- the hardware-cap half of this chapter's search space, evaluated at code capacity.",
+"src": "arXiv 2502.14372 (2025)"
+},
+"ibmllm": {
+"who": "Cruz-Benito et al., IBM (2026)",
+"what": "LLM-guided evolutionary discovery of bivariate bicycle codes, scored on distance and code-capacity simulations -- the 2026 LLM-search flurry's flagship, still on the cheap side of the noise seam.",
+"src": "arXiv 2606.02418 (2026)"
+},
+"liumarq": {
+"who": "Liu & Marquardt (2026)",
+"what": "LLM discovery of qLDPC codes through structured concept evolution, evaluated 'under code-capacity depolarizing noise' (verbatim) -- BP+OSD-scored fitness, no syndrome-extraction errors.",
+"src": "arXiv 2606.24808 (2026)"
+},
+"bayesopt": {
+"who": "Bayesian-optimization code discovery (2026)",
+"what": "Bayesian optimization applied to quantum code discovery. Identity verified against arXiv; its noise-model statement is still to be quoted verbatim -- carried as open verification work, not asserted.",
+"src": "arXiv 2601.18562 (2026)"
+},
+"benito": {
+"who": "Benito, Velazquez-Resendiz & Bermudez (2026)",
+"what": "Circuit-level optimization of existing bias-tailored code families (no automated search): 'the substantial advantages predicted ... under code-capacity noise are strongly reduced once realistic syndrome extraction and circuit-level noise models are considered' -- independent corroboration of this chapter's first published miss.",
+"src": "arXiv 2606.17709 (2026)"
+},
+"roffe": {
+"who": "Roffe et al. (2023)",
+"what": "Bias-tailored quantum LDPC codes: the program of shaping code structure to the noise channel's bias -- the theory context for this chapter's measured bias-regime map.",
+"src": "Quantum 7, 1005 (2023), arXiv 2202.01702"
+}
+}
+</script>
+<script>
+// citation database — add an entry per chip:
+// KEY: {who:"Author(s) (Year)", what:"What they showed, 2 sentences, plain language.", src:"Journal Vol, Page"}
+const CITES = Object.assign(
+  { demo: {who:"This is a citation chip", what:"Tap any chip like this one and you get the source plus a two-sentence plain-language summary of what it actually showed \u2014 instead of a bare [7] sending you down a rabbit hole.", src:"You never leave the page."} },
+  (document.getElementById('cites-data') ? JSON.parse(document.getElementById('cites-data').textContent) : {})
+);
+// one shared toggle behavior for terms and citations
+function closeCard(btn){ const c = btn._card; if(c){ c.remove(); btn._card = null; btn.setAttribute('aria-expanded','false'); } }
+function toggle(btn, html, extraClass){
+  if(btn._card){ closeCard(btn); return; }
+  const card = document.createElement('span');
+  card.className = 'popcard' + (extraClass ? ' ' + extraClass : '');
+  card.innerHTML = html;
+  const block = btn.closest('p, .howto, .body, .openclaim, .forecast, .reported') || btn.parentNode;
+  block.insertAdjacentElement('afterend', card);
+  btn._card = card; btn.setAttribute('aria-expanded','true');
+}
+document.querySelectorAll('.term').forEach(btn=>{
+  btn.setAttribute('aria-expanded','false');
+  btn.addEventListener('click', ()=> toggle(btn, btn.dataset.d));
+});
+document.querySelectorAll('.cite').forEach(btn=>{
+  btn.setAttribute('aria-expanded','false');
+  btn.addEventListener('click', ()=>{
+    const c = CITES[btn.dataset.c];
+    if(!c) return;
+    toggle(btn, '<b>'+c.who+':</b> '+c.what+'<span class="src">'+c.src+'</span>', 'citecard');
+  });
+});
+</script>
+<script>
+// ---------------------------------------------------------------
+// SURVEY LANDSCAPE — single source of truth for the cards.
+// One object per avenue. Replace the sample rows with yours.
+//   name     : avenue/option name
+//   thesis   : one-line plain-language thesis
+//   status   : ESTABLISHED | OPEN-UNVERIFIED | FORECAST | REPORTED
+//              (any other ladder status renders as a neutral chip)
+//   forecast : integer percent, or null  (only meaningful for FORECAST)
+//   signpost : dated, falsifiable signpost string — MANDATORY for a
+//              FORECAST (a forecast without one is just an opinion with
+//              a number on it; the card flags it in red)
+//   cites    : array of citation keys (match dossier.html's audit)
+// ---------------------------------------------------------------
+let AVENUES = [];
+let RULES = {};
+
+const STATUS = {
+  "ESTABLISHED":     {cls:"s-est",      tcls:"t-est"},
+  "OPEN-UNVERIFIED": {cls:"s-open",     tcls:"t-open"},
+  "FORECAST":        {cls:"s-forecast", tcls:"t-forecast"},
+  "REPORTED":        {cls:"s-reported", tcls:"t-reported"},
+};
+const statusMeta = s => STATUS[s] || {cls:"s-default", tcls:""};
+
+function chip(s){ return '<span class="s-chip '+statusMeta(s).cls+'">'+s+'</span>'; }
+function forecastCell(a){
+  if(a.status !== "FORECAST") return '';
+  if(!a.signpost)             return '<span class="fc missing">⚠ forecast needs a dated signpost</span>';
+  const pct = (a.forecast==null) ? '?' : a.forecast+'%';
+  return '<span class="fc"><span class="pct">~'+pct+'</span> <span class="by">by '+a.signpost+'</span></span>';
+}
+function sourcesCell(a){
+  if(!a.cites || !a.cites.length) return '<span class="srcs"><span class="none">no sources</span></span>';
+  return '<span class="srcs">'+a.cites.map(c=>'<span class="ref">'+c+'</span>').join('')+'</span>';
+}
+
+function renderCards(){
+  document.getElementById('av-grid').innerHTML = AVENUES.map(a =>
+    '<div class="av-card '+statusMeta(a.status).tcls+'">'+
+      '<div class="av-top"><span class="av-name">'+a.name+'</span>'+chip(a.status)+'</div>'+
+      '<p class="av-thesis">'+a.thesis+'</p>'+
+      '<div class="av-meta">'+forecastCell(a)+sourcesCell(a)+'</div>'+
+    '</div>'
+  ).join('');
+}
+
+// ---------------------------------------------------------------
+// CONSISTENCY CONSOLE — checks computed from AVENUES; the RULES they
+// enforce are single-sourced from avenues.json's "checks" block (the
+// same file verify_numbers.py reads), so a threshold can't drift
+// between this page and the verifier. RULES is set by the loader below.
+// ---------------------------------------------------------------
+function buildChecks(){
+  const c = [];
+  const minAvenues   = (RULES.min_avenues ?? 1);
+  const signpostReq  = (RULES.forecast_signpost_required ?? true);
+  const pctMin       = (RULES.forecast_pct_min ?? 0);
+  const pctMax       = (RULES.forecast_pct_max ?? 100);
+
+  const forecasts    = AVENUES.filter(a=>a.status==="FORECAST");
+  const withSignpost = forecasts.filter(a=>!!a.signpost).length;
+  const outOfRange   = AVENUES.filter(a=>a.forecast!=null && (a.forecast<pctMin || a.forecast>pctMax)).length;
+
+  c.push(["Consistency: at least one avenue in the landscape", AVENUES.length, [minAvenues, 9999]]);
+  const expSign = signpostReq ? forecasts.length : withSignpost;
+  c.push(["Consistency: every FORECAST has a dated signpost", withSignpost, [expSign, expSign]]);
+  c.push(["Consistency: all forecast probabilities lie in ["+pctMin+","+pctMax+"]", outOfRange, [0, 0]]);
+  return c;
+}
+
+const fmt = v => v >= 1e4 ? v.toExponential(2) : (Number.isInteger(v) ? String(v) : v.toFixed(4));
+const runBtn = document.getElementById('run');
+const logEl  = document.getElementById('log');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function renderLandscapeError(){
+  document.getElementById('av-grid').innerHTML =
+    '<div class="av-card"><div class="av-top"><span class="av-name">Landscape unavailable</span></div>'+
+    '<p class="av-thesis">The avenue data loads from <span class="mono">avenues.json</span>. '+
+    'View this page on the live site or a local server — a file:// double-click can\'t fetch it.</p></div>';
+  document.getElementById('ncheck').textContent = '0';
+}
+// data-baked guard: a static-baked floor (bake_machinery.js) already carries the cards +
+// console verdict; still load AVENUES/RULES so the Run button works, but DON'T re-render the
+// cards or let a fetch failure (file://) overwrite the baked floor.
+const baked = !!document.querySelector('#av-grid[data-baked]');
+if (document.getElementById('av-grid')) {
+fetch('avenues.json').then(r=>r.json()).then(d=>{
+  AVENUES = Array.isArray(d.avenues) ? d.avenues : [];
+  RULES   = d.checks || {};
+  if(!baked){
+    renderCards();
+    document.getElementById('ncheck').textContent = buildChecks().length;
+  }
+}).catch(()=>{ if(!baked) renderLandscapeError(); });
+
+runBtn.addEventListener('click', () => {
+  runBtn.disabled = true; logEl.innerHTML = '';
+  const checks = buildChecks(); let pass = 0;
+  checks.forEach((ck, i) => {
+    const [label, val, [lo, hi]] = ck, ok = val >= lo && val <= hi;
+    if(ok) pass++;
+    const row = document.createElement('div'); row.className = 'row'; row.style.opacity = '0';
+    row.innerHTML = '<span class="badge ' + (ok?'p':'f') + '">' + (ok?'PASS':'FAIL') + '</span>' +
+      '<span class="what">' + String(i+1).padStart(2,'0') + ' · ' + label + '</span>' +
+      '<span class="nums">' + fmt(val) + ' ∈ [' + fmt(lo) + ', ' + fmt(hi) + ']</span>';
+    logEl.appendChild(row);
+    const show = () => { row.style.transition = 'opacity .25s'; row.style.opacity = '1'; };
+    reduced ? show() : setTimeout(show, 90 * i);
+    if(i === checks.length - 1){
+      const t = document.createElement('div'); t.className = 'tally';
+      t.textContent = 'TOTAL: ' + checks.length + ' checks · ' + pass + ' pass · ' +
+        (checks.length - pass) + ' fail' +
+        (pass === checks.length ? ' — the survey is internally consistent.' : ' — fix the paper, not the tolerance.');
+      const fin = () => { logEl.appendChild(t); runBtn.disabled = false; runBtn.textContent = 'Run again'; };
+      reduced ? fin() : setTimeout(fin, 90 * i + 350);
+    }
+  });
+});
+}
+</script>
+<script>
+fetch('provenance.json').then(r=>r.json()).then(p=>{
+  const d=document.getElementById('pv-doi'), v=document.getElementById('pv-doi-v');
+  // Lineage is an index over ALL chapters, not a single reading edition: it shows the
+  // concept (all-versions) DOI and an index-appropriate reading label. The trinity shows
+  // this release's version DOI. The no-DOI branch stays FIRST for both (an honestly
+  // un-DOI'd dossier shows "not DOI-archived" on every surface, lineage included).
+  var isIndex = document.body.dataset.chrome === 'index';
+  if(p.doi_archived===false){
+    v.textContent='not DOI-archived \u2197';
+    d.href='verify.html';
+  } else if(isIndex){
+    var cd=p.concept_doi||'';
+    if(!cd || cd.indexOf('TODO')===0){ v.textContent='DOI after first release'; d.href='https://github.com/m4gr4th34/dossier-QC-Accelerate-002'; }
+    else { d.href='https://doi.org/'+cd; v.textContent=cd+' \u2197'; }
+  } else if(!p.version_doi || p.version_doi.indexOf('TODO')===0){
+    v.textContent='DOI after first release';
+    d.href='https://github.com/m4gr4th34/dossier-QC-Accelerate-002';
+  } else {
+    d.href='https://doi.org/'+p.version_doi; v.textContent=p.version_doi+' \u2197';
+  }
+  // Draft-state labels (root reading editions): render ONLY client-side-verifiable states from
+  // provenance.json. "identical to <tag>" is deliberately impossible — not verifiable without
+  // hashing — so we never claim it. released = a real tag AND a real release date (mirrors
+  // check_placeholders' semantics). updatedSince = the working "last worked on" date is after the
+  // release date (day granularity; ISO date strings compare lexically) -> worked on since the freeze.
+  var released = p.release_tag && p.release_tag !== 'v0.0.0' &&
+                 !/^TODO/.test(p.release_tag) &&
+                 /^\d{4}-\d{2}-\d{2}$/.test(p.released || '');
+  var updatedSince = released && p.updated && p.updated > p.released;
+  document.getElementById('pv-state').textContent =
+    isIndex ? 'the chapter index'
+      : !released ? 'working draft · unreleased'
+      : updatedSince ? 'living draft · updated since ' + p.release_tag
+      : 'living draft · last release ' + p.release_tag;
+  // Byline "last updated" date: appended client-side (never baked -> HTML stays deterministic for
+  // check-edition). Only on author/meta bylines (index + dossier) -- NOT lineage (chapter index,
+  // not a dated edition) and NOT verify (its byline is an aphorism). p.updated is the working
+  // "last worked on" date (render-stamped); real-date-gated so the YYYY-MM-DD placeholder never shows.
+  (function(){
+    if (isIndex) return;                          // lineage: no date on the series subtitle
+    var path = location.pathname;
+    if (/verify\.html$/.test(path)) return;       // verify: byline is an aphorism, no date
+    var dt = p.updated;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dt) || dt === 'YYYY-MM-DD') return;  // real-date gate
+    var by = document.getElementById('byline');
+    if (!by) return;
+    var span = document.createElement('span');
+    span.className = 'byline-updated';
+    span.textContent = ' \u00b7 updated ' + dt + ' ';
+    var utc = document.createElement('abbr');
+    utc.className = 'byline-utc';
+    utc.textContent = '(UTC)';
+    // Self-explaining tooltip (matches the dossier's "explain any term" idiom) -- no external link,
+    // no link rot. The date is UTC to stay consistent with the release date (also UTC) and to be
+    // timezone-neutral for any reader.
+    utc.title = 'Coordinated Universal Time \u2014 the timezone-neutral standard; may differ from your local date.';
+    span.appendChild(utc);
+    by.appendChild(span);
+  })();
+  // Byline STATUS STRIP: a one-line, truthful draft-state label. Root reading editions only (skip
+  // the chapter index and verify's aphorism byline). Frozen live/ pages never reach here \u2014 their
+  // provenance.json fetch 404s -> .catch -> the strip is self-suppressing, and their statically
+  // baked "release <tag>" chip + record-note banner stand untouched. Every wording is a state
+  // verifiable from provenance.json alone; no identity/divergence claim beyond the day-granular
+  // updated-vs-released date.
+  (function(){
+    if (isIndex) return;                          // chapter index: not a dated reading edition
+    if (/verify\.html$/.test(location.pathname)) return;  // verify: byline is an aphorism
+    var by = document.getElementById('byline'); if (!by) return;
+    var strip = document.createElement('span');
+    strip.className = 'byline-status';
+    if (!released) {
+      strip.textContent = 'Working draft \u2014 not yet released.';
+    } else {
+      strip.textContent = 'Living draft \u2014 last frozen as ' + p.release_tag + ' (' + p.released + '). ';
+      var a = document.createElement('a');
+      a.href = 'lineage.html';
+      a.textContent = 'All versions \u2197';
+      strip.appendChild(a);
+    }
+    by.appendChild(strip);
+  })();
+}).catch(()=>{
+  // data-doi-baked guard: a frozen chapters/<tag>/ (or live/<tag>/) page bakes its DOI state
+  // statically at freeze/reskin time (freeze_chapter.py bake_doi_chip). Its provenance.json fetch
+  // 404s by design -> this .catch fires, but the baked chip is the SEALED TRUTH (a real doi.org
+  // link, or the honest "not DOI-archived"); overwriting it with a generic "see repository" would
+  // un-bake honesty on every JS-on load. Leave a baked chip entirely alone (text + href). Root/live
+  // drafts are never baked, so they still fall through to the generic fallback below.
+  if(document.querySelector('#pv-doi[data-doi-baked]')) return;
+  document.getElementById('pv-doi-v').textContent='see repository \u2197';
+  document.getElementById('pv-doi').href='https://github.com/m4gr4th34/dossier-QC-Accelerate-002';});
+</script>
+<div class="lbx" id="lbx" role="dialog" aria-modal="true" aria-label="Figure, full size" aria-hidden="true">
+  <img id="lbx-img" alt="">
+</div>
+<script>
+(function(){
+  var lbx = document.getElementById('lbx');
+  var lbxImg = document.getElementById('lbx-img');
+  if(!lbx || !lbxImg) return;
+  var imgs = document.querySelectorAll('figure img');
+  if(!imgs.length) return;            // INERT when there are no figures
+  var lastFocus = null;
+  function open(src, alt){
+    lastFocus = document.activeElement;
+    lbxImg.src = src; lbxImg.alt = alt || '';
+    lbx.classList.add('open'); lbx.setAttribute('aria-hidden','false');
+    lbx.tabIndex = -1; lbx.focus();
+  }
+  function close(){
+    lbx.classList.remove('open'); lbx.setAttribute('aria-hidden','true');
+    lbxImg.src = '';
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  imgs.forEach(function(img){
+    img.setAttribute('role','button');
+    img.setAttribute('tabindex','0');
+    if(!img.getAttribute('aria-label'))
+      img.setAttribute('aria-label','View figure full size');
+    img.addEventListener('click', function(){ open(img.currentSrc||img.src, img.alt); });
+    img.addEventListener('keydown', function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(img.currentSrc||img.src, img.alt); }
+    });
+  });
+  lbx.addEventListener('click', close);   // backdrop OR image click closes (cursor:zoom-out)
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape' && lbx.classList.contains('open')) close();
+  });
+})();
+</script>
+<script>
+// Lineage strip — mirrors the provenance fetch shape against lineage.json.
+// ANCESTORS-ONLY / OUTWARD: links the latest SEALED chapter + "view all", never a
+// forward/next chapter (a sealed chapter cannot know its successors). Hidden
+// unless chapters exist; built via createElement/textContent (no innerHTML).
+fetch('lineage.json').then(function(r){return r.json();}).then(function(d){
+  var chs = (d.chapters||[]).slice().sort(function(a,b){return a.n-b.n;});
+  if(chs.length < 1) return;                 // solo dossier (no releases) -> strip stays hidden
+  var strip = document.getElementById('lineageStrip');
+  if(!strip) return;
+  var currentN = Math.max.apply(null, chs.map(function(c){return c.n;}));
+  var latest = chs.filter(function(c){return c.n===currentN;})[0];
+
+  function sep(){ var s=document.createElement('span'); s.className='sep'; s.textContent='·'; return s; }
+
+  // The reader is on the WORKING DRAFT (the live, unreleased tip) — NOT on a
+  // sealed chapter. Label it as such; never call the latest seal "current".
+  var lead=document.createElement('span');
+  var b=document.createElement('b'); b.textContent='Working draft';
+  lead.appendChild(b);
+  strip.appendChild(lead);
+
+  // ANCESTOR back-link only: the latest SEALED release (Chapter currentN) is the
+  // working draft's immediate ancestor — never a forward/next claim.
+  strip.appendChild(sep());
+  var rel=document.createElement('a');
+  rel.href=(latest.path||'')+'index.html';
+  rel.textContent='latest release Chapter '+latest.n;
+  strip.appendChild(rel);
+
+  var all=document.createElement('a');
+  all.className='ls-all'; all.href='lineage.html';
+  all.textContent='View all chapters →';
+  strip.appendChild(all);
+
+  strip.classList.add('show');
+}).catch(function(){ /* hide: strip stays display:none (standalone or load failure) */ });
+</script>
+</body>
+</html>

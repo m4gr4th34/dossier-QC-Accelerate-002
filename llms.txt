@@ -8,6 +8,7 @@
 
 ## Chapters
 
+- [Chapter 4 — Chapter 4 -- The loop eats first](chapters/v4.0.0/index.md)
 - [Chapter 3 — Chapter 3 — Where to stand before the puck arrives](chapters/v3.0.0/index.md)
 - [Chapter 2 — Chapter 2 — What works, what loops, what looms](chapters/v2.0.0/index.md)
 - [Chapter 1 — Chapter 1 — The story so far (recap bridge)](chapters/v1.0.0/index.md)

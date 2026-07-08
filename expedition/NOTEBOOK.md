@@ -512,3 +512,68 @@ the same w-cap; survived pilot, deep shots, fresh-seed and alt-decoder
 re-checks; its one apparent weakness (depth trend) traced to an instrument
 artifact that was named, predicted, and closed by measurement. The loop thesis
 in one arc: propose, referee, repair, verify, adversarially attack, publish.
+
+## Day 2 (continued) -- S3 severity map: pre-run records (campaign closer)
+
+Records made BEFORE the canonical S3 run below.
+
+**Design.** Depth-matched 16-round comparisons throughout (the E8 standing
+rule). L1: the GM decade map at kappa_1/kappa_2 = 1e-3 for both product codes
+vs their strict comparators ([40,4,20] finally gets a measurable point; its
+1e-4 value remains the S2 labeled bound -- rep-13 sits at ~1.6e-10 there,
+unmeasurable at sane budgets, stated not hidden). L2: the Ocelot nbar axis
+(D5) for the winner vs rep-7 -- Gamma_X measured at nbar = 1.0/1.5/2.0,
+k-extrapolated (measured k = 0.735) at 2.5/3.0, extrapolation LABELED; both
+architectures are X-only so both bit floors are analytic and unprotected.
+L3: the family-scaling data P4's resolution needs.
+
+**Frozen predictions.** (1) At 1e-3 the winner's advantage COMPRESSES OR
+INVERTS -- w=4 syndrome noise scales with the decade and deep codes drown
+first; whether the 0.5 ratio survives there is genuinely open. This is a map,
+not a re-test: P2's operating point is and remains 1e-4. (2) On the Ocelot
+axis the X-only winner DROWNS in its own analytic bit floor at today's
+measured bias -- the third appearance of the campaign's central lesson: codes
+must match their bias regime. (3) P4 heads for FALSE: the product family's
+q/log grows with distance (13.0 at d = 12), so no campaign output reaches
+<= 10 q/logical at eps <= 1e-8, and no labeled extrapolation helps.
+
+After this output the campaign data closes: P3 (final leaderboard) and P4
+adjudicate in the strategy room, hits and misses both publishing.
+
+Output of expedition/s3_severity.py (canonical stack, verbatim):
+
+**Ledger E9 (caught by the byte guard, exactly as designed):** the strategy
+room's handoff block drifted ONE character from its own hashed bytes -- a
+docstring case variant (T_cycle vs T_CYCLE, line 17) introduced during block
+transcription. The executor's guard STOPPED, refused to force the hash, and
+reported cleanly; the strategy room reproduced the executor's hash from the
+single-substitution hypothesis, confirmed zero semantic difference, and
+adopted the executor's on-disk bytes as canonical (they are the more
+consistent variant -- the docstring now matches the constant's name). The
+sha256 gate exists precisely for this class of silent drift; this is its
+first live catch on the outbound channel.
+```
+S3 -- SEVERITY MAP (depth-matched 16 rounds throughout, per the E8 rule)
+
+L1 -- GM decade kappa_1/kappa_2 = 1e-3 (p_m = 6e-3 assumption unchanged)
+  [24,4,12] eps=2.609e-02 (fails=297136) vs rep-7 eps=2.151e-03 (fails=66668) -> ratio=12.127 CI [12.025, 12.229] [1124s]
+  [40,4,20] eps=1.148e-02 (fails=196266) vs rep-13 eps=1.833e-04 (fails=5848) -> ratio=62.649 CI [61.019, 64.278] [3165s]
+  (1e-4 for [40,4,20]/rep-13: NOT measurable at sane budgets; the S2 labeled upper bound stands. rep-13 FIT there = 1.60e-10.)
+
+L2 -- Ocelot nbar axis: winner [24,4,12] vs rep-7 (transmon mode, FITTED p_m=0.0478, 6 rounds phase-decode; bit floor analytic, X-only)
+   nbar   Gx(/s) src            |  win phase  win bitfl  win TOTAL | rep7 phase rep7 bitfl rep7 TOTAL
+    1.0     2890 measured       |  1.357e-04  4.836e-02  4.849e-02 |  1.241e-03  5.642e-02  5.766e-02
+    1.5     1571 measured       |  9.693e-04  2.633e-02  2.730e-02 |  4.762e-03  3.072e-02  3.549e-02
+    2.0     1051 measured       |  3.286e-03  1.763e-02  2.092e-02 |  9.260e-03  2.057e-02  2.983e-02
+    2.5      728 k-extrapolated |  7.774e-03  1.221e-02  1.999e-02 |  1.649e-02  1.425e-02  3.074e-02
+    3.0      504 k-extrapolated |  1.468e-02  8.461e-03  2.314e-02 |  2.547e-02  9.871e-03  3.534e-02
+  NOTE: rep-7's phase column is decoded protection; BOTH architectures are X-only here, so both bit floors are unprotected and analytic.
+
+L3 -- P4 assessment data (family scaling, rep-a (x) extHam8, w<=4):
+  a=3: [24,4,12] q/log=13.0
+  a=5: [40,4,20] q/log=23.0
+  a=7: [56,4,28] q/log=33.0
+  q/log GROWS with distance in this family (13.0 at d=12); P4 requires <= 10 q/log at eps <= 1e-8. Measured: [24,4,12] at 1e-4 = 1.72e-7 at 13 q/log. No campaign output reaches the P4 operating point; any extrapolation beyond measured points would be labeled, and none helps.
+
+S3 complete -- campaign data closed. P3 (final leaderboard) and P4 adjudication happen in the strategy room; hits and misses both publish.
+```

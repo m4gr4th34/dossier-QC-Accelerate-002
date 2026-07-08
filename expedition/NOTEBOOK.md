@@ -577,3 +577,20 @@ L3 -- P4 assessment data (family scaling, rep-a (x) extHam8, w<=4):
 
 S3 complete -- campaign data closed. P3 (final leaderboard) and P4 adjudication happen in the strategy room; hits and misses both publish.
 ```
+
+## Day 2 (concluded) -- Campaign 1 closed: P3 TRUE, P4 FALSE
+
+Full resolutions in PREREG_search1.md. Scoreboard: P1 FALSE / P2 TRUE /
+P3 TRUE / P4 FALSE -- two hits, two misses, four-for-four resolved against
+frozen criteria, 24 days ahead of the signpost date. The L2 nuance is
+recorded as adjudicated: the winner's Ocelot-axis totals are nominally lower
+than rep-7's, but both are catastrophic (~2-5%/cycle, bit-floor-dominated) --
+"drowns in its own bit floor" is the honest read, and no advantage is claimed
+at today's bias.
+
+The chapter's arc is now sealed in data: an AI-driven search that proposed,
+was refereed, repaired itself, won on the frontier's own terms at one
+operating point, and had every boundary of that win mapped honestly -- plus
+nine ledger entries proving the machinery catches errors in both directions,
+including in its own handoffs (E9). Chapter 4 prose builds on this record;
+nothing in it needs to be softer or harder than what the instruments measured.

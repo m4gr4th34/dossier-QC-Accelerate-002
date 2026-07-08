@@ -116,3 +116,57 @@ comparisons are depth-matched on the same instrument, by construction.
 
 P3 and P4 remain OPEN: P3's "final leaderboard" requires the campaign to close
 (S3 pending); P4 requires the S3 severity map and labeled scaling analysis.
+
+**P3 -- RESOLVED TRUE (2026-07-07; campaign leaderboard final at commit 0300eac).**
+Criterion: final leaderboard top-3 contains >= 1 family whose classical seed
+originated from the LLM-proposal layer. Final leaderboard by campaign FOM
+(per-logical ratio to own strict comparator, depth-matched, GM primary point):
+1. rep3(x)extHam8 [24,4,12] -- ratio 0.255 -- LLM-layer (H1c). 2-3. repetition
+controls (H4) at ratio ~0.9-1.0. The top entry is LLM-layer: TRUE. Honest
+footnotes, carried with the claim: (a) the "LLM layer" is the strategy room
+acting as proposer against its own mechanical referee -- the Day-1 llm_seeds
+pattern, not an external model; (b) the layer's full record is 1 win (H1c),
+1 mid-tier (H1b extHam8 alone, ratio 4.4 -- beaten by plain repetition), and
+1 family killed before MC by the referee (H1, structural d <= 4 ceiling); the
+win required the kill first. Prior was 40%; a hit. Calibration note: 40% was
+conservative -- it underweighted that the proposer iterates after referee
+kills, which is precisely the loop's design advantage.
+
+**P4 -- RESOLVED FALSE (2026-07-07; S3 L3 data at commit 0300eac).**
+Criterion: exists code with <= 10 total qubits/logical at eps_L <= 1e-8 (GM
+mode, nbar = 11, kappa_1/kappa_2 = 1e-4, w <= 4). No campaign output reaches
+the operating point: the winning family's q/log GROWS with distance (13.0 at
+d = 12 -> 23.0 at d = 20 -> 33.0 at d = 28); the high-rate w <= 4 seeds
+(q/log ~ 2.5-3) cap at d <= 4 and lose to repetition outright at circuit
+level; and the measured winner sits at 1.72e-7 at 13 q/log -- 17x above the
+eps bar at 1.3x the budget bar. No labeled extrapolation helps (the scaling
+runs the wrong way). Ruiz's CA overhead (~7.6 q/log at 1e-8) remains
+unmatched by any w <= 4 construction this campaign found. Prior was 20%;
+a miss in the direction the prior expected -- the stretch was a stretch.
+
+## Campaign 1 -- CLOSED (2026-07-07; signpost date 2026-07-31 beaten by 24 days)
+
+Scoreboard: P1 FALSE (35%) -- P2 TRUE (55%) -- P3 TRUE (40%) -- P4 FALSE (20%).
+Two hits, two misses, all four resolved against frozen criteria with every
+clarification made in the anti-self-serving direction, all published at equal
+prominence.
+
+What the campaign established (each with its scope label in the record):
+1. The bias-regime matching principle, measured three ways: the Day-1
+   moderate-bias headline drowned at high bias (P1); the high-bias winner
+   inverts in the dirty decade and drowns at today's measured bias (S3);
+   full-CSS extraction pays ~54x under GM gates to guard a ~1e-9 floor (S1).
+2. A model-level positive: rep3(x)extHam8 [24,4,12], w <= 4, 13 q/logical,
+   ~4x below strict budget-matched repetition at the Ruiz-class operating
+   point -- adversarially re-checked, depth-matched, instrument-tilt-free.
+3. Instrument science: the boundary-effect rule (depth-matched comparisons
+   only), the disclosed GM-mode tilt, and a calibration chain anchored
+   entirely in published measurements.
+Ledger for the campaign: E1-E9, every catch credited (executor: E1, E2
+surface, E4, E7 surface, E9 STOP; strategy room: E3 diagnosis, E5, E8
+diagnosis; the byte-guard machinery: E9).
+
+Standing OPEN items carried out of the campaign: OPEN-1 (kappa_2, paper
+appendices), OPEN-3 (PDF byte-verification of Q1-Q9 + the Fig. 4b/Fig. 5
+definitions), OPEN-4 (CX^2 protocol detail), OPEN-7 (GM channel constants
+vs the PRX PDF).

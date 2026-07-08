@@ -165,3 +165,54 @@ the strategy sandbox (py 3.12.3 / numpy 2.5.1 / stim 1.16.0 / ldpc 2.4.1 /
 pymatching 2.4.0); canonical numbers are the executor's on the pinned venv.
 New pinned dependencies vs Day-1 stack: stim==1.16.0 (already installed, first use),
 pymatching==2.4.0 (new).
+
+## v1.1 addendum -- calibration executed (2026-07-07; numbers from the executor's canonical runs)
+
+**Correction to the v1.0 calibration protocol (ledger E2).** v1.0 implicitly read
+the published eps_L as a bit+phase total. The paper defines it as the AVERAGE:
+"epsilon_L=(epsilon_L,bit-flip+epsilon_L,phase-flip)/2" [QUOTED, Fig. 5 caption and
+text]. Calibration targets were therefore redefined -- and became decoder-
+independent: eps_phase_target = 2*eps_L_published - eps_bit_refit, evaluated at the
+published operating points (d5 at nbar=1.5; both d3 sections at nbar=1.0), not at
+nbar=2 as v1.0 planned. No decoder enters the calibration chain.
+
+**OPEN-2: RESOLVED (measured).** Amplitude-free correlator refit of the Zenodo
+bit_flip data (corr(C) = A*exp(-C/tau), A free -- the paper's own convention;
+eps_bit = 1/(2*tau)): T_bf scale factor k = 0.882/nbar for first_d3 (x2.42 per
+photon), 0.733 for second_d3 (x2.08), 0.735 for d5 (x2.09). The exponential regime
+holds for nbar <= 3 and SATURATES above nbar ~ 3 (first_d3 T_bf falls from nbar 3.5
+to 4.0). Closure C1: refit eps_bit(d5, nbar=1) = 4.05% vs the paper's stated ~4%
+(+1.3%); d3 sections 2.43%/2.17% vs ~2%. The v1.0-era amplitude-pinned first pass
+was ~2x high (ledger E3).
+
+**OPEN-5: RESOLVED.** Derived targets (executor arithmetic):
+target_d5 = 2*0.0165 - 0.0220 = 0.01101; target_d3a = 2*0.0183 - 0.0243 = 0.01231;
+target_d3b = 2*0.0167 - 0.0217 = 0.01174; Gx15 = 1/(2*5*63.7us) = 1571/s;
+Gx10 = mean(2892, 2578) = 2735/s. **FITTED p_m = 0.0478** (fit_pm.py grid +
+monotone inversion; D2 corridor [0.005, 0.10] PASS; BP-OSD vs matching at the
+fitted point 0.01160 vs 0.01157, 0.3%). Out-of-sample with the fitted p_m
+untouched: d3 prediction 0.01508 vs targets 0.01231 (+22.5%) and 0.01174 (+28.4%)
+-- both WITHIN +/-30%. The two-section spread is device variability the evaluator
+cannot resolve; it bounds honest model accuracy at ~+/-25%.
+
+**Gamma_X, v1.1 values (in-array, per-section, from the refit).** Per-cat in-array
+rates Gx = 1/(2*n*T_Z_array); d5 section: 2890/s (nbar=1.0), 1571/s (1.5), 1051/s
+(2.0). The v1.0 Q6-derived 1250/s (nbar=2) remains the characterization-pair value;
+the d5-section 1051/s agrees within 20%. Per-cat bit-flip times are NOT directly
+extractable from the released data (readout symmetrizations leave only the n-cat
+logical XOR well-defined; per-cat marginals sit at 0.50), so closure C2 is data-
+limited/inconclusive: array-inferred per-cat T_bf(d5, nbar=2) = 0.475 ms vs the
+Q6-derived 0.80 ms, the gap recorded as cross-section device variability. Q3/Q6
+remain the per-cat anchors.
+
+**D5 (author decision, 2026-07-07): nbar UNLOCKED as a search axis on [1, 3].**
+Gamma_Z = nbar*kappa_1 (verified law); Gamma_X(nbar) interpolated from the
+d5-section refit; HARD saturation cap -- no exponential bit-flip credit above
+nbar = 3. Supersedes D3's pin, which awaited exactly this resolution.
+
+**OPEN-6 (new): the Ruiz comparability corridor (calibration protocol step 4) has
+not yet run.** It is the remaining gate before the evaluator referees any candidate
+code. OPEN-1 (kappa_2), OPEN-3 (PDF byte-verification of Q1-Q9, now including the
+Fig. 4b / Fig. 5 definitions used here), and OPEN-4 are unchanged.
+
+Error ledger for this cycle: NOTEBOOK.md Day-2 entry, E1-E4, with credit.

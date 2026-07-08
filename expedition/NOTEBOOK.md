@@ -129,3 +129,70 @@ cat+outer syndrome extraction, BP-OSD decoding on the circuit-level detector gra
 then the structured search (LLM proposals + referee + arena) under the realistic
 model — the regime the published AI searches have not evaluated. Prior-art table to
 CITE grade accompanies the first chapter prose.
+
+## Day 2 (2026-07-07, continued session) -- v1 circuit-level evaluator: derived, formalized, calibrated
+
+**What landed before this entry.** Commit 0a568b3: DERIV_noise_v1.md (Ocelot-
+anchored noise-model derivation, author decisions D1-D4), evaluator_v1.py (stim
+CSS-memory circuits for arbitrary outer codes, two ancilla modes, DEM -> BP-OSD or
+matching), validate_v1.py (data-free battery), requirements-canonical.txt (the
+canonical stack is now reconstructible from the repo; the Day-1 venv was not
+persisted -- ledger E1). This commit adds fit_pm.py, refit_bitflip.py, this entry,
+and the DERIV v1.1 addendum.
+
+**Validation battery (canonical stack: py 3.12.13 / numpy 2.5.1 / ldpc 2.4.1 /
+stim 1.16.0 / pymatching 2.4.0) -- ALL PASS:**
+  V1 noiseless floor: rate = 0.0 (d=3,5; both bases)
+  V2 analytic majority vote: measured 0.02212 vs analytic 0.02240 (4-sigma 0.00242)
+  V3 decoder cross-check: bposd 0.0653 vs matching 0.0643
+  V4 bit-flip sector: per-round 0.01984, corridor [0.01398, 0.03144]
+  V5 distance scaling: eps(d5) 0.0124 < eps(d3) 0.0362
+
+**Ocelot Zenodo dataset (DOI 10.5281/zenodo.14257632; 139 MB zip, kept outside the
+repo).** Raw shot-level parquet, six sections ({first_d3, second_d3, d5} x
+{bit_flip, phase_flip}); no pre-computed rates -- the published figures are decoded
+results. Measured erasure fraction 6.6-7.9% per syndrome. Per-cat readout inferred
+from XOR-compounded fit amplitudes A^(1/n): ~4.4-5.6%. Schema limit: readout
+symmetrizations leave only the n-cat logical XOR well-defined (per-cat marginals
+sit at 0.50), so per-cat bit-flip times are inference-only from this data.
+
+**Amplitude-free bit-flip refit** (refit_bitflip.py, run against the dataset;
+corr(C) = A*e^(-C/tau), the paper's convention; eps_bit = 1/(2*tau); key rows):
+  d5:        nbar=1.0: T_Z 34.6us, eps_bit 4.05% | 1.5: 63.7us, 2.20% | 2.0: 95.1us, 1.47%
+  first_d3:  nbar=1.0: T_Z 57.6us, eps_bit 2.43% | 1.5: 121.5us, 1.15% | 2.0: 201.9us, 0.69%
+  second_d3: nbar=1.0: T_Z 64.6us, eps_bit 2.17% | 1.5: 124.8us, 1.12% | 2.0: 187.6us, 0.75%
+  Scale factors k = 0.882 / 0.733 / 0.735 per nbar (x2.1-2.4 per photon),
+  saturating above nbar ~ 3. Closure C1 PASS: eps_bit(d5,1) = 4.05% vs the paper's
+  stated ~4%.
+
+**Calibration fit (fit_pm.py; targets decoder-independent:
+eps_phase = 2*eps_L_published - eps_bit_refit):**
+  Inputs: target_d5 0.01101 (Gx15 1571/s); targets_d3 0.01231 / 0.01174
+  (Gx10 2735/s). FITTED p_m = 0.0478 (D2 corridor PASS). Cross-check at the fitted
+  point: bposd 0.01160 vs matching 0.01157 (0.3%). Out-of-sample d3: predicted
+  0.01508 vs 0.01231 (+22.5%) and 0.01174 (+28.4%) -- both within +/-30%; the
+  section spread is device variability, bounding honest model accuracy at ~+/-25%.
+
+**Retired, kept for the record:** the first-look MWPM-decoded phase table (carry-
+forward erasure handling) is labeled NOT calibration-grade -- a known-
+overestimating upper bound (d5 at nbar=1.5 decoded 1.98% vs derived target 1.10%).
+It never enters the calibration chain.
+
+**Error ledger (credit where due):**
+  E1 The strategy room asserted a persisted Day-1 venv; none existed. Caught by
+     the executor; fixed structurally (requirements-canonical.txt).
+  E2 The strategy room read the published eps_L as a bit+phase total; the paper
+     defines the AVERAGE. Surfaced by the executor's data pull colliding with the
+     published number; resolved by a primary-source definition fetch.
+  E3 The executor's first bit-flip fit pinned the correlator amplitude, biasing
+     tau ~2x low. Diagnosed by the strategy room from the paper's fit convention;
+     refit by the executor; closure C1 then landed +1.3% from the paper's value.
+  E4 The strategy room's C3 amplitude corridor used raw A; the observable is an
+     n-cat XOR, so the corridor must be A^(1/n). Caught and corrected by the
+     executor.
+
+**Status.** Calibration protocol steps 1-3 complete. Step 4 (the Ruiz
+comparability corridor) is OPEN-6 -- the remaining gate before any candidate code
+is refereed. nbar unlocked as a search axis on [1, 3] with a hard saturation cap
+(author decision D5). Analysis extras (pandas/pyarrow/scipy) live only in the
+off-repo analysis environment; the canonical stack is unchanged.

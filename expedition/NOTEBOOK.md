@@ -415,3 +415,44 @@ LEG C -- deep shots (2e6) on the product-code family
 
 S2 arena complete. P2/P3 adjudication happens in the strategy room against PREREG_search1.md; hits and misses both publish.
 ```
+
+## Day 2 (continued) -- P2 adversarial re-check: pre-run records
+
+**Why this runs at all:** P2's frozen criterion reads "...surviving adversarial
+re-check" -- that clause binds P2's own resolution, not just the >10x STOP
+trigger (which correctly did not fire at ratio 0.155). No resolution before
+the re-check.
+
+**Instrument-tilt argument, recorded BEFORE seeing leg R5:** the arena compared
+the candidate on OUR instrument (disclosed ~1.2-2x optimistic) against the
+comparator's Ruiz FIT value -- an asymmetry that inflates the candidate's
+advantage by up to ~2x. Worst-case correction: 0.155 -> ~0.31, still under the
+0.5 bar. R5 removes the asymmetry entirely by measuring rep-7 on the same
+harness (pymatching, 2e7 shots); the same-instrument ratio is the primary
+number for adjudication.
+
+**Ledger E7 (minor, credited to the executor):** the S2 pre-run intro's
+"returned zero pilot fails" was true of the strategy-room sandbox pilot but
+read as a family property; the canonical pilot showed 1 fail / 20k for
+rep3xextHam8 -- within cross-build MC variation per the published policy, and
+the verbatim canonical table sits directly beneath the preview, so the record
+self-corrects. Surfaced by the executor at the S2 gate. No label violated;
+noted for preview-sentence discipline.
+
+Output of expedition/s2_recheck.py (canonical stack, verbatim):
+```
+RE-CHECK target: rep3 (x) extHam8 = [24,4,12] w=4 q/log=13.0  (mechanical floor re-verified)
+strict comparator rep-7: FIT=8.070e-07 (corridor-validated, instrument tilt disclosed); same-instrument R5 below is primary.
+
+R1 fresh-seed:      eps=1.406e-07 (fails=9/2e6) ratio-to-FIT=0.174  [322s]
+R2 alt-decoder:     eps=3.125e-08 (fails=2/2e6) ratio-to-FIT=0.039  [408s]
+R3 depth (16 rnds): eps=2.188e-07 (fails=14/1e6) ratio-to-FIT=0.271  [2380s]
+R5 rep-7 same-instrument: eps=4.563e-07 (fails=73/2e7) vs FIT 8.070e-07 (MC/FIT=0.57)  [12s]
+R4 Ocelot context:  eps_phase=8.709e-04 (context only)
+
+VERDICT R1: ratio-to-FIT=0.174 [PASS] | ratio-same-instrument=0.308 [PASS] (bar 0.5)
+VERDICT R2: ratio-to-FIT=0.039 [PASS] | ratio-same-instrument=0.068 [PASS] (bar 0.5)
+VERDICT R3: ratio-to-FIT=0.271 [PASS] | ratio-same-instrument=0.479 [PASS] (bar 0.5)
+
+Re-check complete. P2 adjudication happens in the strategy room; hits and misses both publish.
+```

@@ -23,7 +23,6 @@ on:
       # release-label bake (freeze_chapter.py --reskin) and the per-chapter console verdict
       # (verify_numbers.py --avenues <sealed>). A change to either changes the reskin bytes.
       - 'verification/freeze_chapter.py'
-      - 'verification/verify_numbers.py'
       # NOTE: lineage.json is intentionally NOT a trigger. A newly frozen chapter gets its live/
       # view generated ATOMICALLY in the same freeze commit (freeze-chapter.yml runs the renderer),
       # so this workflow owns only the skin/renderer-change case — re-skinning the EXISTING catalog.

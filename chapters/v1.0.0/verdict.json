@@ -1,0 +1,18 @@
+{
+  "checks": [
+    {
+      "status": "PASS",
+      "label": "Consistency: at least one avenue in the landscape"
+    },
+    {
+      "status": "PASS",
+      "label": "Consistency: every FORECAST has a dated signpost"
+    },
+    {
+      "status": "PASS",
+      "label": "Consistency: all forecast probabilities lie in [0,100]"
+    }
+  ],
+  "tally": "3 checks · 3 pass · 0 fail",
+  "summary": "All checks pass — the survey is internally consistent."
+}

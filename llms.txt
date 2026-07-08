@@ -1,6 +1,6 @@
 # Accelerating Quantum Computing Research Using AI and Robotics
 
-> Chapter 3 — where to stand before the puck arrives.
+> Chapter 4 — the loop eats first.
 
 ## Working draft
 

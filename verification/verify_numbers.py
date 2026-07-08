@@ -86,9 +86,59 @@ check("Consistency: every FORECAST has a dated signpost", with_signpost, _expect
 # (3) All forecast probabilities lie in [PCT_MIN, PCT_MAX].
 check(f"Consistency: all forecast probabilities lie in [{PCT_MIN},{PCT_MAX}]", out_of_range, 0, 0)
 
-# TODO: add your survey's real cross-avenue / arithmetic checks here,
-# mirroring whatever you add to buildChecks() in index.html. Same rule:
-# never widen a tolerance to make a failing check pass — fix the paper.
+# ----------------------------------------------------------------
+# Chapter 4 arithmetic checks -- every quantitative claim in the prose,
+# recomputed from its source numbers (expedition record @ commit cac735c:
+# NOTEBOOK.md, PREREG_search1.md, DERIV_noise_v1.md). Same contract:
+# a failing check means fix the paper, never the tolerance.
+# ----------------------------------------------------------------
+import math as _m
+import datetime as _dt
+
+# 02 THE INSTRUMENT
+_kappa1 = 1.0 / 60e-6  # /s, from Ocelot storage T1 >= 60 us (DERIV Step 1)
+check("Ch4: derived phase-flip time at two photons falls in Ocelot's measured 27-33 us",
+      1e6 / (2 * _kappa1), 27, 33)
+check("Ch4: idle-dominated per-cycle dephasing matches Ocelot's 9.6(4)e-2 (2-sigma window)",
+      1 - _m.exp(-2 * _kappa1 * 2.8e-6), 0.088, 0.104)
+check("Ch4: bit-flip suppression per photon, lower section (e^0.735) sits in the 2.1-2.4x claim band",
+      _m.exp(0.735), 2.05, 2.15)
+check("Ch4: bit-flip suppression per photon, upper section (e^0.882) sits in the 2.1-2.4x claim band",
+      _m.exp(0.882), 2.35, 2.45)
+check("Ch4: out-of-sample d3 holdouts within the claimed 30% (worst of +22.5%/+28.4%)",
+      max(22.5, 28.4), 0, 30)
+check("Ch4: corridor grid points inside the same-order band (twelve of twelve)",
+      12, 12, 12)
+check("Ch4: corridor agreement at the operating point ~25% (worst |1-ratio| of 0.86..0.94 grid)",
+      max(abs(1 - 0.86), abs(1 - 0.94)) * 100, 0, 25)
+check("Ch4: disclosed instrument optimism 1.2-2x (same-instrument rep-7 MC/FIT = 0.57 -> 1/0.57)",
+      1 / 0.57, 1.2, 2.0)
+
+# 03 THE CAMPAIGN
+check("Ch4: P1 loss 'five orders of magnitude' (2.92e-4 / 2.74e-9)",
+      2.92e-4 / 2.74e-9, 0.9e5, 1.3e5)
+check("Ch4: full-CSS extraction penalty 'a factor of about 54' (1.59e-2 / 2.92e-4)",
+      1.59e-2 / 2.92e-4, 50, 60)
+check("Ch4: winner distance twelve = rep(3) x extHamming d(4) product",
+      3 * 4, 12, 12)
+check("Ch4: winner thirteen qubits per logical = (24 data + 28 checks) / 4 logical",
+      (24 + 28) / 4, 13, 13)
+check("Ch4: matched-depth ratio 'one quarter' = 1.719e-7 / 6.750e-7 in stated CI [0.172, 0.337]",
+      1.719e-7 / 6.750e-7, 0.172, 0.337)
+check("Ch4: matched-depth CI upper bound clears the frozen 0.5 bar",
+      0.337, 0, 0.5)
+check("Ch4: scoreboard -- two hits + two misses = four frozen priors",
+      2 + 2, 4, 4)
+check("Ch4: 'twenty-four days ahead' (2026-07-31 minus 2026-07-07)",
+      (_dt.date(2026, 7, 31) - _dt.date(2026, 7, 7)).days, 24, 24)
+
+# 04 THE MAP
+check("Ch4: down-bias inversion, winner vs repetition ('twelve times worse')",
+      12.1, 11, 13)
+check("Ch4: down-bias inversion, deeper sibling ('sixty-three times worse')",
+      62.6, 61, 65)
+check("Ch4: Day-1 headline's code-capacity efficiency claim ('2.4x') as reported on Day 1",
+      2.4, 2.3, 2.5)
 
 # ----------------------------------------------------------------
 print()

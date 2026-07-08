@@ -127,6 +127,10 @@ check("Ch4: winner distance twelve = rep(3) x extHamming d(4) product",
 check("Ch4: distance 12 corrects any 5 phase flips = floor((12-1)/2)", (12-1)//2, 5, 5)
 check("Ch4: winner thirteen qubits per logical = (24 data + 28 checks) / 4 logical",
       (24 + 28) / 4, 13, 13)
+check("Ch4: winner parity matrix has 24 columns = 3 (rep) x 8 (extHamming)",
+      3 * 8, 24, 24)
+check("Ch4: winner parity matrix has 28 rows = 2*8 (rep-check (x) I8) + 3*4 (I3 (x) extHam-check)",
+      2 * 8 + 3 * 4, 28, 28)
 check("Ch4: matched-depth ratio 'one quarter' = 1.719e-7 / 6.750e-7 in stated CI [0.172, 0.337]",
       1.719e-7 / 6.750e-7, 0.172, 0.337)
 check("Ch4: matched-depth CI upper bound clears the frozen 0.5 bar",

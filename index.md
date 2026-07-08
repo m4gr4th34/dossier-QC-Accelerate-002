@@ -28,6 +28,8 @@ This chapter does something more direct: it runs the loop. Not on hardware — w
 
 One more discipline, borrowed from clinical medicine: before the loop ran at all, we wrote four predictions about how it would go, attached a probability to each, and committed them to a public, cryptographically timestamped record. Pre-registration means nobody — including us — can quietly move the goalposts after seeing the results. Two of the four came true; the other two are published at the same size as the wins. And one boundary, stated up front: this chapter does not score Chapter 3's hardware bets, which resolve on their own dates against the outside world.
 
+One limit, stated plainly and up front: this chapter turns the loop *once*. It is a proof of principle, not a finished search — a single propose-refute-repair pass over a small, hand-seeded set of candidate codes, with the scoring fully automated but the proposals human-guided. Nobody here ground through thousands of generations; the aim was to show the loop closes and yields a real, checkable result, not to exhaust the space. Code space is effectively unbounded, so such a search never truly finishes — it converges or plateaus, and the ceiling is compute, since each honest evaluation costs seconds to minutes and a thorough run costs hours to days. What an *automated* proposer turns up when the loop is left to run for hours rather than minutes is the question the next chapter takes up.
+
 *(figure: The five-station discovery loop drawn as a ring played clockwise: PROPOSE (an AI drafts a candidate code), VERIFY (cheap algebra grades it before any simulation), SIMULATE (the full checking circuit poisoned with chip-calibrated errors), SCORE (count decoder failures against budget-matched repetition), and LEARN (autopsy every loser to feed the next proposal). The referee's kill is marked at VERIFY and the campaign's win at SCORE; the loop is degenerate because the make step is free — making a candidate means simulating it. — Fig 1 — The discovery loop, run on itself: five stations played clockwise. PROPOSE (an AI drafts a candidate code, a small grid of 0s and 1s), VERIFY (cheap algebra grades it before any simulation), SIMULATE (the full checking circuit, poisoned with chip-calibrated errors), SCORE (count decoder failures against budget-matched repetition), LEARN (autopsy every loser to feed the next proposal). The loop is the degenerate case — its make step is free, because making a candidate means simulating it. The campaign’s two decisive events are marked where they landed on the ring: the referee’s kill at VERIFY, the win at SCORE. [SCHEMATIC])*
 
 ## 02 THE GAME: WHAT A CODE IS, AND WHAT KILLS ONE
@@ -76,6 +78,20 @@ The first term is ordinary decay; the second is the gate's own quantum clumsines
 
 **Bet 2 (55%): the search beats repetition anyway.** The first family the AI proposed for the honest-grading campaign died before a single simulation — the mechanical verifier proved in one line that it had a hidden ceiling, its error-survival could never exceed d = 4 no matter the size. That is the loop working, not failing: the kill was cheap, immediate, and explained. The repair bred the winner: take 3x repetition, cross it with a classic 8-bit code (the extended Hamming code — four parity checks, each touching four qubits), and the product is a [24, 4, 12] code — 24 cat qubits storing 4 logical qubits, 13 per logical including helpers, surviving any 5 simultaneous phase flips. At the frontier operating point, graded honestly, depth-matched on the same instrument, it fails at one quarter the rate of budget-matched repetition (ratio 0.255; 95% confidence interval 0.17–0.34). Then we tried to kill it three ways — fresh random seeds, a stronger decoder, doubled circuit depth — and it survived all three. Hit. One label rides with it everywhere: this is a result about a validated model of hardware, not about hardware.
 
+Here is that winner written out, because the whole point of a search is a recipe you can use. Its two ingredients are the 3-bit repetition check and the [8,4,4] extended Hamming check — each a small grid of 0s and 1s, exactly the "code" of Section 02:
+
+```math
+H_{\text{rep}} = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \end{bmatrix}, \qquad H_{\text{eH}} = \begin{bmatrix} 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 \\ 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 \\ 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 \end{bmatrix} \tag{eq.\ 5}
+```
+
+The winner is their classical product: one copy of the repetition check for every extended-Hamming bit, stacked on one copy of the extended-Hamming check for every repetition bit. That gives a 28-row, 24-column parity-check matrix — the phase-check code — of distance twelve, storing 4 logical qubits (24 data qubits plus 28 helper checks, thirteen physical per logical):
+
+```math
+H = \begin{bmatrix} H_{\text{rep}} \otimes I_8 \\ I_3 \otimes H_{\text{eH}} \end{bmatrix} \;\Rightarrow\; [24, 4, 12] \tag{eq.\ 6}
+```
+
+In code the whole recipe is three lines — build the repetition check, build the extended-Hamming check, take their product — and the exact functions (`rep_H(3)`, `ext_hamming8()`, `product_code()`) are committed in the expedition record that Section 06 points to. The bit-flip logical operators are weight-1 and left unprotected by design — at high bias equation 1 has already made bit flips rare — so only these phase checks are ever extracted, which is exactly the phase-only architecture the frontier proposal uses [Nat. Commun. 2025].
+
 **Bet 3 (40%): the AI's own proposal reaches the podium.** It did — the winner is the AI-layer proposal, with the footnote printed at equal size: the proposing agent and the strategy running this dossier are the same system, refereed by its own mechanical verifier, and the win exists only because that verifier killed the first attempt. Hit, footnotes attached.
 
 **Bet 4 (20%): match the frontier's overhead.** The published frontier architecture reaches about 7.6 qubits per logical at error rates of one in a hundred million [Nat. Commun. 2025]. Bet 4 asked our weight-limited search to match it. Nothing came close — the winning family's overhead grows with protection, the wrong direction entirely. Miss: the stretch was a stretch. Final score: two hits, two misses, twenty-four days ahead of the signpost date.
@@ -95,6 +111,10 @@ So what is an AI-driven discovery loop actually good for, today, on this evidenc
 Three new bets go on the board, hollow until scored: someone publishes a low-weight cat code matching the frontier's overhead by end of 2027 (30%); an outside group runs an AI code search under honest circuit-level grading by mid-2027 (55%); someone demonstrates a multi-logical cat code on real hardware by end of 2028 (25%). Misses will publish like hits — they always do here.
 
 The error ledger is the chapter's second result. Nine entries: a phantom environment, a misread definition, a biased fit, a wrong corridor, a tool's bad arithmetic, a missing observable, an imprecise preview, a depth-biased comparison, and a one-character drift in the machinery's own handoff — each caught by the discipline built for exactly that failure, each credited to its catcher, each published in the expedition notebook. A loop that cannot catch its own errors cannot be trusted to catch nature's. This one, on one day's evidence, catches both.
+
+## 06 REPRODUCE THIS
+
+Everything the central result rests on is committed and public, so a third party can rebuild it without contacting us. **The noise model:** photon-loss rate kappa-1 = 1/(60 microseconds), correction cycle 2.8 microseconds, fitted measurement error 4.8%; the high-bias operating point is cat size n-bar = 11 at loss-to-stabilization ratio kappa-1/kappa-2 = 1e-4, and the two-qubit gate channel is equation 4 from the founding theory [PRX 2019], every rate anchored to Amazon's published Ocelot numbers and released shot data [Nature 2025]. **The code:** the explicit [24, 4, 12] construction of Section 04 (equations 5 and 6). **The decoder:** belief propagation with ordered-statistics post-processing on the circuit-level detector error model — min-sum belief propagation, thirty iterations, OSD order 4 — with exact matching used only for the repetition baseline. **The experiment:** depth-matched at sixteen cycles on the same instrument, about 4x10^5 shots for the winner and 2x10^6 for the repetition comparator, the per-logical rate taken as one minus (one minus the any-logical rate) raised to the one-over-k. **The artifacts:** the evaluator and campaign scripts (`evaluator_v1.py`, `gm_css.py`, and the staged runners) sit in the expedition record beside the frozen pre-registration, the noise derivation, and a pinned software stack (Python 3.12 with numpy, ldpc, stim, and pymatching at exact versions); the Ocelot data itself is public at DOI 10.5281/zenodo.14257632. **The honest scope:** this reproduces a model-level result — a validated model of cat-qubit hardware — not a hardware measurement, and the model carries its disclosed 1.2-2x optimism throughout.
 
 ## Consistency checks
 
@@ -119,6 +139,8 @@ Results from `verification/verify_numbers.py` — the same checks the in-page co
 - [PASS] Ch4: winner distance twelve = rep(3) x extHamming d(4) product
 - [PASS] Ch4: distance 12 corrects any 5 phase flips = floor((12-1)/2)
 - [PASS] Ch4: winner thirteen qubits per logical = (24 data + 28 checks) / 4 logical
+- [PASS] Ch4: winner parity matrix has 24 columns = 3 (rep) x 8 (extHamming)
+- [PASS] Ch4: winner parity matrix has 28 rows = 2*8 (rep-check (x) I8) + 3*4 (I3 (x) extHam-check)
 - [PASS] Ch4: matched-depth ratio 'one quarter' = 1.719e-7 / 6.750e-7 in stated CI [0.172, 0.337]
 - [PASS] Ch4: matched-depth CI upper bound clears the frozen 0.5 bar
 - [PASS] Ch4: scoreboard -- two hits + two misses = four frozen priors
@@ -128,7 +150,7 @@ Results from `verification/verify_numbers.py` — the same checks the in-page co
 - [PASS] Ch4: Day-1 headline's code-capacity efficiency claim ('2.4x') as reported on Day 1
 - [PASS] Ch4: frontier overhead ~7.6 q/logical = 758/100 (Ruiz)
 
-**TOTAL: 27 checks · 27 pass · 0 fail** — All checks pass — the survey is internally consistent.
+**TOTAL: 29 checks · 29 pass · 0 fail** — All checks pass — the survey is internally consistent.
 
 ## References
 

@@ -456,3 +456,35 @@ VERDICT R3: ratio-to-FIT=0.271 [PASS] | ratio-same-instrument=0.479 [PASS] (bar 
 
 Re-check complete. P2 adjudication happens in the strategy room; hits and misses both publish.
 ```
+
+## Day 2 (continued) -- matched-depth leg: E8 recorded, prediction frozen
+
+**Ledger E8 (design gap in the re-check, recorded before this run):** the
+re-check's R3 leg compared the 16-round candidate against the 8-round rep-7
+comparator. Finite-depth memory experiments are flattered by their
+deterministic boundaries -- short runs read LOW per-round for BOTH codes -- so
+R3's cross-depth ratio (0.479) is biased AGAINST the candidate; the candidate's
+own 8->16 round drift (x1.55) is the steady-state correction surfacing. The
+arena's 8-round comparison was depth-matched and fair. Surfaced by the
+executor's marginality flag at the re-check gate; diagnosed in the strategy
+room; closed by this leg (both codes at 16 rounds, same instrument, same
+fresh seed).
+
+**Falsifiable prediction, frozen before the run:** rep-7's own boundary
+correction will restore the matched-depth ratio to ~0.3, comfortably under
+P2's 0.5 bar. If instead the ratio stays at or above the bar at matched depth,
+the candidate's advantage does not survive steady state and P2 does not
+resolve TRUE on it.
+
+Output of expedition/s2_depth.py (canonical stack, verbatim):
+```
+MATCHED-DEPTH LEG (E8 closure): both codes at 16 rounds, same instrument, seed 291
+candidate [24,4,12] 16r: eps=1.719e-07 (fails=44/4e6) [2044s]
+rep-7  8r: eps=5.500e-07 (fails=88/2e7) [12s]   16r: eps=6.750e-07 (fails=216/2e7) [25s]
+boundary-effect factor on comparator: rep-7 16r/8r = 1.23 (candidate's own was ~1.55 across the same depths)
+
+MATCHED-DEPTH RATIO (candidate/rep-7, both 16r, same instrument): 0.255  95% CI [0.172, 0.337]  vs bar 0.5 -> PASS
+Context: arena depth-matched (8r) ratio was 0.155-to-FIT / ~0.31 same-instrument; prediction recorded pre-run: ~0.3.
+
+Matched-depth leg complete. P2 adjudication happens in the strategy room; hits and misses both publish.
+```

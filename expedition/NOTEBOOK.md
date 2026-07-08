@@ -258,3 +258,67 @@ level) 35%; P2 (some code beats repetition >= 2x at matched budget, w <= 4) 55%;
 P3 (LLM seed family reaches leaderboard top-3) 40%; P4 (stretch: <= 10 q/logical
 at eps_L <= 1e-8, beating Ruiz CA overhead at lower weight) 20%. All resolve by
 2026-07-31 against the campaign's own published outputs, hits and misses alike.
+
+## Day 2 (continued) -- S1 instruments land; pre-run clarifications and catches
+
+Three records, all made BEFORE the canonical S1 run below.
+
+**P1 resolution clarification.** The frozen P1 criterion says "same mode and
+operating point" without naming the point. Clarified per the PREREG's own S1
+design (GM mode primary): P1 resolves at the GM primary point (kappa_1/kappa_2
+= 1e-4, nbar = 11); the Ocelot-point result publishes alongside as context, not
+as P1's verdict. Transparency: a strategy-room sandbox dry-run of the harness
+preceded this clarification and suggested the GM point is HARSH for the Day-1
+headline (effective bias there is ~1e7; the [[42,3]] is a moderate-bias code
+found at eta = 30-100). The clarification therefore leans AGAINST our own 35%
+prior -- the anti-self-serving direction.
+
+**Ledger E6.** evaluator_v1.css_memory_circuit tracks only logical observable
+#0; for k > 1 codes this understates P_any. Caught by the strategy room in the
+S1 smoke test BEFORE any canonical or campaign run; handled by an
+observable-completion wrapper inside s1_referee.py (the committed evaluator is
+untouched -- the campaign instrument includes the wrapper from the start, so no
+mid-campaign instrument change).
+
+**Sandbox preview, to be confirmed or refuted by the canonical output below:**
+under GM gates, full-CSS extraction appears heavily penalized -- Z-check
+extraction places the control-side non-adiabatic term directly on data qubits
+while guarding a ~1e-9 bit floor. If canonical S1 confirms, S2's search space
+should include X-only extraction architectures (classical-seeded, Ruiz-like) as
+first-class candidates.
+
+Output of expedition/s1_referee.py (canonical stack, verbatim):
+```
+S0 -- noiseless floor gate
+  hgp_r5xpH6_[[42,3]] xonly: p_any=0.0  PASS
+  hgp_r5xpH6_[[42,3]] full: p_any=0.0  PASS
+  hgp_r7r3_[[33,1]] xonly: p_any=0.0  PASS
+  hgp_r7r3_[[33,1]] full: p_any=0.0  PASS
+
+S1 GM LEG (PRIMARY) -- k1/k2=0.0001, nbar=11.0, p_m=0.006 (mid-corridor assumption), rounds=8, shots=50000, BP-OSD
+  hgp_r5xpH6_[[42,3]]     xonly  q/log= 22.0 slots= 8 eps_perlog/cycle=2.921e-04 (fails=349) [10s]
+  hgp_r5xpH6_[[42,3]]     full   q/log= 27.0 slots=13 eps_perlog/cycle=1.587e-02 (fails=15189) [33s]
+  hgp_r7r3_[[33,1]]       xonly  q/log= 51.0 slots= 6 eps_perlog/cycle=2.000e-05 (fails=8) [4s]
+  hgp_r7r3_[[33,1]]       full   q/log= 65.0 slots=10 eps_perlog/cycle=1.100e-02 (fails=4077) [17s]
+  rep-5 spot-check: MC=1.190e-05 vs FIT=1.385e-05 ratio=0.86 (corridor-validated instrument)
+  rep-9  q/log= 17.0  eps_perlog/cycle=4.702e-08 [FIT -- corridor-validated at d=3,5; instrument reads ~1.2-2x optimistic]
+  rep-11 q/log= 21.0  eps_perlog/cycle=2.740e-09 [FIT -- corridor-validated at d=3,5; instrument reads ~1.2-2x optimistic]
+  rep-13 q/log= 25.0  eps_perlog/cycle=1.596e-10 [FIT -- corridor-validated at d=3,5; instrument reads ~1.2-2x optimistic]
+  P1 DATA: [[42,3]] xonly (22 q/log) = 2.921e-04 vs matched-budget k=1 comparator rep-11 (21 q/log, FIT) = 2.740e-09 -> ratio = 1.1e+05
+
+S1 OCELOT LEG (calibrated reality check) -- transmon mode, p_m=0.0478 (FITTED), rounds=6, shots=20000, total = phase + bit per logical
+  operating point nbar=1.5: Gamma_Z=2.5e+04/s Gamma_X=1571/s
+    hgp_r5xpH6_[[42,3]]      q/log= 27.0 phase=4.825e-02 bit=2.598e-03 TOTAL=5.085e-02
+    hgp_r7r3_[[33,1]]        q/log= 65.0 phase=5.026e-02 bit=3.364e-03 TOTAL=5.362e-02
+    rep-9                    q/log= 17.0 phase=2.046e-03 bit=3.718e-02 TOTAL=3.923e-02
+    rep-11                   q/log= 21.0 phase=1.013e-03 bit=4.617e-02 TOTAL=4.718e-02
+    rep-13                   q/log= 25.0 phase=5.013e-04 bit=5.424e-02 TOTAL=5.474e-02
+  operating point nbar=2.0: Gamma_Z=3.33e+04/s Gamma_X=1051/s
+    hgp_r5xpH6_[[42,3]]      q/log= 27.0 phase=8.953e-02 bit=1.159e-03 TOTAL=9.069e-02
+    hgp_r7r3_[[33,1]]        q/log= 65.0 phase=9.302e-02 bit=1.478e-03 TOTAL=9.450e-02
+    rep-9                    q/log= 17.0 phase=4.832e-03 bit=2.635e-02 TOTAL=3.119e-02
+    rep-11                   q/log= 21.0 phase=2.960e-03 bit=3.109e-02 TOTAL=3.405e-02
+    rep-13                   q/log= 25.0 phase=1.562e-03 bit=3.665e-02 TOTAL=3.822e-02
+
+S1 complete. P1 adjudication happens in the strategy room against PREREG_search1.md; hits and misses both publish.
+```

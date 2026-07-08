@@ -196,3 +196,54 @@ comparability corridor) is OPEN-6 -- the remaining gate before any candidate cod
 is refereed. nbar unlocked as a search axis on [1, 3] with a hard saturation cap
 (author decision D5). Analysis extras (pandas/pyarrow/scipy) live only in the
 off-repo analysis environment; the canonical stack is unchanged.
+
+## Day 2 (continued) -- OPEN-6: Ruiz comparability corridor
+
+Calibration protocol step 4. Design: repetition-code (phase) memory under the
+Guillaud-Mirrahimi dissipative-gate cat channel at Ruiz's operating point
+(kappa_1/kappa_2 = 1e-4, nbar = 11, every op T = 1/kappa_2 [QUOTED, Ruiz]),
+plus a second decade (1e-3) for robustness. CNOT channel [Guillaud & Mirrahimi,
+PRX 9, 041053 (2019), Sec. VI]: p_Z(ctrl) = nbar*k1*T + 1/(2*pi*nbar*k2*T);
+p_Z(tgt) = p_Z1Z2 = nbar*k1*T/2. Constants pending PDF byte-check (OPEN-7).
+The measurement flip p_m is not verified from primary source, so it is SWEPT over
+a decade (2e-3 to 2e-2) and the verdict must hold across the sweep -- robustness,
+not tuning. Target curve computed IN CODE from the quoted form
+eps_zL = 0.07*(486*k1/k2)^(0.94*floor((d+1)/2)) [QUOTED, Ruiz Fig. 3 caption].
+
+Corridor grade: same-order agreement (factor ~3). Honesty note: a pass validates
+the circuit machinery and channel implementation against an independent group's
+published simulation fit -- the GM channel is the intellectual ancestor of Ruiz's
+own master-equation model, so this is a consistency check between kin models, not
+independent physics.
+
+Ledger E5: a fetch-summarizer evaluation of the Ruiz fit formula was
+arithmetically wrong (exponent 0.94 instead of 0.94*floor((d+1)/2) = 1.88 at
+d=3, giving 4.4e-3 instead of the correct 2.38e-4). Caught in the strategy room
+by computing the target from the quoted formula in code rather than adopting the
+summarizer's derived numbers. Protocol vindicated: quote formulas, compute
+locally, never trust tool-derived arithmetic.
+
+Output of expedition/gm_corridor.py (canonical stack, verbatim):
+```
+k1/k2=1e-04: p_idle=1.10e-03 p_cx_ctrl=1.56e-02 p_cx_tgt=5.50e-04 p_zz=5.50e-04
+  d=3: Ruiz fit target = 2.377e-04  (rounds=6, shots=200000)
+    p_m=2e-03: eps_zL/cycle = 2.052e-04 (fails=246)  ratio to fit =  0.86
+    p_m=6e-03: eps_zL/cycle = 2.244e-04 (fails=269)  ratio to fit =  0.94
+    p_m=2e-02: eps_zL/cycle = 2.244e-04 (fails=269)  ratio to fit =  0.94
+  d=5: Ruiz fit target = 1.385e-05  (rounds=10, shots=2000000)
+    p_m=2e-03: eps_zL/cycle = 9.851e-06 (fails=197)  ratio to fit =  0.71
+    p_m=6e-03: eps_zL/cycle = 1.110e-05 (fails=222)  ratio to fit =  0.80
+    p_m=2e-02: eps_zL/cycle = 1.305e-05 (fails=261)  ratio to fit =  0.94
+k1/k2=1e-03: p_idle=1.10e-02 p_cx_ctrl=2.55e-02 p_cx_tgt=5.50e-03 p_zz=5.50e-03
+  d=3: Ruiz fit target = 1.803e-02  (rounds=6, shots=200000)
+    p_m=2e-03: eps_zL/cycle = 1.327e-02 (fails=14908)  ratio to fit =  0.74
+    p_m=6e-03: eps_zL/cycle = 1.340e-02 (fails=15039)  ratio to fit =  0.74
+    p_m=2e-02: eps_zL/cycle = 1.416e-02 (fails=15830)  ratio to fit =  0.79
+  d=5: Ruiz fit target = 9.150e-03  (rounds=10, shots=200000)
+    p_m=2e-03: eps_zL/cycle = 4.867e-03 (fails=9318)  ratio to fit =  0.53
+    p_m=6e-03: eps_zL/cycle = 4.990e-03 (fails=9543)  ratio to fit =  0.55
+    p_m=2e-02: eps_zL/cycle = 5.679e-03 (fails=10794)  ratio to fit =  0.62
+```
+
+All grid points inside the same-order corridor on the canonical stack -> OPEN-6 PASS.
+Calibration protocol steps 1-4 complete; the evaluator is cleared to referee candidate codes.

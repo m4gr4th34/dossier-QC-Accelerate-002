@@ -216,3 +216,34 @@ code. OPEN-1 (kappa_2), OPEN-3 (PDF byte-verification of Q1-Q9, now including th
 Fig. 4b / Fig. 5 definitions used here), and OPEN-4 are unchanged.
 
 Error ledger for this cycle: NOTEBOOK.md Day-2 entry, E1-E4, with credit.
+
+## v1.2 addendum -- OPEN-6 resolved: Ruiz comparability corridor PASS (2026-07-07)
+
+Calibration protocol step 4 executed (gm_corridor.py; canonical output in
+NOTEBOOK.md Day-2 continued). At Ruiz's operating point (kappa_1/kappa_2 = 1e-4,
+nbar = 11) and at 1e-3, across a decade-wide sweep of the unverified measurement
+flip p_m, every grid point (d = 3, 5) landed inside the same-order corridor
+against the published fit eps_zL = 0.07*(486*k1/k2)^(0.94*floor((d+1)/2)); at
+the primary operating point agreement is ~+/-25%.
+
+**D4 status update.** The deferred CX gate term came due at this gate: at
+kappa_1/kappa_2 = 1e-4 the non-adiabatic control-dephasing term 1/(2*pi*nbar*k2*T)
+DOMINATES idle dephasing (1.45e-2 vs 1.1e-3 per op), so the corridor could not
+run under the v1.0 time-driven channel. The Guillaud-Mirrahimi CNOT channel
+(PRX 9, 041053 (2019), Sec. VI: p_Z(ctrl) = nbar*k1*T + 1/(2*pi*nbar*k2*T),
+p_Z(tgt) = p_Z1Z2 = nbar*k1*T/2) is now verified-by-fetch and implemented for the
+GM-GATE ARCHITECTURE mode (gm_corridor.py). It is NOT applied to the
+Ocelot-anchored mode: Ocelot's chi-matched transmon-mediated CX is a different
+gate design, and the measured Step-3 closure (CX excess <= 0.007/cycle) already
+bounds its gate term empirically. Two architectures, two gate models, each with
+its own provenance.
+
+**OPEN-7 (new):** byte-verification of the GM channel constants (the 2*pi factor
+and the /2 factors) against the PRX PDF -- folded into the OPEN-3 PDF pass.
+
+**Status: calibration protocol steps 1-4 COMPLETE. The v1 evaluator is cleared
+to referee candidate outer codes** in two labeled hardware modes: Ocelot-anchored
+(measured, lambda/nbar axes per D5) and GM-gate (formula-derived, kappa_1/kappa_2
+axis). Next per the expedition plan: the search-harness upgrade (GM channel for
+arbitrary CSS outer codes and weight-w stabilizer cycles), then PRIORS AND
+SIGNPOSTS proposed to the author for judgment BEFORE the first full search run.

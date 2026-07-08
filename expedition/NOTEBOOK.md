@@ -344,3 +344,74 @@ architecture candidate). S2 proceeds with X-only extraction first-class and
 classical-LDPC-seeded candidates in the arena, per the pre-run note. The
 dossier's loop thesis worked as designed: cheap model proposes, expensive
 model disposes, and pre-registration makes the disposal creditable.
+
+## Day 2 (continued) -- S2 arena: pre-run decisions, seed provenance, and a referee kill
+
+Records made BEFORE the canonical S2 run below.
+
+**D6 (author decision): STRICT budget comparator.** P2's frozen "equal qubit
+budget" is resolved as: comparator = the smallest odd-d repetition code with
+2d-1 >= the candidate's q/log -- repetition granted at least the candidate's
+budget. Anti-self-serving, consistent with the P1-clarification precedent.
+**D7 (author decision): deep-shot budget 2e6** per product-code candidate;
+zero-fail outcomes publish as rule-of-three 95% upper bounds, not as numbers.
+
+**Seed provenance (P3 bookkeeping).** LLM-layer proposals this session: H1
+(double-circulant [I|C3]), H1b (extended Hamming [8,4,4] w=4 basis), H1c
+(product codes rep-a (x) [8,4,4], d = 4a at w <= 4). Controls: H2 (Hamming
+family, literature), H4 (repetition). A top-3 leaderboard entry from
+H1/H1b/H1c resolves P3 TRUE.
+
+**Referee kill, recorded with credit to the mechanical verifier:** the
+proposer's first family H1 has a structural distance ceiling the proposer
+missed -- for H = [I | C], any unit-weight message y yields the codeword
+(Cy | y) of weight 1 + colweight(C) = 4, so d <= 4 for ALL m and ALL weight-3
+taps. The tap search confirmed: d = 4 across m = 6..16. H1 is dead on arrival;
+H1b/H1c are the repair, proposed AFTER the kill. The Day-1 pattern
+(LLM-proposes / verifier-referees) working against the proposer, as designed.
+
+**Sandbox pilot preview (canonical numbers below decide):** every low-budget
+high-rate seed (q/log ~ 3, d = 3-4) LOSES to rep-3 by 3-4x at the GM point --
+w=4 syndrome noise (~6e-2/check) drowns small distances, confirming hypothesis
+H2's prediction against itself. The product-code family returned zero pilot
+fails and is the live P2 candidate; the deep leg below resolves it.
+
+Output of expedition/s2_arena.py (canonical stack, verbatim):
+```
+S2 ARENA -- GM primary point, xonly extraction, D6 strict comparator, D7 2e6 deep shots
+seed                    [n,k,d]       w deg colors  q/log
+H1_dc_m8_t0-1-2         [16,8,4]     4   3      5    3.0
+H1_dc_m12_t0-1-2        [24,12,4]     4   3      5    3.0
+H1b_extHam8             [8,4,4]     4   3      6    3.0
+H1c_rep3xextHam8        [24,4,12]     4   5      8   13.0
+H1c_rep5xextHam8        [40,4,20]     4   5      8   23.0
+H2_hamming74            [7,4,3]     4   3      4    2.5
+H2_shortHam6            [6,3,3]     3   2      4    3.0
+H4_rep5                 [5,1,5]     2   2      2    9.0
+H4_rep9                 [9,1,9]     2   2      2   17.0
+H4_rep11                [11,1,11]     2   2      2   21.0
+H4_rep13                [13,1,13]     2   2      2   25.0
+
+Provenance for P3: LLM-layer = H1 (refereed DEAD: structural ceiling d <= 1 + colw(C) = 4), H1b, H1c. Controls = H2 (literature), H4 (repetition).
+
+LEG B -- pilot (20k shots, rounds=8)
+  H1_dc_m8_t0-1-2         [16,8,4] q/log=  3.0 eps=6.497e-04 vs rep-3 FIT=2.377e-04 ratio=2.73e+00 (fails=813, 1s)
+  H1_dc_m12_t0-1-2        [24,12,4] q/log=  3.0 eps=6.842e-04 vs rep-3 FIT=2.377e-04 ratio=2.88e+00 (fails=1269, 2s)
+  H1b_extHam8             [8,4,4] q/log=  3.0 eps=1.018e-03 vs rep-3 FIT=2.377e-04 ratio=4.28e+00 (fails=639, 0s)
+  H1c_rep3xextHam8        [24,4,12] q/log= 13.0 eps=1.563e-06 vs rep-7 FIT=8.070e-07 ratio=1.94e+00 (fails=1, 4s)
+  H1c_rep5xextHam8        [40,4,20] q/log= 23.0 eps=0.000e+00 vs rep-13 FIT=1.596e-10 ratio=0.00e+00 (fails=0, 9s)
+  H2_hamming74            [7,4,3] q/log=  2.5 eps=1.060e-03 vs rep-3 FIT=2.377e-04 ratio=4.46e+00 (fails=665, 0s)
+  H2_shortHam6            [6,3,3] q/log=  3.0 eps=9.145e-04 vs rep-3 FIT=2.377e-04 ratio=3.85e+00 (fails=433, 0s)
+  H4_rep5                 [5,1,5] q/log=  9.0 eps=1.250e-05 vs rep-5 FIT=1.385e-05 ratio=9.03e-01 (fails=2, 0s)
+  H4_rep9                 [9,1,9] q/log= 17.0 eps=0.000e+00 vs rep-9 FIT=4.702e-08 ratio=0.00e+00 (fails=0, 0s)
+  H4_rep11                [11,1,11] q/log= 21.0 eps=0.000e+00 vs rep-11 FIT=2.740e-09 ratio=0.00e+00 (fails=0, 0s)
+  H4_rep13                [13,1,13] q/log= 25.0 eps=0.000e+00 vs rep-13 FIT=1.596e-10 ratio=0.00e+00 (fails=0, 1s)
+
+LEG C -- deep shots (2e6) on the product-code family
+  H1c_rep3xextHam8         eps=1.250e-07 (fails=8) vs rep-7 FIT=8.070e-07 ratio=1.55e-01 [326s]
+  P2 DATA: H1c_rep3xextHam8 ratio-to-strict-comparator = 1.55e-01 (P2 bar: <= 0.5; PREREG adversarial re-check bar: < 0.1)
+  H1c_rep5xextHam8         0 fails/2e6 -> eps <= 4.688e-08 (95% UB) vs rep-13 FIT=1.596e-10 -> ratio <= 2.94e+02 [870s]
+  P2 DATA: H1c_rep5xextHam8 ratio-to-strict-comparator <= 2.94e+02 (P2 bar: <= 0.5; PREREG adversarial re-check bar: < 0.1)
+
+S2 arena complete. P2/P3 adjudication happens in the strategy room against PREREG_search1.md; hits and misses both publish.
+```

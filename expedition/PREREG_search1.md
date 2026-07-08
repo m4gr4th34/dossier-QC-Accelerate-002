@@ -84,3 +84,35 @@ lesson (optimal dx -> 1 as eta rises) writ large, now measured at circuit level.
 Z-check-on-data non-adiabatic tax), so X-only extraction is promoted to
 first-class in S2 -- a consequence flagged in the NOTEBOOK before the canonical
 run. P2, P3, and P4 remain OPEN pending S2/S3.
+
+**P2 -- RESOLVED TRUE (2026-07-07; evidence chain across commits bddf09f,
+671fa62, eea98d5).** Criterion walk-through, every clause:
+- "per-logical error <= 0.5x the d-matched repetition baseline at equal qubit
+  budget": candidate rep3(x)extHam8 = classical [24,4,12] at 13.0 q/logical,
+  X-only extraction; strict comparator (D6, repetition granted AT LEAST the
+  candidate's budget) rep-7. Depth-matched, same-instrument ratio at 16 rounds:
+  0.255, 95% CI [0.172, 0.337] (44 and 216 fails) -- upper bound clear of the
+  bar. The arena's 8-round depth-matched ratio (0.155-to-FIT, ~0.31
+  same-instrument) is consistent.
+- "kappa_1/kappa_2 = 1e-4, w <= 4": the GM primary point; all checks weight 4.
+- "surviving adversarial re-check": R1 fresh-seed and R2 alt-decoder passed
+  outright; R3's marginal 0.479 was diagnosed as a cross-depth comparator bias
+  (ledger E8), closed by the matched-depth leg with the mechanism exhibited on
+  the comparator itself (rep-7 boundary factor 1.23), and the pre-frozen ~0.3
+  prediction confirmed at 0.255.
+Prior was 55%; a hit, published with the same scrutiny the P1 miss received.
+
+**Scope label, carried wherever this result is stated:** this is a MODEL-LEVEL
+result under the v1 GM-gate circuit channel (verified-by-fetch constants,
+OPEN-7 byte-check pending; disclosed ~1.2-2x optimistic tilt -- which cancels
+in this same-instrument ratio) with a fitted-free but assumed p_m = 6e-3
+mid-corridor. It is NOT a hardware demonstration. Within that stated scope:
+a w<=4, 13-qubits-per-logical product code (rep3 (x) extended-Hamming[8,4,4],
+d = 12, an LLM-layer seed born from a refereed kill) outperforms budget-matched
+repetition by ~4x per logical at the Ruiz-class operating point.
+
+**Standing instrument rule adopted (from E8):** all future cross-code
+comparisons are depth-matched on the same instrument, by construction.
+
+P3 and P4 remain OPEN: P3's "final leaderboard" requires the campaign to close
+(S3 pending); P4 requires the S3 severity map and labeled scaling analysis.

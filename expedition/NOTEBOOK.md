@@ -488,3 +488,27 @@ Context: arena depth-matched (8r) ratio was 0.155-to-FIT / ~0.31 same-instrument
 
 Matched-depth leg complete. P2 adjudication happens in the strategy room; hits and misses both publish.
 ```
+
+## Day 2 (continued) -- P2 resolved: TRUE (the campaign's first hit)
+
+P2 (prior 55%, frozen at 3255fb9) resolves TRUE: full criterion walk-through in
+PREREG_search1.md's resolution log. The one-line version: rep3(x)extHam8
+[24,4,12] (w<=4, 13 q/logical, LLM-layer seed) beats strict budget-matched
+repetition by ~4x per logical at the GM primary point -- depth-matched,
+same-instrument, CI clear of the bar, adversarial re-check survived with its
+one marginal leg diagnosed (E8) and closed rather than waved through. Scope
+label carried in-sentence: a model-level result under the v1 GM-gate channel,
+not a hardware demonstration.
+
+Forecaster calibration: 55% was about right, and for the right reasons -- the
+Ruiz CA result was a strong existence proof, the untested w<=4 cap was the real
+risk, and it nearly bit (the naive small-seed families all lost; only the
+product construction cleared it). Contrast with P1's miscalibration, where
+available evidence went unpropagated.
+
+The result's pedigree, for the chapter prose: proposer's first family killed
+by the mechanical verifier (structural d <= 4 ceiling); repair proposed under
+the same w-cap; survived pilot, deep shots, fresh-seed and alt-decoder
+re-checks; its one apparent weakness (depth trend) traced to an instrument
+artifact that was named, predicted, and closed by measurement. The loop thesis
+in one arc: propose, referee, repair, verify, adversarially attack, publish.

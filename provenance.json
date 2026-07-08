@@ -1,8 +1,8 @@
 {
   "release_tag": "v4.0.0",
-  "version_doi": "",
-  "concept_doi": "",
-  "doi_archived": false,
+  "version_doi": "10.5281/zenodo.21270187",
+  "concept_doi": "10.5281/zenodo.21270186",
+  "doi_archived": true,
   "released": "2026-07-08",
   "updated": "2026-07-08"
 }

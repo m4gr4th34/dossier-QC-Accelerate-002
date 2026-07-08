@@ -12,7 +12,7 @@ date-released: "2026-07-08"  # ISO 8601: YYYY-MM-DD
 license: "CC-BY-4.0"
 repository-code: "https://github.com/m4gr4th34/dossier-QC-Accelerate-002"
 url: "https://m4gr4th34.github.io/dossier-QC-Accelerate-002/"
-# doi: "10.5281/zenodo.XXXXXXX"   # uncomment and fill after first Zenodo release
+doi: "10.5281/zenodo.21270186"   # concept DOI (all-versions), Zenodo
 keywords:
   - open dossier
   - verified open research

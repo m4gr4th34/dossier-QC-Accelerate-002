@@ -594,3 +594,33 @@ operating point, and had every boundary of that win mapped honestly -- plus
 nine ledger entries proving the machinery catches errors in both directions,
 including in its own handoffs (E9). Chapter 4 prose builds on this record;
 nothing in it needs to be softer or harder than what the instruments measured.
+
+## Day 3 -- Ch5 Campaign 2 opens: the automated proposer (closed AI loop)
+
+PREREG_search2.md frozen (fdd8de5); harness s5_proposer.py committed (f496f78,
+selftest + determinism verified); canonical venv rebuilt and referee-smoked
+(Ch4 winner rep3(x)extHam8 re-verifies as [24,4,12] w=4; all candidates
+reproduce from seed at the referee level, ~8 s/candidate at pilot depth for
+n=24). Two campaigns will run under one referee: the learning loop (elitism +
+crossover + per-compute operator bandit) and a matched-compute pure-random
+control.
+
+METHOD PIN (recorded before any campaign candidate) -- two ratios, never
+conflated:
+- TRIAGE FOM (steering only): pilot-depth eps, sorted with an analytic
+  Ruiz-fit denominator. Cheap, approximate; drives the bandit and elitism.
+  It is NOT the scoreboard, and its value never enters the leaderboard or the
+  chapter.
+- SCOREBOARD RATIO (the resolver): candidate vs its D6 strict-repetition
+  comparator, BOTH simulated through the same referee at the same deep depth
+  (same-instrument, depth-matched, per E8), so the disclosed ~1.2-2x GM
+  optimism cancels. This ratio alone resolves Q2/Q3/Q4. Computed for elites
+  only, at deep depth -- the honest cost story (no matched-rep leg is paid for
+  the thousands of triaged candidates, only the tens that reach deep).
+
+Why the pin: the referee smoke printed a provisional triage ratio of ~1.94 for
+the Ch4 winner (analytic-fit denominator) -- coarser and larger than Ch4's
+same-instrument 0.255, and easy to mistake for a contradiction. It is not one:
+different denominator, different depth. The driver reports the same-instrument
+ratio as the scoreboard figure; triage FOM is labeled steering-only wherever it
+prints. Credit: Code smoke-test catch, 2026-07-08.

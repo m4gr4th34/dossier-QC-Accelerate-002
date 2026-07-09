@@ -123,3 +123,18 @@ Reasoning sketches (calibration off Ch4's resolution log):
 ## Resolution log
 
 (empty until the campaign closes)
+
+## Pre-run harness parameters (recorded 2026-07-08, before any campaign candidate)
+
+Physics-neutral setup values, fixed before the run and logged with every
+candidate. They shape COST, not any resolution criterion Q1-Q6:
+- VERIFY exact-distance tractability gate: KMAX = 16. classical_verify
+  enumerates 2^k codewords, so it is the cheap gate only for k <= KMAX
+  (~65k codewords, ~ms). Candidates with k > KMAX are KILLED and LOGGED
+  (reason "k>KMAX"), never scored. This excludes only the few-check / high-k /
+  low-d corner (measured d = 1-2, already killed by the d >= 3 cap); it does
+  not exclude any low-k usable code the priors concern (the Ch4 winner is k=4).
+- Triage budgets: pilot 2e4 shots / 8 rounds; deep 4e5 shots / 16 rounds
+  (top finalist 2e6). GM primary point (nbar=11, k1/k2=1e-4, p_m=6e-3), X-only,
+  frozen from Ch4.
+- Master seed committed with the run; determinism gate per STOP conditions.

@@ -640,3 +640,26 @@ The prior driver returned inf whenever rep floored, mislabeling a floored
 CONTENDER as "infinitely worse." Every deep row now carries a scoreboard_kind
 label so a bound is never read as a point value. Credit: Code caught the
 inf/zero in the real-referee mini-run, before any campaign number hit the record.
+
+## Day 3 (cont.) -- E-ledger: closed-loop crash on a floored pilot (caught, fixed)
+
+The overnight Campaign 2 run died at LEARN gen 7 (~0.66h in) with a
+ZeroDivisionError in the bandit credit calc: a candidate [[23,2,11]] floored at
+pilot depth (0 fails / 20k shots -> eps=0), setting the running frontier
+best_fom=0; the next candidate's relative-improvement credit then divided by
+zero. The random control never ran; the machine sat idle ~11h.
+
+Root cause: the SAME zero-fail flooring class fixed for the deep scoreboard in
+0505d37, one layer up in the pilot/bandit steering path -- missed there because
+a floored pilot is rare (~1/300) and neither the dry-run surrogate nor the
+mini-runs produced one.
+
+Fix (this commit): (1) credit operands clipped at the pilot shot-noise floor
+1/shots -- a rate below that is unmeasurable, so a floored pilot earns
+proportionate credit (never a spurious 1.0) and the denominator is never zero;
+the rule-of-three honesty of the scoreboard, applied to the steering signal.
+(2) a try/except safety net around both pilot and deep legs: any single
+pathological candidate is logged as stage:"error"/"error_deep" and skipped, so
+no one candidate can kill an unattended run again. Determinism and resume
+re-verified; the exact floored-pilot crash class reproduced and confirmed
+survived. Credit: Code diagnosed the crash to the precise line and candidate.

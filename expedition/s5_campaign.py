@@ -172,20 +172,31 @@ def run_campaign(mode, seed, budget_s, outdir, pilot_pop, deep_promote,
                 if bandit:
                     bandit.update(op, 0.0)      # verify-kill ~ 0 compute, 0 credit
                 continue
-            eps, _ = score_fn(H, k, sp.PILOT["rounds"], sp.PILOT["shots"], seed)
-            tri = eps                       # STEERING ONLY = raw pilot eps
-            log(gen=gen, mode=mode, stage="pilot", kept=True, n=n, k=k, d=d,
-                w=int(H.sum(axis=1).max()), triage_eps=eps, triage_fom=tri,
-                op=op, hash=enc["hash"], b64=enc["b64"])
-            survivors.append((tri, eps, H, n, k, d, op))
+            # score + credit, guarded so no single candidate can kill the run
+            try:
+                eps, _ = score_fn(H, k, sp.PILOT["rounds"], sp.PILOT["shots"], seed)
+                tri = eps                   # STEERING ONLY = raw pilot eps
+                log(gen=gen, mode=mode, stage="pilot", kept=True, n=n, k=k, d=d,
+                    w=int(H.sum(axis=1).max()), triage_eps=eps, triage_fom=tri,
+                    op=op, hash=enc["hash"], b64=enc["b64"])
+                survivors.append((tri, eps, H, n, k, d, op))
+                # per-compute credit: RELATIVE frontier improvement / compute
+                # (pilot = 1 unit). Both operands clipped at the pilot shot-noise
+                # floor 1/shots -- a rate below that is unmeasurable (same
+                # rule-of-three honesty as the deep scoreboard), so a floored
+                # pilot earns proportionate credit, never a spurious 1.0, and the
+                # denominator is never zero.
+                ef = 1.0 / sp.PILOT["shots"]
+                be, te = max(best_fom, ef), max(tri, ef)
+                credit = max(0.0, (be - te) / be) if np.isfinite(be) else 0.0
+                best_fom = min(best_fom, tri)
+            except Exception as exc:
+                log(gen=gen, mode=mode, stage="error", kept=False,
+                    reason=f"{type(exc).__name__}: {str(exc)[:200]}",
+                    n=n, k=k, d=d, hash=enc["hash"], b64=enc["b64"])
+                credit = 0.0                 # errored candidate: no credit, deterministic
             if bandit:
-                # per-compute credit: RELATIVE frontier improvement / compute.
-                # pilot compute = 1 unit; verify-kills (above) got 0 -> an op
-                # whose children mostly die cheap is diluted, not rewarded.
-                credit = (max(0.0, (best_fom - tri) / best_fom)
-                          if np.isfinite(best_fom) else 0.0)
                 bandit.update(op, credit)
-            best_fom = min(best_fom, tri)
         if not survivors:
             gen_best.append(None)
             _save_ckpt(ckpt, gen, elites, bandit, rng, elapsed0 + time.time() - t0, best_fom, gen_best)
@@ -196,15 +207,20 @@ def run_campaign(mode, seed, budget_s, outdir, pilot_pop, deep_promote,
 
         # deep scoreboard leg -- elites only (the honest cost story)
         for (tri, eps, H, n, k, d, op) in survivors[:deep_promote]:
-            ratio, kind, dstar, ec, er = same_instrument_ratio(
-                H, n, k, sp.DEEP["rounds"], sp.DEEP["shots"], seed, score_fn)
             enc = sp.h_encode(H)
-            log(gen=gen, mode=mode, stage="deep", kept=True, n=n, k=k, d=d,
-                w=int(H.sum(axis=1).max()), qlog=(n + H.shape[0]) / k,
-                scoreboard_ratio=ratio, scoreboard_kind=kind,
-                needs_finalist=(kind == "both_floored_unresolved"),
-                rep_dstar=dstar, eps_cand=ec, eps_rep=er,
-                op=op, hash=enc["hash"], b64=enc["b64"])
+            try:
+                ratio, kind, dstar, ec, er = same_instrument_ratio(
+                    H, n, k, sp.DEEP["rounds"], sp.DEEP["shots"], seed, score_fn)
+                log(gen=gen, mode=mode, stage="deep", kept=True, n=n, k=k, d=d,
+                    w=int(H.sum(axis=1).max()), qlog=(n + H.shape[0]) / k,
+                    scoreboard_ratio=ratio, scoreboard_kind=kind,
+                    needs_finalist=(kind == "both_floored_unresolved"),
+                    rep_dstar=dstar, eps_cand=ec, eps_rep=er,
+                    op=op, hash=enc["hash"], b64=enc["b64"])
+            except Exception as exc:
+                log(gen=gen, mode=mode, stage="error_deep", kept=False,
+                    reason=f"{type(exc).__name__}: {str(exc)[:200]}",
+                    n=n, k=k, d=d, hash=enc["hash"], b64=enc["b64"])
             # no bandit credit here: deep is the scoreboard leg, not steering
             # (the op was already credited once at pilot; deep would double-count)
 

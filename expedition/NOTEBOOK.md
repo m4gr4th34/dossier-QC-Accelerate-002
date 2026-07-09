@@ -624,3 +624,19 @@ same-instrument 0.255, and easy to mistake for a contradiction. It is not one:
 different denominator, different depth. The driver reports the same-instrument
 ratio as the scoreboard figure; triage FOM is labeled steering-only wherever it
 prints. Credit: Code smoke-test catch, 2026-07-08.
+
+## Day 3 (cont.) -- scoreboard flooring convention (rule-of-three)
+
+Pre-run refinement to same_instrument_ratio, before the campaign generates any
+scoreboard number. When a deep same-instrument comparison FLOORS (zero fails in
+the shot budget), the ratio is not a point value -- it is a rule-of-three 95%
+bound (Ch4 convention: zero-fail runs publish as bounds, never as numbers):
+  - rep floored      -> LOWER bound (candidate >= Nx worse), rep's 3/shots UB as
+                        denominator; kind=lower_bound_rep_floored.
+  - candidate floored -> UPPER bound (a bounded win); kind=upper_bound_cand_floored.
+  - both floored     -> unresolved at this depth; ratio null, needs_finalist
+                        flagged for the 2e6-shot re-check; kind=both_floored_unresolved.
+The prior driver returned inf whenever rep floored, mislabeling a floored
+CONTENDER as "infinitely worse." Every deep row now carries a scoreboard_kind
+label so a bound is never read as a point value. Credit: Code caught the
+inf/zero in the real-referee mini-run, before any campaign number hit the record.

@@ -51,15 +51,49 @@ def _strict_comparator(qlog):
 # =============================================================================
 # scoreboard resolver (the only number that reaches the leaderboard)
 # =============================================================================
+def _per_round(eps_R, R):
+    """Exact copy of evaluator_v1.per_round (saturation-aware); inlined so the
+    numpy-only dry-run path needs no stim-bearing import."""
+    x = max(1.0 - 2.0 * eps_R, 1e-12)
+    return 0.5 * (1.0 - x ** (1.0 / R))
+
+def _floor_eps_ub(k, rounds, shots):
+    """Per-round per-logical eps for a zero-fail run: rule-of-three 95% upper
+    bound p_any <= 3/shots, mapped through the k-th root and the saturation-aware
+    per-round conversion. The most a floored side's true rate could be."""
+    p_any_ub = 3.0 / shots
+    eps_R = 1.0 - (1.0 - p_any_ub) ** (1.0 / k)
+    return _per_round(eps_R, rounds)
+
 def same_instrument_ratio(H, n, k, rounds, shots, seed, score_fn):
     """Candidate vs D6 strict-rep comparator, both through the SAME referee at
     the SAME deep depth (same-instrument, depth-matched, per E8). GM optimism
-    cancels. Returns (ratio, dstar, eps_c, eps_r)."""
+    cancels.
+
+    Zero-fail flooring is handled by rule-of-three (Ch4 convention: zero-fail
+    runs publish as 95% bounds, never as point values). Returns
+    (ratio, kind, dstar, eps_c, eps_r), kind one of:
+      point                    -- both sides > 0; ratio is a point value.
+      lower_bound_rep_floored  -- rep floored (0 fails); ratio is a LOWER bound
+                                  (candidate >= this many x worse), using rep's
+                                  3/shots upper bound as the denominator.
+      upper_bound_cand_floored -- candidate floored; ratio is an UPPER bound
+                                  (candidate <= this; a bounded win).
+      both_floored_unresolved  -- both floored; ratio None, defer to the 2e6
+                                  finalist depth (STOP-condition re-check)."""
     qlog = (n + H.shape[0]) / k
     dstar = _strict_comparator(qlog)
     eps_c, _ = score_fn(H, k, rounds, shots, seed)
     eps_r, _ = score_fn(_rep_H(dstar), 1, rounds, shots, seed)
-    return (eps_c / eps_r if eps_r else float("inf")), dstar, eps_c, eps_r
+    if eps_c > 0 and eps_r > 0:
+        return eps_c / eps_r, "point", dstar, eps_c, eps_r
+    if eps_c > 0 and eps_r == 0:                       # rep floored -> lower bound
+        return (eps_c / _floor_eps_ub(1, rounds, shots),
+                "lower_bound_rep_floored", dstar, eps_c, eps_r)
+    if eps_c == 0 and eps_r > 0:                       # candidate floored -> upper bound
+        return (_floor_eps_ub(k, rounds, shots) / eps_r,
+                "upper_bound_cand_floored", dstar, eps_c, eps_r)
+    return None, "both_floored_unresolved", dstar, eps_c, eps_r
 
 # =============================================================================
 # dry-run surrogate referee (numpy-only; deterministic in (seed, H))
@@ -162,12 +196,14 @@ def run_campaign(mode, seed, budget_s, outdir, pilot_pop, deep_promote,
 
         # deep scoreboard leg -- elites only (the honest cost story)
         for (tri, eps, H, n, k, d, op) in survivors[:deep_promote]:
-            ratio, dstar, ec, er = same_instrument_ratio(
+            ratio, kind, dstar, ec, er = same_instrument_ratio(
                 H, n, k, sp.DEEP["rounds"], sp.DEEP["shots"], seed, score_fn)
             enc = sp.h_encode(H)
             log(gen=gen, mode=mode, stage="deep", kept=True, n=n, k=k, d=d,
                 w=int(H.sum(axis=1).max()), qlog=(n + H.shape[0]) / k,
-                scoreboard_ratio=ratio, rep_dstar=dstar, eps_cand=ec, eps_rep=er,
+                scoreboard_ratio=ratio, scoreboard_kind=kind,
+                needs_finalist=(kind == "both_floored_unresolved"),
+                rep_dstar=dstar, eps_cand=ec, eps_rep=er,
                 op=op, hash=enc["hash"], b64=enc["b64"])
             # no bandit credit here: deep is the scoreboard leg, not steering
             # (the op was already credited once at pilot; deep would double-count)

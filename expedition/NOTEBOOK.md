@@ -663,3 +663,13 @@ pathological candidate is logged as stage:"error"/"error_deep" and skipped, so
 no one candidate can kill an unattended run again. Determinism and resume
 re-verified; the exact floored-pilot crash class reproduced and confirmed
 survived. Credit: Code diagnosed the crash to the precise line and candidate.
+
+## Loop-lessons log
+
+The running record of what each automated-search run taught (and what to change
+next) lives in expedition/CH5_WORKING.md -- append-only working memory for the
+outer loop, so future sessions don't start from scratch. Campaign 2 (broad
+X-only search, 2026-07-09) is entry 001: no code beat repetition; the load-
+bearing lesson is that a saturating cheap evaluator biases a closed-loop search
+away from the winnable region. See CH5_WORKING.md for the redesign + the
+ruler-resolution diagnostic to run before the next loop.

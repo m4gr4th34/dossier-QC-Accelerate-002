@@ -669,7 +669,9 @@ survived. Credit: Code diagnosed the crash to the precise line and candidate.
 The running record of what each automated-search run taught (and what to change
 next) lives in expedition/CH5_WORKING.md -- append-only working memory for the
 outer loop, so future sessions don't start from scratch. Campaign 2 (broad
-X-only search, 2026-07-09) is entry 001: no code beat repetition; the load-
+X-only search, 2026-07-09) is entry 001: no code beat repetition in any load-bearing sense (6 trivial
+low-distance point-wins pending adversarial re-check; 3 high-distance codes
+unresolved); the load-
 bearing lesson is that a saturating cheap evaluator biases a closed-loop search
 away from the winnable region. See CH5_WORKING.md for the redesign + the
 ruler-resolution diagnostic to run before the next loop.

@@ -434,3 +434,43 @@ operating-point ranking of strong codes.
 
 **Next session, start here:** gate a penalty form on the m=1 column of
 s5_rankmap_data.json (knowns only, no new shots), then PREREG Campaign 4.
+
+---
+
+## Entry 008 — 2026-07-10 — first gated fitness refinement: d − λ·col_deg_max (scoped)
+
+**The C3 anomaly root-caused:** the C3 find [34,6,12] carries a col_deg_max=9
+hotspot qubit (winner 5, rep2 4, eh8x8 6) -- column degree = CX exposure per
+cycle, so a degree-9 qubit accumulates ~9x gate noise. The efficiency search
+exploited the UNCAPPED constraint dimension: row weight was capped (w<=4),
+column degree was not. The optimizer gamed the constraint nobody wrote down.
+
+**Penalty gate (knowns only, zero new shots, s5_rankmap_data.json m=1 column):**
+score = d - lambda*col_deg_max reproduces the full measurable ordering AND
+stays floor-consistent for a WIDE window lambda in [0.8, 4.0] (33 contiguous
+steps). Distance alone (lambda=0) FAILS both. Binding constraints are
+physically clean: lambda>0.8 demotes the hotspot below a lower-d clean code;
+lambda<4 keeps distance dominant among clean codes. First fitness refinement
+in the saga to pass a known-code gate.
+
+**Caveats (recorded before use):** 4 measurable codes = 3 pairwise
+comparisons; feature and form chosen after seeing C3 fail -- admissible
+hypothesis, not law; real test is out-of-sample on Campaign 4's own finds.
+
+**CROSS-FAMILY SCOPE LIMIT (caught at the gate, decisive):** against
+repetition the proxy CONTRADICTS the measured record -- it scores rep-7 (3)
+above the winner (2), but Ch4's same-instrument scoreboard measured the
+winner BEATING its d=7 rep comparator at 0.255. And within the rep family the
+proxy grows unboundedly (rep-n scores n-4), so an unscoped search would
+trivially converge to long repetition -- a claim the gate never licensed.
+THEREFORE: the fitness is gated for the k>=2 product/structured space ONLY;
+repetition is excluded from the search space and reserved as the finalist
+referee baseline (its historical role). Landmark check inside scope holds:
+eh8(x)eh8 S=4 > winner S=2, matching measured m=1 truth.
+
+**Campaign 4 (PREREG_search4.md):** maximize S = d - 2*col_deg_max (lambda=2,
+window midpoint, frozen) over k>=2, w<=4, n<=64, k<=16 (exact d),
+qubits-per-logical <= 13 (the winner's budget; also keeps the search inside
+the gated region). Frontier to beat: eh8(x)eh8 S=4 at qlog=8. Bandit credit
+fixed per Entry 006: feasibility-blended, plateau-proof. Referee verifies
+finalists at the operating point (floors -> bounds, honestly).

@@ -95,9 +95,14 @@ def run(mode, seed, budget_s, outdir, pop, max_gens=10**9):
             enc = sp.h_encode(H)
             row = dict(gen=gen, mode=mode, stage="fit", op=op,
                        hash=enc["hash"], **rec)
-            if rec["eff"] > FRONTIER_BEST:          # frontier event: full record
+            if rec["eff"] > best:                    # NEW RUNNING-BEST: full H
+                row["running_best"] = True           # (Entry 006 fix: the top
+                row["b64"] = enc["b64"]              # find must live in the log,
+                row["shape"] = enc["shape"]          #  not be replay-only;
+            if rec["eff"] > FRONTIER_BEST:          #  shape needed by h_decode)
                 row["frontier_event"] = True
                 row["b64"] = enc["b64"]
+                row["shape"] = enc["shape"]
             log(**row)
             surv.append((rec["eff"], H))
             if bandit:

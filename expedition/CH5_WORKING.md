@@ -168,3 +168,107 @@ before that. The gate that just failed the old ruler is the gate for the new one
 -> re-run the known-ordering diagnostic through it -> only on a pass, PREREG
 Campaign 3 (efficiency-frontier, structured neighborhood, Lambda steering) with
 priors gauged against the new ruler's measured cost per candidate.
+
+---
+
+## Entry 003 — 2026-07-09 — slope-ruler hardening FAIL: curvature confound (NO-GO #2); pivot to threshold-crossing
+
+**Ran:** the sweep/Lambda evaluator (s5_sweep.py, adaptive ladder) through the
+two-code gate, then the HARDER test Entry 001 prescribed: a 4-code known
+ladder (rep4/rep3/rep2 (x) eh8 = d16>d12>d8, + [9,1,9] weak anchor) x 3 seeds.
+
+**Two-code gate PASSED (seed 7): winner slope 3.80 vs weaker 2.24, margin
++1.57, secondary observable agreeing. Then hardening OVERTURNED it:**
+
+    seed   rep4[32,4,16]  rep3[24,4,12]  rep2[16,4,8]  weak[9,1,9]  ordering
+      7      +0.765          +3.803        +1.185       +2.238      SCRAMBLED (d16 lowest)
+     101     +2.713          +3.768        +2.643       +2.180      d12>d16 swapped
+    2026     +2.742          +2.906        +3.329       +2.114      d8 ranked best
+
+Strongest code ranked lowest/middle/middle across seeds; the weak anchor beat
+two structured codes at seed 7; slopes swing 3.5x seed-to-seed. **The gate
+PASS was a lucky-seed artifact.**
+
+**Root cause (deep, not tunable):** the slope FOM assumes a clean sub-threshold
+power law, but the measurable-window constraint samples DIFFERENT codes on
+NON-COMPARABLE parts of a curved relationship. A strong code only fails
+measurably near its threshold — where the log-log curve FLATTENS — so better
+codes return flatter slopes. The FOM inverts the ranking it exists to produce.
+The selftest could not catch this: it validates fit arithmetic on synthetic
+power laws, never the real near-threshold curvature.
+
+**Scoreboard of dead rulers (both root-caused):**
+- Direct-MC eps at the GM point (Entry 002): floors below shot noise for strong
+  codes; 2e6 shots gave a confidently inverted order.
+- Noise-sweep slope (this entry): curvature confound; multi-seed scrambling.
+Cost note: strong-code sweeps are not cheap either (d=16 ~190-260s each).
+
+**Method lesson (general):** a two-point single-seed gate is NECESSARY but not
+sufficient — hardening (near-neighbors, multi-seed) before commit is what
+caught this. A ruler is proven at the granularity the search needs, not the
+granularity that is convenient to test.
+
+**Decision: pivot to a threshold-crossing metric.** Find the noise multiplier
+m* at which each code's eps crosses ONE FIXED common target (eps = 0.1); rank
+by m* (higher = better). Every code is measured at the same observable, so the
+curvature confound cannot arise — there is no slope to fit. Reuses the adaptive
+probe/bisection machinery. More referee calls per code (a root-find), accepted.
+
+**Proof burden (unmet):** the threshold evaluator must pass BOTH the two-code
+gate AND the 4-code x 3-seed hardening ladder before anything steers on it.
+The bar is now the hardened test; the two-code gate alone proved insufficient.
+
+**Next session, start here:** s5_threshold.py --gate then --harden; only on a
+hardened pass, PREREG Campaign 3.
+
+---
+
+## Entry 004 — 2026-07-09 — threshold-crossing NO-GO at the gate (dead ruler #3); composite hypothesis
+
+**Ran:** s5_threshold.py --selftest (PASS, including on the saturating curves
+that broke ruler #2) then --gate on the real referee. **GATE FAIL, inverted on
+the easiest pair:** winner [24,4,12] m*=17.4 vs weaker [9,1,9] m*=36.3
+(margin 0.48x). Hardening not run as a verdict -- moot after a failed gate.
+
+**Root cause (third, distinct):** threshold and deep-sub-threshold performance
+are DIFFERENT PHYSICAL AXES. m*-at-eps=0.1 asks "where does the code stop
+working" (high-noise property); the search needs "which code has lower error
+at the deep GM point." These do not co-order: the k=4 product code has better
+deep suppression but a LOWER threshold (more logicals, higher-weight checks);
+the simple k=1 product survives to higher noise but suppresses worse. The
+metric measured its axis correctly -- it is the wrong axis.
+
+**Three dead rulers, three root causes:**
+
+| ruler | fails because |
+|---|---|
+| direct-MC eps @ GM (E002) | target floors below shot noise -- unmeasurable |
+| noise-sweep slope (E003) | curvature confound -- non-comparable noise ranges |
+| threshold m* (E004) | measures threshold, a different axis than deep eps |
+
+**Meta-lesson:** every cheap HIGH-NOISE proxy measures a real quantity that is
+correlated-but-not-identical to deep-sub-threshold eps, because high-noise
+physics (threshold, near-threshold curvature) is governed by different
+mechanisms than deep suppression. The quantity the search needs is precisely
+the one that is unmeasurably rare at the operating point. This is a structural
+obstacle, not a tuning problem.
+
+**Composite hypothesis (ruler #4, PRE-REGISTERED before its test data):**
+predict deep suppression analytically from two measurable ingredients:
+    score = t * log10(m*),  t = the fault exponent, d exact from VERIFY,
+                            m* from s5_threshold.py (the axis it measures RIGHT)
+Higher score = better. KNOWN CAVEATS, stated before the data: (1) the exponent
+convention decides the seed-7 gate pair -- t=ceil(d/2) orders it WRONG
+(-7.45 vs -7.80), t=floor(d/2)+1 orders it RIGHT (-8.68 vs -7.80); two
+defensible conventions, opposite verdicts on the only measured pair. (2) the
+prefactor A (combinatorial, grows with n) is ignored. So this is a HYPOTHESIS.
+Proof burden: the hardened 4-code x 3-seed ladder, using measured m* for all
+four codes -- BOTH exponent conventions computed, published either way.
+
+**Status of s5_threshold.py:** committed as the m*-MEASUREMENT INSTRUMENT
+(selftest + correct threshold-axis measurement), NOT as a ranking ruler --
+its gate failure as a standalone ruler is this entry.
+
+**Next step:** run s5_threshold.py --harden to COLLECT m* for the 4-code x
+3-seed ladder (purpose changed: ingredient collection, not ruler validation),
+then compute the composite ordering under both exponent conventions.

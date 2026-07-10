@@ -373,3 +373,64 @@ Candidate: same-instrument error ratio at matched qubits IS the objective --
 but Entry 002 says it floors for strong codes, so the honest version is
 constrained: only objectives measurable on their intended winners. Design
 work, fresh eyes.
+
+---
+
+## Entry 007 — 2026-07-10 — the wall, fully mapped: all measurable-error objectives disqualified; Campaign 4 steers algebraic
+
+**Ran (read-only, objective-gate):** (1) rank-stability map -- 8 known codes x
+6 noise elevations m=(1,1.5,2,3,5,8), one frozen instrument, depth-matched,
+2e5 shots/cell (data: s5_rankmap_data.json). (2) power-law extrapolation gate
+on the same data -- predict eps(m=1) from each code's lowest measurable anchor
+via eps(1)=eps(ma)/ma^t, both exponent conventions, pre-stated pass bar
+(every measurable truth within ~3x AND floor-consistent).
+
+**Map result -- the ranking FULLY INVERTS across the noise range:** eh8(x)eh8
+[64,16,16] is #1 (best, 7.8e-8) at the operating point and #8 (worst, 2.4e-2)
+at m=8; repetition codes are floored-or-worst at m=1 and best at m=8. The
+threshold-vs-suppression anti-correlation (E004's axis) is now a measured
+crossover map. At m=1, half the ladder floors (E002 confirmed across 8 codes).
+=> No single measurable elevation's error-ranking is a faithful proxy for
+operating-point performance. Elevated-noise error objectives: DISQUALIFIED.
+
+**Extrapolation gate result -- MODEL DIES:** both conventions fail 2 of 4
+measurable truths, including the Ch4 winner (off 5.7x / 8.5x) and the C3 find
+(3.3x / 4.9x). Mechanism: the lowest measurable anchor (m=1.5) sits in the
+floor-flattened region, not the clean power-law regime, so the exponent
+over-predicts suppression toward m=1 -- E003's curvature confound in
+extrapolation form. Floor-consistency passed (necessary, not sufficient).
+
+**The completed ledger -- six cheap error-objectives, six pre-registered kills:**
+
+| approach | gate failure |
+|---|---|
+| direct-MC eps @ operating pt (E002) | floors -- unmeasurable |
+| noise-sweep slope (E003) | curvature confound + seed-scramble |
+| threshold m* (E004) | wrong physical axis |
+| composite d + m* (E005) | distance-dominated; m* null-or-harmful |
+| elevated-noise error ranking (E007) | INVERTS vs operating point |
+| power-law extrapolation (E007) | off 5.7-8.5x on the codes that matter |
+
+Structural conclusion, now proven not inferred: the quantity the search needs
+is unmeasurable at the operating point, and everything cheap that IS
+measurable either lies, inverts, or adds nothing over free algebra.
+
+**Refinement from the map (handle with care):** at m=1 the ordering is roughly
+by distance, but NOT purely: at matched d=12, the structured winner (k=4,
+3.1e-7) beats the C3 crossover product (k=6, 2.1e-5) by ~70x -- far more than
+packing alone explains -- while eh8(x)eh8 (k=16, maximally packed) is #1
+overall. So "penalize high k" is too crude; the deficit looks STRUCTURAL, not
+purely packing. Any penalty term in Campaign 4's fitness must itself pass a
+known-code gate before it steers (the objective-gate applies to fitness
+REFINEMENTS too). Until a penalty form is gated: fitness = distance under the
+caps, unadorned.
+
+**DECISION (empirically forced):** Campaign 4 steers on exact algebraic
+distance from VERIFY under the caps; any structure/packing penalty enters only
+after passing its own known-code gate; the referee is used solely for
+operating-point floor/bound verdicts on finalists. Importance sampling remains
+the parked escalation -- now provably the ONLY route to a measured
+operating-point ranking of strong codes.
+
+**Next session, start here:** gate a penalty form on the m=1 column of
+s5_rankmap_data.json (knowns only, no new shots), then PREREG Campaign 4.

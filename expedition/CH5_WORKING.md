@@ -114,3 +114,57 @@ referee calls themselves need the canonical stack, so validate output there:
 depth (or conclude the FOM needs replacing), THEN build the loop with
 deep-signal steering in a winnable regime. Don't re-run a broad-vs-rep search —
 that answer is in this entry.
+
+---
+
+## Entry 002 — 2026-07-09 — ruler-gate verdict: the FOM cannot rank strong codes (NO-GO)
+
+**Ran:** the Entry 001 known-ordering diagnostic (diag_ruler.py, extracted
+verbatim from this file), canonical stack, read-only. Two codes known-different
+by construction: winner = Ch4 [24,4,12] vs weaker = rep3(x)rep3 [9,1,9]
+(d 12 vs 9, k 4 vs 1).
+
+**Result — the current FOM fails the gate at every depth:**
+
+    shots     eps(winner)   eps(weaker)   resolved?
+       20000    0.000e+00    0.000e+00   False
+      100000    1.563e-07    0.000e+00   False
+      500000    9.375e-08    1.250e-07   False
+     2000000    1.719e-07    9.375e-08   False
+
+Worse than unresolved: the ordering is INVERTED and inconsistent across depths
+(100k and 2M rank the known-weaker code better; 500k ranks correctly). At the
+GM point both codes' true eps sits BELOW the shot-noise floor 1/shots even at
+2e6 shots — these are 0-vs-1-failure-event measurements; the "ranking" is
+Monte-Carlo noise. **More shots does not help: the deepest, most expensive rung
+gave a confidently wrong answer.**
+
+**What this explains retroactively:** Campaign 2's deep leg looked healthy
+because it was separating LOSERS (measurable eps ~1e-4), which it did cleanly.
+The instrument works on bad codes and lies about good ones — the worst failure
+mode for a search whose job is finding good ones. Direct Monte-Carlo eps at a
+fixed deep operating point cannot rank strong codes, at any budget.
+
+**Decision (strategy room, this date): replace the FOM with a noise-sweep
+evaluator; steer on the sub-threshold slope.** Raise the physical noise
+(nbar / k_ratio / p_m are already parameters of the frozen gm_css.fom referee)
+to operating points where failures are COMMON, measure eps at a small fixed
+ladder of points, fit, and rank by the suppression slope (Lambda). Threshold
+crossing and extrapolated-eps-at-GM-point are logged alongside as secondary
+observables from the same fit. Properties:
+- Continuous by construction — never returns 0; ranks strong codes analytically.
+- CHEAPER than what it replaces: at eps ~1e-3–1e-2, thousands of failure events
+  per 20k shots — real statistics at pilot cost, vs 2e6 shots observing zero.
+- NOT a moving-instrument violation: the referee (circuit, decoder, calibration)
+  stays frozen; the sweep is a pre-registered protocol of fixed points read
+  through it. The sweep ladder is fixed in the next PREREG before any candidate.
+
+**Proof burden — explicitly unmet until measured:** the sweep evaluator is
+UNPROVEN until it passes THIS SAME known-ordering diagnostic (winner vs weaker,
+correct ordering, with margin, at every sweep budget). No loop gets built on it
+before that. The gate that just failed the old ruler is the gate for the new one.
+
+**Next session, start here:** build the sweep evaluator over the frozen referee
+-> re-run the known-ordering diagnostic through it -> only on a pass, PREREG
+Campaign 3 (efficiency-frontier, structured neighborhood, Lambda steering) with
+priors gauged against the new ruler's measured cost per candidate.

@@ -53,3 +53,21 @@ pilot informs P1/P2 upward; it cannot be un-known and is not hidden.
 - Any P4 claimant: independent exact-d re-verification (fresh code path) +
   row-equivalence audit against all 54 landmarks before the claim stands.
 - Instruments frozen: classical_verify/rank2/rref2 byte-identical to HEAD.
+
+## Resolution log (2026-07-10, same day; full run 15 min/arm, seed 20260710)
+
+| # | Verdict | Evidence |
+|---|---|---|
+| P1 | TRUE | learn best-eff 0.0845 > random 0.0769; passing-rate 95,484 vs 211 (452x, bar was 10x). Trajectory: fast climb gens 1-44, then plateau for ~96% of the run (one marginal late gain at gen 1626). Bandit renormalized to uniform after the plateau -- relative-improvement credit gave no gradient once best stalled; the adaptive component contributed nothing after gen 44. |
+| P2 | TRUE | winner beaten at gen 44 (eff 0.0833 > 0.0769), robustly not marginally; final best [34,6,12] w=4 exact d=12 eff=0.0845, a learn-arm crossover product random never reached. H recovered by deterministic full-run replay (hash-match at gen 1626, 901s) -- satisfying the determinism STOP condition at full scale. |
+| P3 | FALSE | best 0.0845 << 0.1250; the loop stalled at a local optimum and never reached the high-k corner (eh8(x)eh8 [64,16,16]). |
+| P4 | FALSE | zero frontier events. |
+| P5 | TRUE on the letter; decisive caveat on the substance | Deep same-instrument referee, both depths MEASURABLE point verdicts (not floored): ratio 49.1x at 4e5 shots, 30.0x at 2e6 vs the d=7 strict-rep comparator. The efficiency rank is not contradicted (it IS more efficient) -- but the code is 30-49x WORSE than repetition on per-qubit logical error at the GM point. The tell: strong codes floor (Entry 002); this one was measurable precisely because it is a mediocre error-performer. |
+
+**Synthesis:** the closed loop worked as an optimizer -- learned, beat the
+hand-picked baseline on its stated objective, out-produced random 452x. The
+objective was the gap: efficiency-at-fixed-distance is NOT a proxy for error
+performance under GM bias. The search does exactly what you ask; "eff at
+d>=12" is not what FTQC needs. Repetition still dominates on error -- the
+dossier's throughline holds. Prior calibration: 85/90% claims TRUE, 45/20%
+claims FALSE, 55% TRUE-with-caveat.

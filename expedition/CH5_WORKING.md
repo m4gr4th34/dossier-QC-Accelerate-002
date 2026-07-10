@@ -326,3 +326,50 @@ fitness = distance-per-weight/qubit from VERIFY (exact via classical_verify,
 KMAX-gated), learn-vs-random control retrying Q1 under a fitness that cannot
 saturate or lie, finalists verified deep same-instrument. The ruler saga
 (Entries 002-005) is the methods backbone of whatever chapter this becomes.
+
+---
+
+## Entry 006 — 2026-07-10 — Campaign 3: the loop works; the objective was the gap
+
+**Ran:** algebraic efficiency-frontier search (PREREG_search3, driver
+s5_algsearch.py @ a8cf602), 15 min/arm, learn vs random, seed 20260710.
+Full resolutions in PREREG_search3.md; verdicts P1 TRUE, P2 TRUE, P3/P4
+FALSE, P5 TRUE-with-decisive-caveat.
+
+**The first positive of the arc, properly bounded:** the loop genuinely
+learned (452x valid-code rate vs random; beat the hand-picked Ch4 winner at
+gen 44) -- Q1's redemption under a fitness that cannot saturate or lie. And
+then the capstone: the deep referee showed the efficiency winner [34,6,12] is
+30-49x WORSE than a d=7 repetition code on actual per-qubit logical error.
+The optimizer was faithful; the objective was wrong. Efficiency-at-fixed-
+distance does not proxy error performance under GM bias.
+
+**Mechanisms recorded (feed Campaign 4 design):**
+1. PLATEAU KILLS THE BANDIT: credit = relative best-improvement goes to ~0
+   once best stalls (gen 44 of 1646) -> weights renormalize to uniform -> the
+   adaptive component contributes nothing for 96% of the run. Same family as
+   Campaign 2's saturation, new guise: the steering signal died, this time
+   from success-then-stall rather than measurement floor. Fix candidates:
+   credit on feasibility yield or diversity gain, not only frontier delta.
+2. EFFICIENCY != ERROR: the objective optimized (k/(n+r) at d>=12) rewards
+   packing logicals; GM-bias error performance rewards something else
+   (repetition still wins). Any future objective must be validated against
+   the referee's verdict on KNOWN codes before a campaign optimizes it --
+   the ruler-gate discipline (Entries 002-005) applies to OBJECTIVES too.
+3. REPRODUCIBILITY GAP (driver lesson): stage="fit" rows log hash only; full
+   H (b64) rode only on frontier events, of which there were none -- so the
+   top find was recoverable only by a 15-min deterministic replay (which
+   worked, hash-match, and doubled as the full-scale determinism proof).
+   One-line fix before Campaign 4: log b64 for every new running-best.
+
+**Standing throughline, three campaigns in:** repetition dominates practical
+error under realistic bias; the loop's demonstrated value is fast honest
+exploration + exposing wrong objectives cheaply. That IS acceleration -- of
+learning, which is the loop's actual product so far.
+
+**Next session, start here:** Campaign 4 needs an objective the referee
+endorses on known codes FIRST (objective-gate, analogous to the ruler-gate).
+Candidate: same-instrument error ratio at matched qubits IS the objective --
+but Entry 002 says it floors for strong codes, so the honest version is
+constrained: only objectives measurable on their intended winners. Design
+work, fresh eyes.

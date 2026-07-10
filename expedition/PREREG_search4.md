@@ -46,3 +46,24 @@ identical replay from seed at fixed generations, or results not reported.
 - Referee finalist verdicts use the committed flooring conventions; an
   unresolvable floor does not count for OR against R4 -- it is recorded.
 - Instruments frozen at aecffbe.
+
+## PRE-RUN ADDENDUM (2026-07-10, recorded BEFORE the campaign run)
+
+Probe finding (565 gens, seed 20260711, driver as first committed): the
+bit-flip/crossover proposer plateaus at S=0.0 by gen 35 and NEVER reaches
+S>0 -- it cannot assemble product structure (Campaign 2's built-not-stumbled
+lesson resurfacing). Launching as-configured would trivially resolve R2/R3
+FALSE without testing the gated fitness.
+
+Proposer change (this addendum): a constructive "build" operator is added --
+product of two classical factors from the small bank {rep2, rep3, rep4, eh8}
+-- for BOTH arms (learn: bandit-selected; random control: 25% build draws,
+matched access). Landmarks are NOT seeded directly.
+
+Honest consequence, stated before any candidate: with "build", assembling the
+frontier (eh8(x)eh8) is one lucky draw, so R2 DEFLATES to a sanity check
+(effective prior ~95%; its resolution no longer evidences learning). The
+campaign's real questions are now R1 (bandit leaves uniform; plateau-proof
+credit works) and R3 (a frontier-BEATER not row-equivalent to any landmark --
+prior unchanged at 20%; mutation must find off-landmark structure the bank
+cannot assemble directly). R4 unchanged.

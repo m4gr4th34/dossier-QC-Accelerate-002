@@ -272,3 +272,57 @@ its gate failure as a standalone ruler is this entry.
 **Next step:** run s5_threshold.py --harden to COLLECT m* for the 4-code x
 3-seed ladder (purpose changed: ingredient collection, not ruler validation),
 then compute the composite ordering under both exponent conventions.
+
+---
+
+## Entry 005 — 2026-07-09 — composite is distance-dominated; the ruler quest ends: steer on distance-per-weight
+
+**Ran:** m* collection, 4 codes x 3 seeds (s5_threshold.py --harden, purpose:
+ingredients). m* is highly reproducible (e.g. rep4: 18.6/18.5/18.6) -- the
+INSTRUMENT is solid. Composite computed under both pre-registered conventions:
+
+| convention | composite order | vs pure distance |
+|---|---|---|
+| A: ceil(d/2)    | rep4 > weak > rep3 > rep2 | FAIL (weak leapfrogs d12) |
+| B: floor(d/2)+1 | rep4 > rep3 > weak > rep2 | matches |
+
+**Why this kills the composite (not saves convention B):**
+1. Decomposition: the exponent t -- i.e. DISTANCE, free from VERIFY -- does
+   essentially all the ranking work. m* (the only expensive ingredient) is at
+   best a one-bit tie-breaker (B) and at worst actively destroys a correct
+   distance ordering (A). Picking B because it "works" would be post-hoc; the
+   caveat pre-registered in Entry 004 fired exactly as feared.
+2. The two candidate ground truths (harness-assumed vs pure-distance) disagree
+   precisely on the one pair m* decides (weak d=9 vs rep2 d=8) -- and that
+   ground truth is UNMEASURABLE at the GM point (Entry 002). We were validating
+   a proxy against a truth we cannot obtain. Also noted: the harden harness's
+   built-in "known order" was itself distance-inconsistent (ranked d=8 above
+   d=9); its FAIL verdicts were against a flawed reference.
+
+**The wall (final synthesis of the ruler quest, Entries 002-005):**
+- The quantity the search needs (GM-point per-logical eps) is unmeasurable by
+  direct simulation -- it floors below shot noise.
+- Every cheap high-noise proxy measures a DIFFERENT physical axis (threshold,
+  near-threshold slope) that does not co-order with deep performance.
+- The one signal that tracks deep performance -- code distance -- is FREE from
+  VERIFY, and no simulated proxy demonstrated robust value on top of it.
+Four rulers, four root causes. This is a structural result about closed-loop
+QEC code search, not a tuning failure.
+
+**DECISION: Campaign 3 steers on distance-per-weight (and per-qubit) from
+VERIFY.** Free, exact, reproducible, and literally Ch4's central lesson. The
+simulated referee is demoted to FINALIST VERIFICATION ONLY: deep same-
+instrument ratios on the top handful of candidates (rule-of-three bounds where
+floored) -- the machinery that already works. Honest reframe recorded: with an
+algebraic fitness, "the loop learns" means fast exploration of code space, not
+per-candidate physics; the referee arbitrates only at the end.
+
+**Parked (escalation path, not default):** rare-event / importance sampling to
+measure true GM-point eps -- only if algebraic steering proves insufficient or
+a finalist comparison genuinely requires a measured deep ratio.
+
+**Next session, start here:** PREREG Campaign 3 -- structured neighborhood,
+fitness = distance-per-weight/qubit from VERIFY (exact via classical_verify,
+KMAX-gated), learn-vs-random control retrying Q1 under a fitness that cannot
+saturate or lie, finalists verified deep same-instrument. The ruler saga
+(Entries 002-005) is the methods backbone of whatever chapter this becomes.

@@ -507,12 +507,72 @@ def run_g2_rep2eh8(quick=False):
     print(json.dumps({"verdict": ("G2 rep2(x)eh8 " + cell) +
                       (" (quick smoke -- NOT the gate)" if quick else "")}))
 
+
+# ---------------------------------------------------------- core enumeration ---
+def run_enum_cores():
+    """Exact w<=2 core identities on rep2(x)eh8 at m=1 (PREREG_union U1a/Q2).
+    Deterministic: no sampling. Re-derives f_2 and asserts it equals the G2
+    record (1.885e-07) -- ties this run to the committed measurement. Logs
+    every failing pair with indices, priors, and the pair's (dets,obs)
+    signature; writes the seed core basis artifact."""
+    import base64
+    import hashlib
+    from itertools import combinations
+    from evaluator_v1 import make_bposd
+    F2_G2_ANCHOR = 1.885e-07              # committed @ 7ab8bce (rounded repr
+                                          # from the G2 JSONL record)
+    H, k = build_rep2eh8()
+    circ = referee_circuit(H, 1.0)
+    Hd, O, priors = dem_matrices(circ)
+    dec = make_bposd(Hd, priors)
+    M = len(priors)
+    # singles: must all pass (f_1 = 0 exact, per the G2 record)
+    fail1 = [j for j in range(M) if _decode_set(dec, Hd, O, [j])]
+    assert not fail1, f"f_1 no longer zero: {fail1} -- referee drift, STOP"
+    # pairs
+    logodds = np.log(priors) - np.log1p(-priors)
+    num = den = 0.0
+    failing = []
+    t0 = time.time()
+    for i, j in combinations(range(M), 2):
+        wgt = float(np.exp(logodds[i] + logodds[j]))
+        den += wgt
+        if _decode_set(dec, Hd, O, [i, j]):
+            num += wgt
+            dets = (Hd[:, i] ^ Hd[:, j]).astype(np.uint8)
+            obs = (O[:, i] ^ O[:, j]).astype(np.uint8)
+            failing.append(dict(
+                idx=[int(i), int(j)], p=[float(priors[i]), float(priors[j])],
+                dets_b64=base64.b64encode(dets.tobytes()).decode(),
+                obs_b64=base64.b64encode(obs.tobytes()).decode()))
+    f2 = num / den
+    assert abs(f2 - F2_G2_ANCHOR) / F2_G2_ANCHOR < 5e-4, \
+        f"f_2={f2!r} drifted from G2 anchor {F2_G2_ANCHOR!r} -- STOP"
+    basis = dict(code="rep2(x)eh8 [16,4,8]", m=1.0, source="exact w<=2 enum",
+                 mechanisms=M, pairs_total=int(M * (M - 1) // 2),
+                 f2_weighted=float(f2), f2_g2_anchor=F2_G2_ANCHOR,
+                 n_failing_pairs=len(failing), cores=failing,
+                 date="2026-07-10", governed_by="PREREG_union.md U1a")
+    blob = json.dumps(basis, sort_keys=True).encode()
+    basis["basis_sha256"] = hashlib.sha256(blob).hexdigest()[:16]
+    with open("core_basis_rep2eh8.json", "w") as f:
+        json.dump(basis, f, indent=1)
+    print(json.dumps(dict(stage="enum-cores", mechanisms=M,
+                          pairs=basis["pairs_total"],
+                          n_failing_pairs=len(failing),
+                          failing_idx=[c["idx"] for c in failing],
+                          f2_weighted=float(f2), f2_anchor_ok=True,
+                          basis_sha256=basis["basis_sha256"],
+                          t_s=round(time.time() - t0, 1))))
+    print(json.dumps({"verdict": "CORE BASIS SEEDED (w<=2 exact)"}))
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--g0", action="store_true")
     ap.add_argument("--g1", action="store_true")
     ap.add_argument("--g2-rep2eh8", action="store_true")
+    ap.add_argument("--enum-cores", action="store_true")
     ap.add_argument("--quick", action="store_true")
     a = ap.parse_args()
     if a.selftest:
@@ -523,5 +583,7 @@ if __name__ == "__main__":
         run_g1(quick=a.quick)
     elif a.g2_rep2eh8:
         run_g2_rep2eh8(quick=a.quick)
+    elif a.enum_cores:
+        run_enum_cores()
     else:
         ap.print_help()

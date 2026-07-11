@@ -1,24 +1,32 @@
 #!/usr/bin/env python3
-"""s6_sampler.py -- S6 stratified sampler, stage G0 ONLY (DEM-equivalence).
+"""s6_sampler.py -- S6 stratified sampler, stages G0 + G1.
 
-Governed by expedition/PREREG_sampler.md (commit f78e376). This stage builds
-NO stratification machinery (D2-D4 do not exist here to blame): it validates
-that plain Bernoulli sampling from the referee's own DEM reduction
-(evaluator_v1.dem_to_matrices on decompose_errors=False, flatten_loops=True),
-decoded with the referee's own BP-OSD (evaluator_v1.make_bposd, verbatim),
-reproduces a fresh-seed direct fom run on rep2(x)eh8 at m=3 and m=8.
+Governed by expedition/PREREG_sampler.md (commit f78e376).
+G0 (PASSED on record 2026-07-10: m=3 z=1.1389, m=8 z=2.0894): plain Bernoulli
+sampling from the referee's own DEM reduction (evaluator_v1.dem_to_matrices,
+decompose_errors=False, flatten_loops=True), decoded with the referee's own
+BP-OSD (evaluator_v1.make_bposd, verbatim), vs fresh-seed direct fom on
+rep2(x)eh8 at m=3 and m=8. Criterion: |two-proportion z| < 3 at BOTH.
 
-G0 PASS criterion (PREREG section 4): |two-proportion z| < 3 on p_any at BOTH
-elevations. Anything else is a FAIL and gets its own entry.
+G1 (this stage): the stratified estimator (D2-D8: exact Poisson-binomial
+stratum weights, exact conditional-Bernoulli draws, odds-weighted enumeration
+of cheap strata, pilot+Neyman allocation, explicit tail bracket, rule-of-three
+on zero-fail strata) vs the G0 plain-DEM estimator, same code, same
+elevations. PASS iff 95% CIs overlap at BOTH elevations AND the stratified
+point sits inside the plain estimator's 95% CI at m=3.
 
-Registered G0 budgets (dated addendum-level detail, fixed before the run):
-  m=3: 40000 shots per arm, direct seed 20260710, DEM seed 60710
-  m=8: 20000 shots per arm, direct seed 20260711, DEM seed 60711
+Registered budgets (fixed before the runs):
+  G0 m=3: 40000/arm, seeds direct 20260710 / dem 60710
+  G0 m=8: 20000/arm, seeds direct 20260711 / dem 60711
+  G1 m=3: plain 40000 (seed 30710); stratified budget 30000, pilot 400,
+          enum_cap 200000 (seed 30711)
+  G1 m=8: plain 20000 (seed 30810); stratified budget 30000, pilot 400,
+          enum_cap 200000 (seed 30811)
 
 Usage:
   python -u s6_sampler.py --selftest
-  python -u s6_sampler.py --g0                # both elevations, registered budgets
-  python -u s6_sampler.py --g0 --quick        # reduced-shot smoke (NOT the gate)
+  python -u s6_sampler.py --g0 [--quick]
+  python -u s6_sampler.py --g1 [--quick]      # --quick = smoke, NOT the gate
 Output: JSONL lines to stdout (python -u; an "empty log" is buffering).
 """
 import argparse
@@ -107,6 +115,144 @@ def two_prop_z(p1, n1, p2, n2):
     se = np.sqrt(p * (1 - p) * (1 / n1 + 1 / n2))
     return 0.0 if se == 0 else (p1 - p2) / se
 
+# ------------------------------------------------- stratified core (D2-D8) ---
+def pb_suffix_table(priors, w_max):
+    """R[i][w] = P(exactly w of mechanisms i..M-1 fire). Exact Poisson-binomial
+    DP (D3). R[0] is the stratum-weight vector P(W=w), w=0..w_max; the tail
+    P(W>w_max) is 1 - R[0].sum()."""
+    M = len(priors)
+    R = np.zeros((M + 1, w_max + 1))
+    R[M, 0] = 1.0
+    for i in range(M - 1, -1, -1):
+        p = priors[i]
+        R[i, 0] = (1 - p) * R[i + 1, 0]
+        for w in range(1, w_max + 1):
+            R[i, w] = (1 - p) * R[i + 1, w] + p * R[i + 1, w - 1]
+    return R
+
+def cond_bernoulli_draw(priors, R, w, rng):
+    """Exact conditional-Bernoulli draw of a fault set given W=w (D4).
+    Sequential inclusion: P(include i | r still needed from i..M-1) =
+    p_i * R[i+1][r-1] / R[i][r]. Uniform w-subsets are BIASED and forbidden."""
+    S = []
+    r = w
+    for i in range(len(priors)):
+        if r == 0:
+            break
+        denom = R[i][r]
+        if denom <= 0:          # numerically dead branch; remaining must fire
+            S.extend(range(i, i + r)); r = 0; break
+        p_inc = priors[i] * R[i + 1][r - 1] / denom
+        if rng.random() < p_inc:
+            S.append(i); r -= 1
+    return S
+
+def _decode_set(dec, Hd, O, cols):
+    dets = np.zeros(Hd.shape[0], dtype=np.uint8)
+    truth = np.zeros(O.shape[0], dtype=np.uint8)
+    for j in cols:
+        dets ^= Hd[:, j]; truth ^= O[:, j]
+    e_hat = dec.decode(dets)
+    pred = (O @ e_hat.astype(np.uint8)) % 2
+    return int(np.any(pred != truth))
+
+def stratified_estimate(Hd, O, priors, seed, budget=30000, pilot=400,
+                        enum_cap=200000, tail_frac=0.01,
+                        enum_mass_floor=0.01, force_enum_w=-1):
+    """D2+D6+D7+D8: exact stratum weights, odds-weighted enumeration of cheap
+    strata, pilot + Neyman allocation, explicit tail bracket, per-stratum
+    variance, rule-of-three on zero-fail sampled strata.
+    Returns dict with p_any point, 95% CI, UB bracket, per-stratum table."""
+    from evaluator_v1 import make_bposd
+    from itertools import combinations
+    from math import comb
+    rng = np.random.default_rng(seed)
+    dec = make_bposd(Hd, priors)
+    M = len(priors)
+    lam = float(np.sum(priors))
+    # stratum-weight vector out to negligible suffix
+    w_hi = 8
+    while True:
+        R = pb_suffix_table(priors, w_hi)
+        if 1.0 - R[0].sum() < 1e-15 or w_hi >= M:
+            break
+        w_hi = min(2 * w_hi + 4, M)
+    Pw = R[0]                                    # P(W=w), w=0..w_hi
+    order = np.argsort(Pw)[::-1]
+    strata, covered = [], 0.0
+    for w in order:                               # greedy cover by mass (D7)
+        strata.append(int(w)); covered += Pw[w]
+        if 1.0 - covered <= 1e-12:
+            break
+    strata = sorted(strata)
+    table = {}
+    for w in list(strata):                        # enumeration (D6)
+        if w == 0:
+            table[w] = dict(kind="enum", n=1,
+                            fails=_decode_set(dec, Hd, O, []), f=None)
+            table[w]["f"] = float(table[w]["fails"])
+            continue
+        if comb(M, w) <= enum_cap and (Pw[w] >= enum_mass_floor
+                                       or w <= force_enum_w):
+            # D6 addendum (dated 2026-07-10, pre-run): enumerate only strata
+            # that are BOTH cheap (comb <= enum_cap) and mass-relevant
+            # (P(w) >= enum_mass_floor), or force-enumerated low strata
+            # (w <= force_enum_w; used by the G2 row to resolve prior P6).
+            # Rationale: at registered caps, w=2 (139k decodes) would be
+            # enumerated at m=3/8 where it carries ~2e-4 mass -- pure waste.
+            # exact f_w: enumeration must weight subsets by odds (the D4
+            # conditional law applies to enumeration too)
+            logodds = np.log(priors) - np.log1p(-priors)
+            num = den = 0.0
+            for cols in combinations(range(M), w):
+                wgt = float(np.exp(np.sum(logodds[list(cols)])))
+                num += wgt * _decode_set(dec, Hd, O, cols); den += wgt
+            table[w] = dict(kind="enum", n=comb(M, w), fails=None, f=num / den)
+    sampled = [w for w in strata if w not in table]
+    pilots = {}
+    for w in sampled:
+        pilots[w] = sum(
+            _decode_set(dec, Hd, O, cond_bernoulli_draw(priors, R, w, rng))
+            for _ in range(pilot))
+    rem = max(budget - pilot * len(sampled), 0)   # Neyman (efficiency only)
+    def sig(w):
+        f = max(pilots[w] / pilot, 1.0 / pilot)
+        return Pw[w] * np.sqrt(f * (1 - f))
+    tot = sum(sig(w) for w in sampled) or 1.0
+    for w in sampled:
+        extra = int(rem * sig(w) / tot)
+        f = pilots[w] + sum(
+            _decode_set(dec, Hd, O, cond_bernoulli_draw(priors, R, w, rng))
+            for _ in range(extra))
+        n = pilot + extra
+        table[w] = dict(kind="mc", n=n, fails=f, f=f / n)
+    point = var = ub_extra = 0.0
+    for w in strata:
+        t = table[w]
+        fw = t["f"]
+        if t["kind"] == "mc":
+            if t["fails"] == 0:
+                ub_extra += Pw[w] * 3.0 / t["n"]  # rule-of-three (landmine 11)
+                vw = 0.0
+            else:
+                vw = fw * (1 - fw) / t["n"]
+        else:
+            vw = 0.0
+        point += Pw[w] * fw
+        var += Pw[w] ** 2 * vw
+    tail = float(1.0 - sum(Pw[w] for w in strata))  # f<=1 bound (D7)
+    se = float(np.sqrt(var))
+    return dict(p_any=float(point), se=se,
+                ci95=[float(max(point - 1.96 * se, 0.0)),
+                      float(point + 1.96 * se)],
+                ub_bracket=point + tail + ub_extra, tail=tail,
+                zero_fail_ub=ub_extra, lam=lam, strata=strata,
+                per_stratum={int(w): {kk: (round(vv, 10) if isinstance(vv, float)
+                                           else vv)
+                                      for kk, vv in table[w].items()}
+                             for w in strata},
+                tail_ok=bool(tail <= tail_frac * max(point, 1e-300)))
+
 # --------------------------------------------------------------- selftest ---
 def selftest():
     out = {"stage": "selftest"}
@@ -153,7 +299,90 @@ def selftest():
     z = two_prop_z(p_dem, 2000, p_dir, 2000)
     assert abs(z) < 5, f"micro cross-check z={z:.2f}"
     out["micro_z"] = round(float(z), 3)
+    # (6) Poisson-binomial DP vs 2^12 brute force -- exact to 1e-12
+    rng = np.random.default_rng(0)
+    pr = rng.uniform(0.01, 0.3, 12)
+    R = pb_suffix_table(pr, 12)
+    brute = np.zeros(13)
+    for mask in range(1 << 12):
+        w = bin(mask).count("1")
+        prob = np.prod(np.where([(mask >> j) & 1 for j in range(12)], pr, 1 - pr))
+        brute[w] += prob
+    assert np.max(np.abs(R[0] - brute)) < 1e-12, "PB-DP drift vs brute force"
+    out["pb_dp_vs_brute"] = "ok"
+    # (7) conditional-Bernoulli law: empirical inclusion marginals vs exact
+    # P(j in S | W=w) = p_j * [PB of others at w-1] / P(W=w), M=6, w=3, 20k draws
+    pr6 = rng.uniform(0.05, 0.5, 6)
+    R6 = pb_suffix_table(pr6, 6)
+    exact = np.zeros(6)
+    for j in range(6):
+        others = np.delete(pr6, j)
+        exact[j] = pr6[j] * pb_suffix_table(others, 6)[0][2] / R6[0][3]
+    draws = 20000
+    emp = np.zeros(6)
+    for _ in range(draws):
+        for j in cond_bernoulli_draw(pr6, R6, 3, rng):
+            emp[j] += 1
+    emp /= draws
+    zmax = np.max(np.abs(emp - exact) / np.sqrt(exact * (1 - exact) / draws))
+    assert zmax < 5, f"conditional-law drift zmax={zmax:.2f}"
+    out["cond_law_zmax"] = round(float(zmax), 3)
+    # (8) stratified end-to-end micro: rep-3 at m=8 vs plain-DEM, 5-sigma
+    strat = stratified_estimate(Hd3, O3, pr3, seed=3, budget=4000, pilot=200,
+                                enum_cap=5000)
+    p_plain = g0_dem_sample(Hd3, O3, pr3, 4000, seed=4)
+    se_c = np.sqrt(strat["se"] ** 2 + p_plain * (1 - p_plain) / 4000)
+    zs = (strat["p_any"] - p_plain) / se_c if se_c > 0 else 0.0
+    assert abs(zs) < 5, f"stratified micro z={zs:.2f}"
+    assert strat["tail_ok"], "micro tail not controlled"
+    out["strat_micro_z"] = round(float(zs), 3)
     print(json.dumps(out)); print(json.dumps({"selftest": "PASS"}))
+
+# --------------------------------------------------------------- G1 gate ---
+G1_BUDGETS = {3.0: dict(plain_shots=40000, seed_plain=30710, seed_strat=30711,
+                        budget=30000, pilot=400, enum_cap=200000),
+              8.0: dict(plain_shots=20000, seed_plain=30810, seed_strat=30811,
+                        budget=30000, pilot=400, enum_cap=200000)}
+
+def run_g1(quick=False):
+    """G1 (PREREG section 4): stratified vs plain-DEM on rep2(x)eh8 at m=3 and
+    m=8. PASS iff 95% CIs overlap at BOTH elevations AND the stratified point
+    sits inside the plain estimator's 95% CI at m=3."""
+    H, k = build_rep2eh8()
+    cells = {}
+    for m, cfg in G1_BUDGETS.items():
+        plain_shots = 2000 if quick else cfg["plain_shots"]
+        budget = 3000 if quick else cfg["budget"]
+        pilot = 150 if quick else cfg["pilot"]
+        enum_cap = 5000 if quick else cfg["enum_cap"]
+        t0 = time.time()
+        circ = referee_circuit(H, m)
+        Hd, O, priors = dem_matrices(circ)
+        strat = stratified_estimate(Hd, O, priors, cfg["seed_strat"],
+                                    budget=budget, pilot=pilot,
+                                    enum_cap=enum_cap)
+        t1 = time.time()
+        p_pl = g0_dem_sample(Hd, O, priors, plain_shots, cfg["seed_plain"])
+        t2 = time.time()
+        se_pl = np.sqrt(max(p_pl * (1 - p_pl), 1e-300) / plain_shots)
+        ci_pl = [float(max(p_pl - 1.96 * se_pl, 0.0)), float(p_pl + 1.96 * se_pl)]
+        overlap = bool(strat["ci95"][0] <= ci_pl[1] and ci_pl[0] <= strat["ci95"][1])
+        inside = bool(ci_pl[0] <= strat["p_any"] <= ci_pl[1])
+        cells[m] = dict(overlap=overlap, inside=inside)
+        print(json.dumps(dict(
+            stage="G1", code="rep2(x)eh8 [16,4,8]", m=m, quick=quick,
+            strat_p_any=strat["p_any"], strat_ci95=strat["ci95"],
+            strat_tail=strat["tail"], strat_zero_fail_ub=strat["zero_fail_ub"],
+            strat_lam=round(float(strat["lam"]), 4), strata=strat["strata"],
+            per_stratum=strat["per_stratum"], tail_ok=strat["tail_ok"],
+            plain_p_any=p_pl, plain_ci95=ci_pl, plain_shots=plain_shots,
+            ci_overlap=overlap, point_inside_plain=inside,
+            t_strat_s=round(t1 - t0, 1), t_plain_s=round(t2 - t1, 1),
+            seeds=dict(strat=cfg["seed_strat"], plain=cfg["seed_plain"]))))
+    ok = cells[3.0]["overlap"] and cells[8.0]["overlap"] and cells[3.0]["inside"]
+    label = ("G1 PASS" if ok else "G1 FAIL") + \
+            (" (quick smoke -- NOT the gate)" if quick else "")
+    print(json.dumps({"verdict": label}))
 
 # --------------------------------------------------------------- G0 gate ---
 def run_g0(quick=False):
@@ -186,11 +415,14 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--g0", action="store_true")
+    ap.add_argument("--g1", action="store_true")
     ap.add_argument("--quick", action="store_true")
     a = ap.parse_args()
     if a.selftest:
         selftest()
     elif a.g0:
         run_g0(quick=a.quick)
+    elif a.g1:
+        run_g1(quick=a.quick)
     else:
         ap.print_help()

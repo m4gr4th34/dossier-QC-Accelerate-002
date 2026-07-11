@@ -512,3 +512,76 @@ and (3) a mapped structural wall around the quantity FTQC actually needs.
 Repetition still dominates measured error under bias; eh8(x)eh8 dominates the
 algebraic proxy under the caps; nothing automated has beaten either champion
 on its home metric.
+
+---
+
+## Entry 010 — 2026-07-10 — S6 importance sampler: three gates passed; the parity finding; P6 falsified exactly
+
+**Ran:** fault-weight stratified sampler per PREREG_sampler.md (@f78e376),
+driver s6_sampler.py, gated build in three record commits: G0 @959dcae,
+G1 @109afbf, G2 row 1 @7ab8bce. All seeds registered in-file; every record
+value reproduced exactly across the strategy-room validation machine and the
+workbench at pinned versions (numpy 2.5.1 / stim 1.16.0 / ldpc 2.4.1 /
+pymatching 2.4.0) — registered-seed runs are cross-machine deterministic.
+
+**Verdicts:** G0 PASS (DEM-equivalence: m=3 z=1.1389, m=8 z=2.0894, |z|<3
+both). G1 PASS (stratified vs plain-DEM: CIs overlap both elevations, m=3
+point inside plain CI). G2 row 1 PASS (rep2⊗eh8 at m=1: eps=1.0307e-5 in
+[8.64e-6, 1.20e-5], rel half-width 0.1616 ≤ 0.25, point inside the MC band
+[9.22e-6, 1.47e-5]). Priors resolved: P1 TRUE, P2 TRUE, P3 TRUE, P6 FALSE.
+P4/P5/P7 pending (G2 incomplete). K1 did not fire (f_max at top-contribution
+strata 3.17e-3 ≥ 1e-3); K2/K3 untouched (row-1 run ~540k decodes, ~5-25 min).
+
+**Finding 1 — P6 falsified with an exact measurement:** f_1 = 0 and
+f_2 = 1.885e-7, the latter by full odds-weighted enumeration of all 139,128
+weight-2 fault pairs (deterministic, no sampling error). Weight-2 fault sets
+defeat the frozen referee on a d=8 code: circuit-level failure structure sits
+far below code distance (true low-distance circuit paths or BP-OSD
+suboptimality — indistinguishable as measured, and the referee's verdict is
+the quantity we rank on either way). A registered prior resolving FALSE via
+enumeration is the cheapest kind of new knowledge this arc produces.
+
+**Finding 2 — the parity result (load-bearing for what comes next):**
+λ(m=1) = 8.36 mean faults per shot. The non-adiabatic term (1/2πn̄ ≈ 0.0145
+per ctrl slot) and p_m (6e-3) do not scale with the noise knob m, so even at
+the operating point the typical shot carries ~8 faults. Consequence, now
+measured: the f_w profile rises smoothly (2.4e-5 at w=6 → 0.35 at w=34) with
+the W-mass centered right on top of it — conditioning on fault COUNT does not
+enrich for failure. The sampler hit ±16% in ~540k decodes; direct MC reaches
+the same in ~400k. Parity. The PREREG's design premise ("deep sub-threshold,
+low w dominates") is FALSE for the GM channel: the rare event is a conspiring
+fault PATTERN at typical weight, not an atypical fault count. Weight
+stratification is the wrong conditioning variable for this channel; what it
+bought instead is exact machinery (PB-DP weights, conditional-Bernoulli
+draws, odds-weighted enumeration) that transfers unchanged to any mechanism-
+SUBSET stratification.
+
+**Methods lessons (each cost or nearly cost something):**
+1. The landmark-anchor gate caught the strategy room itself on first firing:
+   hardcoded "truth" constants were the room's reconstructed values, not the
+   committed bytes — trailing-digit drift, caught by assertion. Anchors must
+   be pasted from the committed artifact, never recomputed.
+2. Process near-miss: strategy-room approval of the G1 commit was never
+   relayed as "go" in the Code tab; the next handoff arrived first. The
+   handoff's HEAD-expectation guard caught it; Code landed the already-
+   approved G1 before proceeding, keeping three truthfully-labeled commits.
+   New protocol line: an approval is not an authorization until said in the
+   Code tab; every block keeps the HEAD-expectation guard.
+3. Transport: speculative `ls` globs abort under zsh on no-match even with
+   stderr redirected — one path per statement with `|| true`.
+4. Scipy is not in the canonical venv: statistical anchors (Garwood bands)
+   are computed offline and hardcoded with their derivation in comments.
+
+**Next session, start here:** three G2 rows remain (winner rep3⊗eh8,
+eh8⊗eh8, C3-with-H-replay). At parity efficiency the winner row (p_any=1e-5)
+needs ~6e6 decodes for the 25% criterion — 1.5-5h, brushing K2's 4h line;
+eh8⊗eh8 similar with a bigger circuit (K3 watch). Decision queued, to be made
+on the record: (a) run the remaining rows as-is and let K2 resolve
+mechanically, or (b) amend budgets by dated addendum, or (c) treat the parity
+finding as the redesign trigger now — new prereg for mechanism-class
+stratification (condition on fault count WITHIN the damaging mechanism
+classes, or weight-biased sampling with reweighting), reusing the gated
+conditional-Bernoulli core on a mechanism subset. The known-code gate
+discipline carries over verbatim whichever way: same four truths, same bands.
+
+---

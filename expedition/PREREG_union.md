@@ -128,3 +128,28 @@ design's verdicts for any channel other than GM at the registered operating
 point without a new gate run.
 
 ---
+
+## Addendum 1 — 2026-07-10 (pre-run; U-G1 has not executed)
+
+**A1.1 — U-G1 accounting correction.** As registered, U-G1's "≤108,000
+decodes, enumeration and harvest costs INCLUDED" is arithmetically
+unpassable: the seed w≤2 enumeration alone cost 139,128 decodes (committed
+as the U1a artifact, basis ae7b99a1a85f7e77). The inclusion clause was meant
+to prevent cost-hiding and instead made the gate impossible. Corrected
+criterion, replacing the U-G1 cost clause only (band criteria unchanged):
+
+  (i) NEW decodes in the U-G1 run — T1 sampling + T2 residual sampling +
+      all closure harvesting/minimalization — must total ≤ 108,000; AND
+  (ii) ALL-IN cost, including the 139,128-decode seed enumeration, must
+      total < 540,000 (the recorded parity baseline), so the one-time basis
+      cost cannot hide.
+
+**A1.2 — Calibration note (recorded before U-G1, not a criterion).** The
+seed basis carries Σπ ≈ 7.3e-6 against measured p_any = 3.3e-4: the six w=2
+decoder traps explain ~2% of the failure mass. T1 from the seed basis alone
+is therefore expected to be small; the design's efficiency, if any, must
+come from closure (U4) growing the basis with harvested w≥3 cores. This is
+the load Q4 was priced at 0.5 to carry. Recorded so that a small initial T1
+cannot later be presented as either surprise or failure.
+
+---

@@ -411,11 +411,108 @@ def run_g0(quick=False):
             (" (quick smoke -- NOT the gate)" if quick else "")
     print(json.dumps({"verdict": label}))
 
+
+# --------------------------------------------------------------- G2 gate ---
+# rep2(x)eh8 row anchors: direct-MC truth from s5_rankmap_data.json (F=75
+# fails at SHOTS=200000, ROUNDS=8, k=4; re-verified by Code pre-commit at
+# f78e376). Garwood exact Poisson 95% on F=75 -> counts [58.9923, 94.0131]
+# -> p_any [2.9496e-4, 4.7007e-4] -> eps via the referee's own conventions.
+# Bands computed offline (scipy not in the canonical venv) and hardcoded:
+G2_REP2EH8 = dict(
+    name="rep2(x)eh8 [16,4,8]", k=4, m=1.0,
+    eps_truth=1.1721359996663683e-05,           # == G2_ANCHORS entry
+    eps_band=[9.219154925688144e-06, 1.4693655943642803e-05],
+    p_any_band=[0.00029496128850725725, 0.0004700657472441638])
+G2_BUDGET = dict(seed_strat=110710, budget=400000, pilot=1000,
+                 enum_cap=200000, force_enum_w=2, enum_mass_floor=0.01)
+
+def eps_from_pany(p_any, k):
+    """D9: conversion by the referee's own functions -- import, don't rederive."""
+    from evaluator_v1 import per_round
+    pk = 1 - (1 - p_any) ** (1.0 / k)
+    return per_round(pk, ROUNDS)
+
+def k1_evaluate(Pw_f_table):
+    """K1 (PREREG section 5): strata carrying >=80% of sum P(w)*f_w all have
+    f_w < 1e-3 => conditioning failed to enrich; design killed for regime."""
+    contrib = [(w, t["pw"] * t["f"]) for w, t in Pw_f_table.items()
+               if t["f"] and t["f"] > 0]
+    total = sum(c for _, c in contrib)
+    if total <= 0:
+        return dict(k1_fired=None, note="no failing strata measured")
+    contrib.sort(key=lambda x: -x[1])
+    top, cum = [], 0.0
+    for w, c in contrib:
+        top.append(w); cum += c
+        if cum >= 0.8 * total:
+            break
+    fmax = max(Pw_f_table[w]["f"] for w in top)
+    return dict(k1_fired=bool(fmax < 1e-3), top_strata=top,
+                f_max_at_top=float(fmax))
+
+def run_g2_rep2eh8(quick=False):
+    """G2 row 1 (PREREG section 4): the sampler vs the directly-measured m=1
+    truth for rep2(x)eh8. PASS iff (a) rel 95% half-width (bracket-inflated)
+    <= 25% -- else INCONCLUSIVE; (b) sampler interval intersects the MC band;
+    (c) sampler point inside the MC band. force_enum_w=2 resolves prior P6."""
+    cfg = dict(G2_BUDGET)
+    if quick:
+        cfg.update(budget=20000, pilot=300, enum_cap=5000, force_enum_w=1)
+    H, k = build_rep2eh8()
+    t0 = time.time()
+    circ = referee_circuit(H, G2_REP2EH8["m"])
+    Hd, O, priors = dem_matrices(circ)
+    strat = stratified_estimate(Hd, O, priors, cfg["seed_strat"],
+                                budget=cfg["budget"], pilot=cfg["pilot"],
+                                enum_cap=cfg["enum_cap"],
+                                enum_mass_floor=cfg["enum_mass_floor"],
+                                force_enum_w=cfg["force_enum_w"])
+    t1 = time.time()
+    p = strat["p_any"]
+    lo = strat["ci95"][0]
+    hi = max(strat["ci95"][1], strat["ub_bracket"])   # bracket-inflated (D7/D8)
+    rel = (hi - lo) / (hi + lo) if (hi + lo) > 0 else 1.0
+    eps_pt, eps_lo, eps_hi = (eps_from_pany(x, k) for x in (p, lo, hi))
+    band = G2_REP2EH8["eps_band"]
+    conclusive = bool(rel <= 0.25)
+    intersects = bool(eps_lo <= band[1] and band[0] <= eps_hi)
+    inside = bool(band[0] <= eps_pt <= band[1])
+    if not conclusive:
+        cell = "INCONCLUSIVE"
+    else:
+        cell = "PASS" if (intersects and inside) else "FAIL"
+    # K1 diagnostic from the measured profile
+    prof = {}
+    R = pb_suffix_table(priors, max(strat["strata"]))
+    for w in strat["strata"]:
+        t = strat["per_stratum"][w]
+        prof[w] = dict(pw=float(R[0][w]), f=t.get("f"))
+    k1 = k1_evaluate(prof)
+    # P6 resolution: f_1, f_2 exact if enumerated
+    p6 = {w: strat["per_stratum"].get(w, {}).get("f")
+          for w in (1, 2)
+          if strat["per_stratum"].get(w, {}).get("kind") == "enum"}
+    print(json.dumps(dict(
+        stage="G2", row=G2_REP2EH8["name"], m=1.0, quick=quick,
+        p_any=p, p_any_ci95=strat["ci95"], ub_bracket=strat["ub_bracket"],
+        tail=strat["tail"], zero_fail_ub=strat["zero_fail_ub"],
+        lam=round(float(strat["lam"]), 4),
+        eps=eps_pt, eps_interval=[eps_lo, eps_hi], rel_halfwidth=round(rel, 4),
+        mc_band_eps=band, criterion_a_conclusive=conclusive,
+        criterion_b_intersects=intersects, criterion_c_point_inside=inside,
+        cell=cell + (" (quick smoke -- NOT the gate)" if quick else ""),
+        k1=k1, p6_exact_f=p6, per_stratum=strat["per_stratum"],
+        decode_budget=cfg["budget"], seeds=dict(strat=cfg["seed_strat"]),
+        t_s=round(t1 - t0, 1))))
+    print(json.dumps({"verdict": ("G2 rep2(x)eh8 " + cell) +
+                      (" (quick smoke -- NOT the gate)" if quick else "")}))
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--g0", action="store_true")
     ap.add_argument("--g1", action="store_true")
+    ap.add_argument("--g2-rep2eh8", action="store_true")
     ap.add_argument("--quick", action="store_true")
     a = ap.parse_args()
     if a.selftest:
@@ -424,5 +521,7 @@ if __name__ == "__main__":
         run_g0(quick=a.quick)
     elif a.g1:
         run_g1(quick=a.quick)
+    elif a.g2_rep2eh8:
+        run_g2_rep2eh8(quick=a.quick)
     else:
         ap.print_help()

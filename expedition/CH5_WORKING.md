@@ -679,3 +679,80 @@ side fix (osd_order, prior tweak, or trap-listing), which would change the
 REFEREE and therefore needs the full instrument-change ritual if pursued.
 
 ---
+
+## Entry 012 — 2026-07-11 — the founding question, measured: at matched efficiency, the loop's find beats repetition
+
+**Ran:** S8 truth campaign per PREREG_truth.md (@e8a3675), instrument
+s8_truth.py (committed pre-launch, selftest anchors on record). Five rows
+at m=1, frozen referee, 67.2M shots total, ~4.7h wall-clock, zero
+wall-clock kills, 135 checkpoints, byte-identical resume verified in
+build validation. Results reviewed in the strategy room before this
+commit; checkpoint record and run log committed alongside this entry.
+
+**The measured table (per-logical per-round eps, 95% Garwood):**
+
+| row | k | shots | events | eps | 95% CI | kind |
+|---|---|---|---|---|---|---|
+| rep-13 [13,1,13] | 1 | 2.0e7 (cap) | 0 | — | ≤ 2.31e-8 | floor |
+| winner rep3⊗eh8 [24,4,12] | 4 | 2.0e7 (cap) | 85 | 1.328e-7 | [1.061e-7, 1.642e-7] | measurement (cap-limited, ±21%) |
+| frontier eh8⊗eh8 [64,16,16] | 16 | 5.5e6 | 97 | 1.378e-7 | [1.117e-7, 1.681e-7] | measurement |
+| rep-7 [7,1,7] | 1 | 1.97e7 | 97 | 6.153e-7 | [4.99e-7, 7.51e-7] | measurement |
+| C3 find [34,6,12] | 6 | 2.0e6 | 1999 | 2.083e-5 | [1.993e-5, 2.177e-5] | measurement |
+
+**Ordering permitted by the non-overlap rule (PREREG_truth §3):**
+rep-13 ≪ {winner ≈ frontier} ≪ rep-7. The winner-frontier pair is
+statistically TIED (heavy CI overlap; points nearly identical, frontier
+fractionally higher). rep-13's floor UB (2.31e-8) sits below the winner's
+lower CI; rep-7's lower CI (4.99e-7) sits above the frontier's upper CI —
+both claims certified non-overlapping.
+
+**Prior resolutions:** T1 TRUE (85 events), T2 TRUE (97), T3 FALSE
+(tie; frontier not lower), T4 FALSE (rep-7 measured at 97 events AND sits
+above the products), T5 TRUE (C3 dead-center in its band), T6 TRUE
+(4.7h). Consistency: every measured row lands inside its old 2-event
+rankmap Garwood band — the S8 record and the entire committed lineage are
+coherent.
+
+**Interpretation (labeled as such, with its derivation):**
+1. THE FOUNDING ANSWER. rep-7 and the winner have exactly equal
+   efficiency: eff = k/(n+r) = 1/13 = 4/52 = 0.0769 — which is why rep-7
+   was the benchmark. At that matched efficiency, the automated find
+   beats repetition by 6.153e-7 / 1.328e-7 ≈ 4.6× per-logical at the
+   operating point, non-overlap certified. The four-campaign throughline
+   "repetition dominates" was a resolution artifact: at 2e5 shots every
+   strong row was a floor and rep-7's true rate (6.2e-7 → ~1 expected
+   event) was invisible. It took 2e7 shots to see the answer. The
+   chapter's question — can the automated loop find codes that beat
+   human-picked repetition — resolves YES at matched efficiency, NO at
+   unmatched (rep-13, at eff 0.040, roughly half the winner's, is
+   per-logical better; a different point on the tradeoff curve, not a
+   refutation).
+2. DISTANCE IS NOT THE AXIS. frontier (d=16) ties winner (d=12)
+   per-logical, and rep-7 (d=7) loses to both while rep-13 (d=13) beats
+   both. No monotone distance story fits; this is consistent with
+   Entry 011's decoder-trap finding — the operating-point rate is partly
+   a property of the DECODER's failure surface, not the code's distance.
+3. The rep-13 floor is now the target to beat: any future find claiming
+   the operating-point crown must measure below 2.31e-8 — which at
+   direct-MC cost means ≥ 1e8-shot rows or a sampler that survives where
+   two designs died. Recorded as the standing challenge.
+
+**Caveats on the record:** the winner row ended at its 20M shot cap at 85
+events (±21%, target was ±20%) — a valid measurement, cap-limited, so
+labeled. rep-13's row is a floor, not a measurement; "rep-13 beats the
+products" is certified only as floor-UB < CI-lower, and its true eps is
+unknown below 2.31e-8. stim per-machine determinism (Entry 011) applies:
+the record is the workbench's; the strategy-room preview that anticipated
+rep-7's measurability was firewalled from the priors, which were set
+before it existed and resolved mechanically regardless.
+
+**Where this leaves Chapter 5:** the expedition's founding question has a
+measured, certified answer. Candidate closures, in order of decreasing
+readiness: (a) chapter-seal prep on the current record; (b) the
+decoder-trap fix arc (changes the REFEREE — full instrument-change ritual,
+new prereg, would plausibly move every number in this table); (c) a
+rep-13-floor hunt (1e8-shot budgets or a third sampler design that must
+beat the recorded parity baseline AND the recorded kill mechanisms).
+Decision is the author's, next session.
+
+---

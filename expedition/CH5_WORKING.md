@@ -474,3 +474,41 @@ qubits-per-logical <= 13 (the winner's budget; also keeps the search inside
 the gated region). Frontier to beat: eh8(x)eh8 S=4 at qlog=8. Bandit credit
 fixed per Entry 006: feasibility-blended, plateau-proof. Referee verifies
 finalists at the operating point (floors -> bounds, honestly).
+
+---
+
+## Entry 009 — 2026-07-10 — Campaign 4: the frontier is a hard local optimum; the operator window mapped
+
+**Ran:** gated-penalty search (PREREG_search4 + pre-run addendum, driver @
+b1450e2), 15 min/arm, seed 20260711. Verdicts: R1 NOT DEMONSTRATED (ceiling
+collapsed the test), R2 TRUE-sanity, R3 FALSE, R4 NOT TESTED. Full log in
+PREREG_search4.md.
+
+**The finding with weight (R3):** eh8(x)eh8 is a hard local optimum -- 51,700+
+valid candidates, ~11,500 mutations off the frontier elite, zero exceed S=4
+under w<=4, k>=2, qlog<=13. Fourth campaign, same throughline: structured
+codes dominate; the search rebuilds them, never beats them.
+
+**The methods lesson (new):** operator strength has a WINDOW. Bit-flip
+proposer: cannot reach the structured region (S stuck at 0, Campaign-4 probe).
+Build operator: teleports BOTH arms to the assembly-closure ceiling at gen 0,
+erasing the learn-vs-random signal and starving the bandit (no headroom = no
+gradient, Entry 006's pathology by another route). A learning test requires
+headroom between what operators assemble directly and what the campaign asks
+for. Designing that headroom is now a stated prerequisite for any Campaign 5.
+
+**What a Campaign 5 would need (recorded, not committed to):** moves that
+leave the product-assembly closure with the target ABOVE direct assembly --
+factor puncture/extend/splice on built products, HGP over elite factors --
+plus the R4 out-of-sample penalty test, still pending an off-landmark find.
+The alternative escalation remains importance sampling (measure the truth at
+the operating point), now the only ungated route to a code-shaped result:
+every algebraic and proxy path has been gate-tested to its edge.
+
+**Arc status after four campaigns:** the loop's demonstrated products are
+(1) fast honest exploration, (2) cheap exposure of wrong rulers/objectives/
+operators -- three different components caught by pre-registered gates --
+and (3) a mapped structural wall around the quantity FTQC actually needs.
+Repetition still dominates measured error under bias; eh8(x)eh8 dominates the
+algebraic proxy under the caps; nothing automated has beaten either champion
+on its home metric.

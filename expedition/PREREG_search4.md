@@ -67,3 +67,18 @@ campaign's real questions are now R1 (bandit leaves uniform; plateau-proof
 credit works) and R3 (a frontier-BEATER not row-equivalent to any landmark --
 prior unchanged at 20%; mutation must find off-landmark structure the bank
 cannot assemble directly). R4 unchanged.
+
+## Resolution log (2026-07-10, same day; 15 min/arm, seed 20260711)
+
+| # | Verdict | Evidence |
+|---|---|---|
+| R1 | NOT DEMONSTRATED (test collapsed) | Both arms reached S=4 at GEN 0 via build -- the ceiling of the bank's assembly closure -- so "learn beats random on best-S" could not discriminate (tie at ceiling). Pass-rate favored random 2.1x (learn dwells on expensive k=16 exact-d). Bandit stayed only trivially off uniform (~1.6%): with no headroom above the ceiling, the plateau-proof credit had no gradient to act on. This is a failed EXPERIMENT about R1, not evidence against learning (Campaign 3 demonstrated learning); the design removed the headroom the test required. |
+| R2 | TRUE (sanity, as pre-deflated) | Both top finds decode to eh8(x)eh8 [64,16,16] cd=6 exactly -- assembled, per the addendum's prediction; no learning evidence claimed. |
+| R3 | FALSE | Zero frontier events across 51,700+ valid candidates (learn 16,695 + random 35,036); ~11,500 mutations and 13 crossovers off the frontier elite, none exceed S=4. eh8(x)eh8 is a HARD LOCAL OPTIMUM under w<=4, k in [2,16], qlog<=13. Existence of any S>4 code in-caps remains open (search not exhaustive); the loop found none. |
+| R4 | NOT TESTED | The top find is a known landmark, not an off-landmark code -- nothing new existed to validate the penalty on. Carries forward. |
+
+**Methods lesson (recorded):** the build operator over-corrected -- strong
+enough to escape Campaign 4-probe's S=0 plateau, strong enough to trivialize
+the target. A learning test needs HEADROOM between what operators assemble
+directly and what the campaign asks for. Both edges of that window are now
+mapped (can't-reach: bit-flip; trivially-reaches: build).

@@ -585,3 +585,97 @@ conditional-Bernoulli core on a mechanism subset. The known-code gate
 discipline carries over verbatim whichever way: same four truths, same bands.
 
 ---
+
+## Entry 011 — 2026-07-10 — union sampler: born, gated, and killed in one day; the diffuse-structure finding
+
+**Ran:** the S7 arc per PREREG_union.md (@46e0b6d, Addendum 1 @fff29c8):
+U1a core enumeration @cfd4865, U-G0 @9fbe748, U-G1 @c1e8681 (killed). Plus
+the C3 recovery @14e9592 closing Entry 010's replay dependency. All record
+values reproduced exactly between strategy-room validation and the workbench
+on numpy-RNG and deterministic-decode paths.
+
+**Correction to Entry 010 (recorded, not edited — append-only):** Entry 010
+claimed registered-seed runs are cross-machine deterministic. That holds for
+numpy-RNG paths (G1, G2, all S7 arms) and is now FALSIFIED for stim
+detector-sampler paths: a sandbox seed-7 fom run on rep2⊗eh8 gave 1.0940e-5
+vs the committed 1.1721e-5 — statistically consistent, byte-different. stim
+seed streams are machine-dependent; exact-reproduction claims for stim paths
+are per-machine only. Same-machine stim determinism stands (Entry 006
+replay; the C3 fingerprint below).
+
+**C3 recovery (dependency closed):** /tmp survived; H verified by V1
+structural (n,k,d=34,6,12 exact, shape 37×34, w≤4, eff 6/71) AND V2
+behavioral fingerprint — the committed rankmap m=1 cell reproduced
+byte-exact at seed 7 on the workbench (diag z=0.0). Frozen as
+c3_find_H.json (f42569e3fb53016f). The near-impostor test worked: the gen-44
+replay predecessor (right n,k,d, wrong shape/eff) is rejected by V1.
+
+**The union arc, and what survives it:**
+1. Q2 TRUE, with structure: exactly 6 failing weight-2 fault pairs on
+   rep2⊗eh8 — one 2-fault class repeated per round (idx gap 18, spacing 64).
+2. DECODER TRAPS, not distance failures: all 6 pairs carry joint
+   observable = 0 — the truth is "no logical error"; BP-OSD miscorrects the
+   benign weight-6 syndrome into a logical flip. This resolves Entry 010's
+   stated distance-vs-decoder ambiguity in favor of the decoder, with the
+   obs=0 check as proof. f_2 = 1.885e-7 is a property of the frozen
+   REFEREE, not of the code.
+3. U-G0 PASS: Karp–Luby unbiased against brute-force exact, both
+   multiplicity variants, monotone and rescue cases; minimalizer idempotent.
+4. U-G1 KILLED by registered criteria, in budget (106,579 new / 245,707
+   all-in decodes): cell INCONCLUSIVE (rel 0.89); KU1 fired at T2-UB/T1 =
+   4077 vs the 0.25 line; KU2 fired at 93% rescue of planted traps. Priors:
+   Q1 TRUE, Q2 TRUE, Q3 FALSE, Q4 FALSE, Q5 FALSE (93% ≥ 50%), Q6/Q7 NOT
+   TESTED (killed upstream), Q8 FALSE.
+
+**The finding with weight — failure mass is combinatorially diffuse.**
+Mechanics: closure harvested ~50 NOVEL minimal cores per round (49/52/49)
+with zero saturation as the basis grew 6→432, and the grown basis still
+carried 0.14% of the failure mass. Derivation of the compression bound:
+every failing fault set contains a minimal core (the minimalizer is a
+constructive proof), so P_L ≤ Σ π_c over the COMPLETE minimal-core set,
+giving Σ π_c ≥ 3.3e-4. Measured harvested-core mean π ≈ 1e-11 (the 426
+harvested cores added ΔZ ≈ 4e-9); the most generous single-core π available
+in this DEM (weight-3 with one ctrl-na mechanism) is ~2e-8. The complete
+core set therefore numbers ≥ ~1.6e4 even at maximal generosity, and ~3e7 at
+the measured mean. No enumerable basis covers that; the union thesis is
+dead for this channel not by budget but by the structure of the failure
+set. What survives as an object of interest: the core DISTRIBUTION is
+plainly structured (periodicity, mechanism classes) even though the core
+LIST is uncompressible — if anything compresses it, it is a learned
+proposal density over mechanism space, not a list.
+
+**Instrument scoreboard for the operating-point question, after today:**
+count-stratification — parity with direct MC (Entry 010, measured); core
+union — killed (KU1/KU2, measured); direct MC — the honest baseline, ~6e6
+decodes for the winner row at 25% CI (hours, feasible, unglamorous). The
+Entry-010 fork therefore partially reopens for the remaining G2 truth rows:
+option (a) run-as-is at parity cost is back on the table, since the
+redesign branch was tried and died. Surviving method hypotheses, none
+designed yet: adaptive proposal distributions (cross-entropy over the
+diffuse core space), splitting/RESTART. Any of these gets its own prereg
+and the same four-truth gate.
+
+**Protocol lessons:**
+1. The approval-relay near-miss recurred (second occurrence; HEAD guard
+   caught it both times). Structural fix now in force: every strategy-room
+   block ends with an explicit relay line; approvals are not authorizations
+   until said in the Code tab.
+2. A registered gate can be arithmetically impossible (U-G1's original cost
+   clause excluded the 139k seed enum it mandated). Caught before the run;
+   fixed by dated pre-run addendum with a dual criterion so the correction
+   could not hide costs. Lesson: gate arithmetic gets checked against known
+   fixed costs at registration time.
+3. Commit messages carry measured facts only; interpretations ride in
+   entries with their derivations (Code's honesty flag on the U-G1 message,
+   accepted and amended before landing).
+
+**Next session, start here:** decide the reopened fork for the three
+remaining truth rows (winner, eh8⊗eh8, C3) — direct-MC-at-cost is now the
+defensible default; any new sampler design must beat the recorded parity
+baseline AND the recorded kill mechanisms to justify its prereg. The
+decoder-trap finding (obs=0 miscorrections) is independently interesting:
+six exactly-known BP-OSD failure syndromes on a d=8 code invite a decoder-
+side fix (osd_order, prior tweak, or trap-listing), which would change the
+REFEREE and therefore needs the full instrument-change ritual if pursued.
+
+---

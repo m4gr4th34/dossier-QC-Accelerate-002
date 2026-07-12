@@ -1,0 +1,2 @@
+{"stage": "enum-cores", "mechanisms": 528, "pairs": 139128, "n_failing_pairs": 6, "failing_idx": [[95, 113], [159, 177], [223, 241], [287, 305], [351, 369], [415, 433]], "f2_weighted": 1.884942995805515e-07, "f2_anchor_ok": true, "basis_sha256": "ae7b99a1a85f7e77", "t_s": 5.8}
+{"verdict": "CORE BASIS SEEDED (w<=2 exact)"}

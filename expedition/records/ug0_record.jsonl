@@ -1,0 +1,2 @@
+{"stage": "U-G0", "mono_count_z": -0.162, "mono_first_z": -0.237, "mono_exact": 0.03581206631806216, "nonmono_z": 0.077, "nonmono_exact": 0.034776124217623286, "minimalizer_synthetic": "ok", "basis": {"n_cores": 6, "sha": "ae7b99a1a85f7e77"}, "planted_seed_cores_fail": true, "seed_cores_minimal": true}
+{"verdict": "U-G0 PASS"}

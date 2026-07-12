@@ -756,3 +756,67 @@ beat the recorded parity baseline AND the recorded kill mechanisms).
 Decision is the author's, next session.
 
 ---
+
+## Entry 013 — 2026-07-11 — the decoder-gap share: a minority culprit, one indicated exception, and Chapter 6's question
+
+**Ran:** S9 decoder-gap share campaign per PREREG_gapshare.md (@dbc9a4a),
+instrument s9_gap.py (@866b1a2, selftest anchors on record incl. the
+trap-pair classification check). 8.0M decodes across five codes, ~2.0h,
+zero wall-clock kills, every row ≥ 55 classified failures. Q = fraction of
+operating-point failures whose fault set flips NO logical observable
+(truth = 0): the decoder CREATED the logical error. Q is a hard lower
+bound on the decoder-induced share; truth≠0 failures are not attributed.
+
+**The measured table (Q with 95% bootstrap intervals):**
+
+| code | decodes | fails | Q (decoder-created) | 95% CI |
+|---|---|---|---|---|
+| frontier eh8⊗eh8 | 1.5e6 | 68 | 0.085 | [0.00, 0.222] |
+| C3 find [34,6,12] | 2.5e5 | 565 | 0.135 | [0.093, 0.184] |
+| rep2⊗eh8 [16,4,8] | 2.5e5 | 879 | 0.230 | [0.146, 0.320] |
+| winner rep3⊗eh8 | 3.0e6 | 55 | 0.348 | [0.099, 0.615] |
+| rep-7 [7,1,7] | 3.0e6 | 133 | 0.627 | [0.407, 0.821] |
+
+rep-13: zero observed events (floor), not classifiable, recorded as such.
+
+**Prior resolutions:** S1 FALSE (majority on only 1 of 5 codes — the
+finding-bet flipped: decoder-created failures are a MINORITY on 4 of 5,
+8.5–35%). S2 TRUE (spread 54 percentage points; certified non-overlapping
+pairs: rep-7 vs frontier, rep-7 vs C3 — the gap is a CODE-DECODER
+INTERACTION, not a decoder constant). S3 TRUE (all five ≥ 30). S4 TRUE
+(2.0h ≤ 8h). Disclosure check: the pre-registered preview (rep2⊗eh8
+Q ≈ 0.23) reproduced exactly at 0.230 — the firewall precedent and numpy
+cross-machine determinism both held.
+
+**Findings:**
+1. The decoder is guilty but not the principal: on four of five codes,
+   most operating-point failures involve fault sets that ARE logical —
+   the trap mechanism (Entry 011) is real but carries a minority of the
+   mass. Stated with the registered caveat: Q is a lower bound; the
+   truth≠0 majority (mostly misidentified, pred≠truth≠0) is unattributed
+   between unavoidable degeneracy and decoder suboptimality.
+2. Q varies by a factor ~7 across codes at the same operating point under
+   the same decoder. Whatever the decoder gap is, it is a property of the
+   pair, and any decoder repair will move the leaderboard NON-uniformly.
+3. The indicated exception is the sharpest sentence in the dataset:
+   rep-7 — the matched-efficiency loser of Entry 012 — is the one code
+   whose POINT ESTIMATE is majority decoder-created (63%; its CI [41, 82]
+   spans the 0.5 line, so the majority reading is indicated, not
+   certified). Part of the 4.6× gap may be BP-OSD's invention rather than
+   the code's physics. Also not certifiable against the winner's wide Q
+   (CIs overlap; 55 fails). It stands as a question, not a claim — and it
+   is precisely Chapter 6's question: how
+   much of the 4.6× survives decoder repair (referee-v2, full
+   instrument-change ritual)?
+
+**Chapter status:** this closes Chapter 5's measurement program. The
+chapter now holds: the certified operating-point leaderboard (Entry 012),
+the decoder-trap mechanism with six exact syndromes (Entry 011), the
+diffuse-failure-structure derivation (Entry 011), the parity result
+(Entry 010), and the decoder-gap share table (this entry) — with the
+standing challenge (rep-13 floor ≤ 2.31e-8) and Chapter 6's registered
+question both on the record. Next: chapter write-up and seal (DEPLOY.md
+governs the ritual; doc-wins), with the Chapter 6 three-phase plan
+committed as the forward frame.
+
+---

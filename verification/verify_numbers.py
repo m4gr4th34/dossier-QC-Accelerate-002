@@ -87,67 +87,81 @@ check("Consistency: every FORECAST has a dated signpost", with_signpost, _expect
 check(f"Consistency: all forecast probabilities lie in [{PCT_MIN},{PCT_MAX}]", out_of_range, 0, 0)
 
 # ----------------------------------------------------------------
-# Chapter 4 arithmetic checks -- every quantitative claim in the prose,
-# recomputed from its source numbers (expedition record @ commit cac735c:
-# NOTEBOOK.md, PREREG_search1.md, DERIV_noise_v1.md). Same contract:
-# a failing check means fix the paper, never the tolerance.
+# Chapter 5 arithmetic checks -- every quantitative claim in the prose,
+# recomputed from its committed source numbers (expedition record @ cab76e3:
+# CH5_WORKING.md Entries 010-013, records/g2_rep2eh8_record.jsonl,
+# s8_run.log, s9_run.log). Same contract: a failing check means fix the
+# paper, never the tolerance.
 # ----------------------------------------------------------------
-import math as _m
-import datetime as _dt
 
-# 02 THE INSTRUMENT
-_kappa1 = 1.0 / 60e-6  # /s, from Ocelot storage T1 >= 60 us (DERIV Step 1)
-check("Ch4: derived phase-flip time at two photons falls in Ocelot's measured 27-33 us",
-      1e6 / (2 * _kappa1), 27, 33)
-check("Ch4: idle-dominated per-cycle dephasing matches Ocelot's 9.6(4)e-2 (2-sigma window)",
-      1 - _m.exp(-2 * _kappa1 * 2.8e-6), 0.088, 0.104)
-check("Ch4: predicted 8.9% per 2.8us cycle = 1-exp(-2*kappa1*T)", (1-__import__('math').exp(-2*_kappa1*2.8e-6))*100, 8.8, 9.0)
-check("Ch4: today's phase/bit ratio ~30 = 2*kappa1 / Gamma_bit(d5 refit,nbar=2)", (2*_kappa1)/1051.0, 27, 35)
-check("Ch4: fitted measurement error 4.8% = p_m 0.0478*100", 0.0478*100, 4.7, 4.9)
-check("Ch4: bit-flip suppression per photon, lower section (e^0.735) sits in the 2.1-2.4x claim band",
-      _m.exp(0.735), 2.05, 2.15)
-check("Ch4: bit-flip suppression per photon, upper section (e^0.882) sits in the 2.1-2.4x claim band",
-      _m.exp(0.882), 2.35, 2.45)
-check("Ch4: out-of-sample d3 holdouts within the claimed 30% (worst of +22.5%/+28.4%)",
-      max(22.5, 28.4), 0, 30)
-check("Ch4: corridor grid points inside the same-order band (twelve of twelve)",
-      12, 12, 12)
-check("Ch4: corridor agreement at the operating point ~25% (worst |1-ratio| of 0.86..0.94 grid)",
-      max(abs(1 - 0.86), abs(1 - 0.94)) * 100, 0, 25)
-check("Ch4: disclosed instrument optimism 1.2-2x (same-instrument rep-7 MC/FIT = 0.57 -> 1/0.57)",
-      1 / 0.57, 1.2, 2.0)
+# 04 BRUTE FORCE -- the leaderboard (Entry 012 table, verbatim constants)
+_eps_winner,  _win_lo,  _win_hi  = 1.328e-7, 1.061e-7, 1.642e-7
+_eps_front,   _fr_lo,   _fr_hi   = 1.378e-7, 1.117e-7, 1.681e-7
+_eps_rep7,    _r7_lo,   _r7_hi   = 6.153e-7, 4.99e-7,  7.51e-7
+_eps_c3,      _c3_lo,   _c3_hi   = 2.083e-5, 1.993e-5, 2.177e-5
+_floor_rep13 = 2.31e-8
 
-# 03 THE CAMPAIGN
-check("Ch4: P1 loss 'five orders of magnitude' (2.92e-4 / 2.74e-9)",
-      2.92e-4 / 2.74e-9, 0.9e5, 1.3e5)
-check("Ch4: full-CSS extraction penalty 'a factor of about 54' (1.59e-2 / 2.92e-4)",
-      1.59e-2 / 2.92e-4, 50, 60)
-check("Ch4: winner distance twelve = rep(3) x extHamming d(4) product",
-      3 * 4, 12, 12)
-check("Ch4: distance 12 corrects any 5 phase flips = floor((12-1)/2)", (12-1)//2, 5, 5)
-check("Ch4: winner thirteen qubits per logical = (24 data + 28 checks) / 4 logical",
-      (24 + 28) / 4, 13, 13)
-check("Ch4: winner parity matrix has 24 columns = 3 (rep) x 8 (extHamming)",
-      3 * 8, 24, 24)
-check("Ch4: winner parity matrix has 28 rows = 2*8 (rep-check (x) I8) + 3*4 (I3 (x) extHam-check)",
-      2 * 8 + 3 * 4, 28, 28)
-check("Ch4: matched-depth ratio 'one quarter' = 1.719e-7 / 6.750e-7 in stated CI [0.172, 0.337]",
-      1.719e-7 / 6.750e-7, 0.172, 0.337)
-check("Ch4: matched-depth CI upper bound clears the frozen 0.5 bar",
-      0.337, 0, 0.5)
-check("Ch4: scoreboard -- two hits + two misses = four frozen priors",
-      2 + 2, 4, 4)
-check("Ch4: 'twenty-four days ahead' (2026-07-31 minus 2026-07-07)",
-      (_dt.date(2026, 7, 31) - _dt.date(2026, 7, 7)).days, 24, 24)
+check("Ch5: the headline 4.6x = rep-7 eps / winner eps (6.153e-7 / 1.328e-7)",
+      _eps_rep7 / _eps_winner, 4.5, 4.7)
+check("Ch5: matched efficiency 0.0769 -- winner 4/52 equals rep-7 1/13",
+      (4/52) / (1/13), 1.0, 1.0)
+check("Ch5: matched efficiency value = 4/52", 4/52, 0.0769, 0.07693)
+check("Ch5: certified -- rep-13 floor UB sits below the winner's CI-lower",
+      _floor_rep13 / _win_lo, 0.0, 0.999)
+check("Ch5: certified -- rep-7's CI-lower sits above the frontier's CI-upper",
+      _r7_lo / _fr_hi, 1.001, 99.0)
+check("Ch5: the TIE is real -- frontier CI-lower sits below winner CI-upper (overlap)",
+      _fr_lo / _win_hi, 0.0, 0.999)
+check("Ch5: winner row cap-limited at +/-21% = half-width over point",
+      (_win_hi - _win_lo) / 2.0 / _eps_winner, 0.21, 0.225)
+check("Ch5: C3 point sits inside its stated band", _eps_c3, _c3_lo, _c3_hi)
+check("Ch5: '67 million runs' = 2.0e7+2.0e7+5.5e6+1.97e7+2.0e6 shots (Entry 012 rows)",
+      2.0e7 + 2.0e7 + 5.5e6 + 1.97e7 + 2.0e6, 6.70e7, 6.73e7)
+check("Ch5: '100x the standard budget' = 2e7 truth rows over 2e5 proxy rows",
+      2e7 / 2e5, 100, 100)
+check("Ch5: rep-13 efficiency 0.040 = 1/(13+12)", 1/25, 0.0399, 0.0401)
+check("Ch5: rep-13 eff is 'roughly half' the winner's = 0.040/0.0769",
+      (1/25) / (4/52), 0.50, 0.55)
+check("Ch5: rep-7 at the old 2e5 budget -- 'about one expected event' (p_any 4.92e-6, Entry 012)",
+      4.92e-6 * 2e5, 0.9, 1.1)
 
-# 04 THE MAP
-check("Ch4: down-bias inversion, winner vs repetition ('twelve times worse')",
-      12.1, 11, 13)
-check("Ch4: down-bias inversion, deeper sibling ('sixty-three times worse')",
-      62.6, 61, 65)
-check("Ch4: Day-1 headline's code-capacity efficiency claim ('2.4x') as reported on Day 1",
-      2.4, 2.3, 2.5)
-check("Ch4: frontier overhead ~7.6 q/logical = 758/100 (Ruiz)", 758/100, 7.5, 7.7)
+# 02 THE WALL -- the failure spectrum (records/g2_rep2eh8_record.jsonl)
+_lam, _f6, _f8, _f34 = 8.3592, 2.40738e-5, 1.515553e-4, 0.345
+check("Ch5: the typical run carries 'eight point four' faults (lambda)", _lam, 8.3, 8.45)
+check("Ch5: fig-2 '1-in-42,000 at six faults' = 1/f_6", 1.0 / _f6, 41000, 43000)
+check("Ch5: fig-2 'about 1 in 7,000' at the typical count = 1/f_8", 1.0 / _f8, 6400, 7100)
+check("Ch5: fig-2 spectrum tops out at '35%' by thirty-four faults", _f34 * 100, 34.0, 35.5)
+
+# 05 WHOSE FAULT IS FAILURE -- the Q table (Entry 013, verbatim constants)
+_Q = {"frontier": (0.085, 0.0, 0.222), "c3": (0.135, 0.093, 0.184),
+      "rep2eh8": (0.230, 0.146, 0.320), "winner": (0.348, 0.099, 0.615),
+      "rep7": (0.627, 0.407, 0.821)}
+check("Ch5: decoder-created share is a minority on four of five codes",
+      sum(1 for p, _, _ in _Q.values() if p < 0.5), 4, 4)
+check("Ch5: the 'sevenfold' Q spread = 0.627/0.085", _Q["rep7"][0] / _Q["frontier"][0], 7.0, 7.6)
+check("Ch5: certified Q pair -- rep-7 CI-lower above frontier CI-upper",
+      _Q["rep7"][1] / _Q["frontier"][2], 1.001, 99.0)
+check("Ch5: certified Q pair -- rep-7 CI-lower above C3 CI-upper",
+      _Q["rep7"][1] / _Q["c3"][2], 1.001, 99.0)
+check("Ch5: rep-7 'indicated, not certified' -- its own CI spans the 0.5 line",
+      (0.5 - _Q["rep7"][1]) * (_Q["rep7"][2] - 0.5), 1e-6, 1.0)
+check("Ch5: S9 campaign '8.0M decodes' = 2x250k + 3e6 + 1.5e6 + 3e6",
+      2 * 2.5e5 + 3e6 + 1.5e6 + 3e6, 7.99e6, 8.01e6)
+
+# 01/07/08 -- the record's own bookkeeping (counted from the committed files)
+check("Ch5: 'twenty-five priors' across the four measurement preregs = 7+8+6+4",
+      7 + 8 + 6 + 4, 25, 25)
+check("Ch5: 'eight resolved against us' = P6 + Q3,Q4,Q5,Q8 + T3,T4 + S1",
+      1 + 4 + 2 + 1, 8, 8)
+check("Ch5: 'five died untested' = P4,P5,P7 + Q6,Q7", 3 + 2, 5, 5)
+check("Ch5: the error ledger runs E1-E14 = nine measurement-arc + five write-up",
+      9 + 5, 14, 14)
+check("Ch5: 'four of them author-side' in the measurement arc (E1-E4)", 4, 4, 4)
+check("Ch5: landscape carries five scored + six forward = eleven avenues",
+      sum(1 for a in AVENUES if str(a.get("status", "")).startswith("SCORED"))
+      + sum(1 for a in AVENUES if a.get("status") == "FORECAST"), 11, 11)
+check("Ch5: stakes passage '758 cats for 100 logical' ~ 7.6 qubits per logical (Ruiz)",
+      758 / 100, 7.5, 7.7)
 
 # ----------------------------------------------------------------
 print()

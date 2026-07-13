@@ -739,40 +739,44 @@ and the decoder-gap question is open, registered, and waiting.</p>
   <p class="lede">A survey's verification weight sits mostly in the <a href="dossier.html">citation audit</a>; the console here runs the <em>consistency</em> checks — cross-avenue totals, internal arithmetic, and the rule that every forecast carries a dated signpost. Same arithmetic as <span class="mono">verification/verify_numbers.py</span>, which CI reruns on every commit.</p>
   <div class="console">
     <div class="console-head">
-      <span class="label">consistency console · <span id="ncheck">29</span> checks</span>
+      <span class="label">consistency console · <span id="ncheck">33</span> checks</span>
       <button id="run">Run all checks</button>
     </div>
     <div id="log" aria-live="polite" data-baked="1">
       <div class="row"><span class="badge p">PASS</span><span class="what">01 · Consistency: at least one avenue in the landscape</span></div>
       <div class="row"><span class="badge p">PASS</span><span class="what">02 · Consistency: every FORECAST has a dated signpost</span></div>
       <div class="row"><span class="badge p">PASS</span><span class="what">03 · Consistency: all forecast probabilities lie in [0,100]</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">04 · Ch4: derived phase-flip time at two photons falls in Ocelot's measured 27-33 us</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">05 · Ch4: idle-dominated per-cycle dephasing matches Ocelot's 9.6(4)e-2 (2-sigma window)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">06 · Ch4: predicted 8.9% per 2.8us cycle = 1-exp(-2*kappa1*T)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">07 · Ch4: today's phase/bit ratio ~30 = 2*kappa1 / Gamma_bit(d5 refit,nbar=2)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">08 · Ch4: fitted measurement error 4.8% = p_m 0.0478*100</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">09 · Ch4: bit-flip suppression per photon, lower section (e^0.735) sits in the 2.1-2.4x claim band</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">10 · Ch4: bit-flip suppression per photon, upper section (e^0.882) sits in the 2.1-2.4x claim band</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">11 · Ch4: out-of-sample d3 holdouts within the claimed 30% (worst of +22.5%/+28.4%)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">12 · Ch4: corridor grid points inside the same-order band (twelve of twelve)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">13 · Ch4: corridor agreement at the operating point ~25% (worst |1-ratio| of 0.86..0.94 grid)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">14 · Ch4: disclosed instrument optimism 1.2-2x (same-instrument rep-7 MC/FIT = 0.57 -> 1/0.57)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">15 · Ch4: P1 loss 'five orders of magnitude' (2.92e-4 / 2.74e-9)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">16 · Ch4: full-CSS extraction penalty 'a factor of about 54' (1.59e-2 / 2.92e-4)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">17 · Ch4: winner distance twelve = rep(3) x extHamming d(4) product</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">18 · Ch4: distance 12 corrects any 5 phase flips = floor((12-1)/2)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">19 · Ch4: winner thirteen qubits per logical = (24 data + 28 checks) / 4 logical</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">20 · Ch4: winner parity matrix has 24 columns = 3 (rep) x 8 (extHamming)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">21 · Ch4: winner parity matrix has 28 rows = 2*8 (rep-check (x) I8) + 3*4 (I3 (x) extHam-check)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">22 · Ch4: matched-depth ratio 'one quarter' = 1.719e-7 / 6.750e-7 in stated CI [0.172, 0.337]</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">23 · Ch4: matched-depth CI upper bound clears the frozen 0.5 bar</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">24 · Ch4: scoreboard -- two hits + two misses = four frozen priors</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">25 · Ch4: 'twenty-four days ahead' (2026-07-31 minus 2026-07-07)</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">26 · Ch4: down-bias inversion, winner vs repetition ('twelve times worse')</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">27 · Ch4: down-bias inversion, deeper sibling ('sixty-three times worse')</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">28 · Ch4: Day-1 headline's code-capacity efficiency claim ('2.4x') as reported on Day 1</span></div>
-      <div class="row"><span class="badge p">PASS</span><span class="what">29 · Ch4: frontier overhead ~7.6 q/logical = 758/100 (Ruiz)</span></div>
-      <div class="tally">TOTAL: 29 checks · 29 pass · 0 fail — All checks pass — the survey is internally consistent.</div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">04 · Ch5: the headline 4.6x = rep-7 eps / winner eps (6.153e-7 / 1.328e-7)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">05 · Ch5: matched efficiency 0.0769 -- winner 4/52 equals rep-7 1/13</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">06 · Ch5: matched efficiency value = 4/52</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">07 · Ch5: certified -- rep-13 floor UB sits below the winner's CI-lower</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">08 · Ch5: certified -- rep-7's CI-lower sits above the frontier's CI-upper</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">09 · Ch5: the TIE is real -- frontier CI-lower sits below winner CI-upper (overlap)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">10 · Ch5: winner row cap-limited at +/-21% = half-width over point</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">11 · Ch5: C3 point sits inside its stated band</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">12 · Ch5: '67 million runs' = 2.0e7+2.0e7+5.5e6+1.97e7+2.0e6 shots (Entry 012 rows)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">13 · Ch5: '100x the standard budget' = 2e7 truth rows over 2e5 proxy rows</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">14 · Ch5: rep-13 efficiency 0.040 = 1/(13+12)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">15 · Ch5: rep-13 eff is 'roughly half' the winner's = 0.040/0.0769</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">16 · Ch5: rep-7 at the old 2e5 budget -- 'about one expected event' (p_any 4.92e-6, Entry 012)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">17 · Ch5: the typical run carries 'eight point four' faults (lambda)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">18 · Ch5: fig-2 '1-in-42,000 at six faults' = 1/f_6</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">19 · Ch5: fig-2 'about 1 in 7,000' at the typical count = 1/f_8</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">20 · Ch5: fig-2 spectrum tops out at '35%' by thirty-four faults</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">21 · Ch5: decoder-created share is a minority on four of five codes</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">22 · Ch5: the 'sevenfold' Q spread = 0.627/0.085</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">23 · Ch5: certified Q pair -- rep-7 CI-lower above frontier CI-upper</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">24 · Ch5: certified Q pair -- rep-7 CI-lower above C3 CI-upper</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">25 · Ch5: rep-7 'indicated, not certified' -- its own CI spans the 0.5 line</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">26 · Ch5: S9 campaign '8.0M decodes' = 2x250k + 3e6 + 1.5e6 + 3e6</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">27 · Ch5: 'twenty-five priors' across the four measurement preregs = 7+8+6+4</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">28 · Ch5: 'eight resolved against us' = P6 + Q3,Q4,Q5,Q8 + T3,T4 + S1</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">29 · Ch5: 'five died untested' = P4,P5,P7 + Q6,Q7</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">30 · Ch5: the error ledger runs E1-E14 = nine measurement-arc + five write-up</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">31 · Ch5: 'four of them author-side' in the measurement arc (E1-E4)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">32 · Ch5: landscape carries five scored + six forward = eleven avenues</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">33 · Ch5: stakes passage '758 cats for 100 logical' ~ 7.6 qubits per logical (Ruiz)</span></div>
+      <div class="tally">TOTAL: 33 checks · 33 pass · 0 fail — All checks pass — the survey is internally consistent.</div>
     </div>
   </div>
 </section>

@@ -99,34 +99,38 @@ Results from `verification/verify_numbers.py` — the same checks the in-page co
 - [PASS] Consistency: at least one avenue in the landscape
 - [PASS] Consistency: every FORECAST has a dated signpost
 - [PASS] Consistency: all forecast probabilities lie in [0,100]
-- [PASS] Ch4: derived phase-flip time at two photons falls in Ocelot's measured 27-33 us
-- [PASS] Ch4: idle-dominated per-cycle dephasing matches Ocelot's 9.6(4)e-2 (2-sigma window)
-- [PASS] Ch4: predicted 8.9% per 2.8us cycle = 1-exp(-2*kappa1*T)
-- [PASS] Ch4: today's phase/bit ratio ~30 = 2*kappa1 / Gamma_bit(d5 refit,nbar=2)
-- [PASS] Ch4: fitted measurement error 4.8% = p_m 0.0478*100
-- [PASS] Ch4: bit-flip suppression per photon, lower section (e^0.735) sits in the 2.1-2.4x claim band
-- [PASS] Ch4: bit-flip suppression per photon, upper section (e^0.882) sits in the 2.1-2.4x claim band
-- [PASS] Ch4: out-of-sample d3 holdouts within the claimed 30% (worst of +22.5%/+28.4%)
-- [PASS] Ch4: corridor grid points inside the same-order band (twelve of twelve)
-- [PASS] Ch4: corridor agreement at the operating point ~25% (worst |1-ratio| of 0.86..0.94 grid)
-- [PASS] Ch4: disclosed instrument optimism 1.2-2x (same-instrument rep-7 MC/FIT = 0.57 -> 1/0.57)
-- [PASS] Ch4: P1 loss 'five orders of magnitude' (2.92e-4 / 2.74e-9)
-- [PASS] Ch4: full-CSS extraction penalty 'a factor of about 54' (1.59e-2 / 2.92e-4)
-- [PASS] Ch4: winner distance twelve = rep(3) x extHamming d(4) product
-- [PASS] Ch4: distance 12 corrects any 5 phase flips = floor((12-1)/2)
-- [PASS] Ch4: winner thirteen qubits per logical = (24 data + 28 checks) / 4 logical
-- [PASS] Ch4: winner parity matrix has 24 columns = 3 (rep) x 8 (extHamming)
-- [PASS] Ch4: winner parity matrix has 28 rows = 2*8 (rep-check (x) I8) + 3*4 (I3 (x) extHam-check)
-- [PASS] Ch4: matched-depth ratio 'one quarter' = 1.719e-7 / 6.750e-7 in stated CI [0.172, 0.337]
-- [PASS] Ch4: matched-depth CI upper bound clears the frozen 0.5 bar
-- [PASS] Ch4: scoreboard -- two hits + two misses = four frozen priors
-- [PASS] Ch4: 'twenty-four days ahead' (2026-07-31 minus 2026-07-07)
-- [PASS] Ch4: down-bias inversion, winner vs repetition ('twelve times worse')
-- [PASS] Ch4: down-bias inversion, deeper sibling ('sixty-three times worse')
-- [PASS] Ch4: Day-1 headline's code-capacity efficiency claim ('2.4x') as reported on Day 1
-- [PASS] Ch4: frontier overhead ~7.6 q/logical = 758/100 (Ruiz)
+- [PASS] Ch5: the headline 4.6x = rep-7 eps / winner eps (6.153e-7 / 1.328e-7)
+- [PASS] Ch5: matched efficiency 0.0769 -- winner 4/52 equals rep-7 1/13
+- [PASS] Ch5: matched efficiency value = 4/52
+- [PASS] Ch5: certified -- rep-13 floor UB sits below the winner's CI-lower
+- [PASS] Ch5: certified -- rep-7's CI-lower sits above the frontier's CI-upper
+- [PASS] Ch5: the TIE is real -- frontier CI-lower sits below winner CI-upper (overlap)
+- [PASS] Ch5: winner row cap-limited at +/-21% = half-width over point
+- [PASS] Ch5: C3 point sits inside its stated band
+- [PASS] Ch5: '67 million runs' = 2.0e7+2.0e7+5.5e6+1.97e7+2.0e6 shots (Entry 012 rows)
+- [PASS] Ch5: '100x the standard budget' = 2e7 truth rows over 2e5 proxy rows
+- [PASS] Ch5: rep-13 efficiency 0.040 = 1/(13+12)
+- [PASS] Ch5: rep-13 eff is 'roughly half' the winner's = 0.040/0.0769
+- [PASS] Ch5: rep-7 at the old 2e5 budget -- 'about one expected event' (p_any 4.92e-6, Entry 012)
+- [PASS] Ch5: the typical run carries 'eight point four' faults (lambda)
+- [PASS] Ch5: fig-2 '1-in-42,000 at six faults' = 1/f_6
+- [PASS] Ch5: fig-2 'about 1 in 7,000' at the typical count = 1/f_8
+- [PASS] Ch5: fig-2 spectrum tops out at '35%' by thirty-four faults
+- [PASS] Ch5: decoder-created share is a minority on four of five codes
+- [PASS] Ch5: the 'sevenfold' Q spread = 0.627/0.085
+- [PASS] Ch5: certified Q pair -- rep-7 CI-lower above frontier CI-upper
+- [PASS] Ch5: certified Q pair -- rep-7 CI-lower above C3 CI-upper
+- [PASS] Ch5: rep-7 'indicated, not certified' -- its own CI spans the 0.5 line
+- [PASS] Ch5: S9 campaign '8.0M decodes' = 2x250k + 3e6 + 1.5e6 + 3e6
+- [PASS] Ch5: 'twenty-five priors' across the four measurement preregs = 7+8+6+4
+- [PASS] Ch5: 'eight resolved against us' = P6 + Q3,Q4,Q5,Q8 + T3,T4 + S1
+- [PASS] Ch5: 'five died untested' = P4,P5,P7 + Q6,Q7
+- [PASS] Ch5: the error ledger runs E1-E14 = nine measurement-arc + five write-up
+- [PASS] Ch5: 'four of them author-side' in the measurement arc (E1-E4)
+- [PASS] Ch5: landscape carries five scored + six forward = eleven avenues
+- [PASS] Ch5: stakes passage '758 cats for 100 logical' ~ 7.6 qubits per logical (Ruiz)
 
-**TOTAL: 29 checks · 29 pass · 0 fail** — All checks pass — the survey is internally consistent.
+**TOTAL: 33 checks · 33 pass · 0 fail** — All checks pass — the survey is internally consistent.
 
 ## References
 

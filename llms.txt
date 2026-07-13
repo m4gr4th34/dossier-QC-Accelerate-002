@@ -1,6 +1,6 @@
 # Accelerating Quantum Computing Research Using AI and Robotics
 
-> Chapter 4 — the loop eats first.
+> Chapter 5 — the price of an honest number.
 
 ## Working draft
 

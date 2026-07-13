@@ -8,10 +8,6 @@ An Open Dossier survey of how AI and robotics could shorten the path to fault-to
 ### ▶ [Read the living paper](https://USER.github.io/REPO/) · [Run the checks](https://USER.github.io/REPO/#verify) · [Audit trail](https://USER.github.io/REPO/dossier.html)
 Rationale: lead with the live result for the skeptic, then GETTING-STARTED for the would-be author, then the explanatory sections. Do not leave these as live links until the Pages site actually resolves, or they 404. -->
 
-<!-- DRAFT BANNER: present during pre-release. At first release, the "Spawning"/release ritual replaces this block with the standard live-document links (no "work in progress" caveat). See DEPLOY.md and the Rituals section. AGENT: replace YOURUSER/YOURREPO in these links with the real repo path during the spawn rename pass, so the author's draft preview works immediately. -->
-### 📖 Live preview (work in progress)
-> **This dossier is an active draft — not yet released.** Sections, claims, and checks may be incomplete. Shared early so the ideas can be read and discussed as they develop.
-
 ▶ **[Read the self-explaining edition](https://m4gr4th34.github.io/dossier-QC-Accelerate-002/)** · [Audit trail](https://m4gr4th34.github.io/dossier-QC-Accelerate-002/dossier.html)
 
 ## How this works (the pre-release operating model)

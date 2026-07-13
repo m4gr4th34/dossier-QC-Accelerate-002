@@ -406,26 +406,11 @@
   </div>
 </header>
 <div class="wrap">
-  <div class="statusbar">
-    <span class="chip"><span class="dot t"></span>avenues&nbsp;<b>7 (4 scored · 3 forecast)</b></span>
-    <span class="chip"><span class="dot v"></span>forecasts&nbsp;<b>3 (all signposted)</b></span>
-    <span class="chip"><span class="dot g"></span>citations&nbsp;<b>6 verified · 5 preprint</b></span>
-    <span class="chip"><span class="dot o"></span>red team&nbsp;<b>5 resolved · 4 open</b></span>
-  </div>
-
-<p class="lede"><b>Chapter 4 runs the loop; this page shows the receipts.</b> The front door's result rests on a circuit-level evaluator calibrated to published hardware, eleven sources audited below, and twenty-nine machine-checked consistency numbers. The red-team section leads with the caveat that matters most — every number here grades a validated model, not a chip — and then publishes the ten errors the machinery caught while building itself, because a loop that cannot catch its own mistakes cannot be trusted to catch nature's.</p>
-
-<!-- ============================================================
-     SURVEY-shaped audit trail. For a survey the citation audit is
-     the centrepiece (most verification weight sits there, since
-     there is no single headline number), so it leads. Red-team
-     findings follow. The pipeline is unchanged machinery.
-     ============================================================ -->
-
+  
 <section>
   <div class="kicker violet">SOURCES — THE CENTREPIECE</div>
   <h2>Citation audit</h2>
-  <p class="lede">In a survey, the citations carry the verification weight: every avenue stands on its sources, so every source is checked against the primary work or triangulated through three or more independent citing works. Interested-party sources (vendor roadmaps, press releases) are marked REPORTED, not verified — the provenance is the point.</p>
+  <p class="lede">Every source is checked against the primary work or triangulated through independent citing works; interested-party sources are marked REPORTED, not verified. This chapter's two load-bearing new references (the failure-spectrum program and circuit-level splitting) ride at preprint grade and are flagged as such — they position the field, they do not carry any measured number here. Every measured number in this chapter carries its own committed record instead.</p>
   <table>
     <thead><tr><th>#</th><th>Reference</th><th>Status</th></tr></thead>
     <tbody id="cites"></tbody>
@@ -435,51 +420,61 @@
 <section>
   <div class="kicker coral">ADVERSARIAL REVIEW</div>
   <h2>Red-team findings</h2>
-  <p class="lede">A hostile pass over the finished survey, published with it. Resolved findings were fixed before launch; open findings are stated as caveats in the avenues themselves.</p>
+  <p class="lede">A hostile pass over the finished chapter, published with it. Resolved findings were fixed before launch; open findings are stated as caveats in the chapter itself.</p>
 
   <details class="finding resolved" open>
     <summary><span class="tag res">RESOLVED</span>Every number here grades a model, not a chip</summary>
-    <div class="body">The winning code, the one-quarter error ratio, the whole severity map — all are measured inside a circuit-level simulator calibrated to Amazon's Ocelot chip, not on hardware. The label "a model-level result, not a hardware demonstration" rides with the claim on the front door, in the figures, and in the ledger. The evaluator earned that license: it closes on three independently measured Ocelot numbers with no fitting, and matches an independent group's published simulation at twelve of twelve grid points, within about 25% at the operating point. But a validated model is still a model. Stated as the lead finding, not buried at the bottom.</div>
+    <div class="body">The leaderboard, the 4.6x headline, the decoder-gap table — all are measured inside a circuit-level simulator calibrated to Amazon's Ocelot chip, not on hardware. The label rides with the claims on the front door and in every figure. The evaluator's license is unchanged from Chapter 4 (closes on three independently measured Ocelot numbers, matches an independent group's simulation at twelve of twelve grid points) — and the referee has been byte-frozen since, with its configuration anchored verbatim in every instrument's self-test. A validated model is still a model. Lead finding, as before.</div>
   </details>
 
   <details class="finding resolved">
-    <summary><span class="tag res">RESOLVED</span>The instrument reads 1.2-2x optimistic in absolute terms — disclosed, and cancelled in ratios</summary>
-    <div class="body">Against the same independent published fit, the evaluator sits 1.2-2x low on absolute logical error. Every quantitative conclusion in the chapter is therefore a same-instrument ratio, where the shared optimism cancels; absolute numbers are labeled as such. The tilt is disclosed on the front door and here rather than smoothed away.</div>
+    <summary><span class="tag res">RESOLVED</span>The instrument's absolute tilt is disclosed; this chapter's claims are same-instrument orderings</summary>
+    <div class="body">The evaluator reads 1.2-2x optimistic on absolute logical error against an independent published fit (Chapter 4's disclosure, unchanged). Every ordering claim in this chapter — the leaderboard, the 4.6x at matched efficiency, the tie left as a tie — compares codes on the same frozen instrument, where a shared tilt cannot re-order. Absolute values (including the rep-13 floor) are labeled as instrument-absolute.</div>
   </details>
 
   <details class="finding resolved">
-    <summary><span class="tag res">RESOLVED</span>The loop turned once — a proof of principle, not a search</summary>
-    <div class="body">This chapter ran a single propose-refute-repair pass over a small, hand-seeded candidate bank: the scoring is automated, the proposals were human/LLM-guided. It shows the loop closes and yields a checkable result; it does not exhaust the code space or claim optimality. Framed as a proof of principle in the chapter's first section, with an automated many-generation search named as the next chapter's work — so the reach of the claim matches what was actually run.</div>
+    <summary><span class="tag res">RESOLVED</span>The winner's row is cap-limited and says so</summary>
+    <div class="body">The headline code's measurement ended at its 20-million-shot cap with 85 events — a ±21% interval against a ±20% target. A valid measurement, labeled cap-limited on the front door and in the record; the 4.6x claim's interval separation does not depend on the missing precision.</div>
   </details>
 
   <details class="finding resolved">
-    <summary><span class="tag res">RESOLVED</span>Ten of the machinery's own errors — caught, credited, published (E1-E10)</summary>
-    <div class="body">E1 a phantom build environment; E2 reading the published logical error as a sum when the paper defines it as an average; E3 an amplitude-pinned fit biased about 2x low; E4 a corridor observable taken before the n-th root; E5 a fetch-summarizer's wrong arithmetic on a quoted formula; E6 an evaluator that tracked only one of several logical observables; E7 an imprecise pre-run preview sentence; E8 a cross-depth comparison flattered by boundary effects (below); E9 a one-character drift in a handoff, caught by a byte guard; E10 a straight apostrophe that broke a figure caption's JSON on the first bake. Each was caught by the discipline built for exactly that failure, each is credited to its catcher in the expedition notebook. The errors are half the value.</div>
+    <summary><span class="tag res">RESOLVED</span>Two claims were softened at the gate to what the statistics certify</summary>
+    <div class="body">The rep-7 "majority decoder-created" claim (point 63%, interval spanning the 50% line) was caught at the commit gate and published as indicated, not certified — with two independent reasons stated. Earlier, an ordering between the chapter's two best finds was never asserted at all: their intervals overlap, so the record says TIED. The discipline is the same in both directions: no claim outruns its interval.</div>
   </details>
 
   <details class="finding resolved">
-    <summary><span class="tag res">RESOLVED</span>A depth artifact nearly produced a wrong verdict — now a standing rule</summary>
-    <div class="body">An early cross-code comparison put a sixteen-round candidate against an eight-round comparator. Boundary effects flatter shorter runs (measured: repetition-7 at 16 rounds vs 8 rounds = 1.23), which would have inflated the win. Caught, diagnosed, and closed by re-running depth-matched — and promoted to a standing rule: every cross-code comparison in this chapter runs both codes at matched depth on the same instrument. The verdict that survived is the depth-matched one.</div>
+    <summary><span class="tag res">RESOLVED</span>The write-up itself was fact-checked like an experiment — and failed twice before landing</summary>
+    <div class="body">The chapter draft's first version carried invented summary counts (priors registered, misses, ledger size) written from narrative memory rather than the committed record; the executing agent's pre-commit fact-check counted the actual artifacts and the draft was re-issued with the verified numbers (25 priors, 8 against, 5 dead-untested; nine measurement-arc catches). A separate cross-machine reproducibility claim in the notebook was falsified mid-arc (stim seed streams are per-machine) and corrected append-only. The prose is held to the same verify-don't-recall standard as the data.</div>
+  </details>
+
+  <details class="finding resolved">
+    <summary><span class="tag res">RESOLVED</span>Fourteen of the machinery's own errors — caught, credited, published (E1-E14)</summary>
+    <div class="body">Measurement arc (nine, as counted on the front door): E1 hardcoded "truth" constants that were reconstructions, not the committed bytes — caught by the landmark-anchor gate on its first firing; E2 a checkpoint count written from a stale mid-run report, caught twice against the file; E3 a commit clause asserting records "identical to committed outputs" with no committed twins; E4 the "majority" overclaim above; E5 a registered gate that was arithmetically impossible as written, caught pre-run and fixed by dated addendum; E6 the stim per-machine discovery correcting a notebook claim; E7 a shell that aborts speculative file checks; E8 a transport channel that corrupts long code (files-and-hashes ever since); E9 an approval relayed in the wrong room, twice, caught both times by a one-line HEAD guard. Write-up phase (five more): E10 the invented summary counts above; E11 a staging instruction that would have swept 224k lines of run cruft into a publication-adjacent commit, caught and staged precisely instead; E12 a raw "&lt;" in a figure caption that silently swallowed 34 atoms from the markdown projection, caught by the projection gate; E13 a perl one-liner that mojibake'd every em-dash in the source, caught by integrity counts, reverted and redone; E14 a lightbox renderer shipped with its parameters backwards — five green CI gates missed it, the mandated in-browser functional check caught it. Each is credited to its catcher in the expedition notebook. The errors are half the value.</div>
   </details>
 
   <details class="finding">
-    <summary><span class="tag open">OPEN</span>The GM gate-channel constants are not yet byte-verified against the source PDF</summary>
-    <div class="body">The high-bias gate model uses the CNOT error channel from Guillaud &amp; Mirrahimi (PRX 9, 041053); the numerical constants are carried from the published form but not yet re-derived against the PDF byte-for-byte (OPEN-7). The chapter's comparative conclusions rest on same-instrument ratios and are insensitive to a constant prefactor, but the absolute high-bias numbers would move if a constant is off. Closes on the PDF verification pass.</div>
+    <summary><span class="tag open">OPEN</span>rep-13's crown rests on a floor, not a measurement</summary>
+    <div class="body">The best per-logical performer produced zero failures in twenty million runs: an upper bound at 2.31e-8, with the true rate unknown below it. "rep-13 beats everything" is certified as floor-below-interval, stated as such everywhere. Measuring under the floor requires ~1e8-shot rows or a gated splitting instrument — the crown attempt of the next chapter's plan.</div>
   </details>
 
   <details class="finding">
-    <summary><span class="tag open">OPEN</span>kappa-2 is not yet pinned from the Ocelot appendices</summary>
-    <div class="body">The high-bias operating point uses the theory loss-to-stabilization ratio kappa-1/kappa-2 = 1e-4; the chip's own two-photon stabilization rate has not yet been extracted from the Ocelot supplementary material (OPEN-1). The operating point is labeled as the search target, not a measured chip value — stated, not hidden.</div>
+    <summary><span class="tag open">OPEN</span>The decoder-gap share is a lower bound with an unattributed majority</summary>
+    <div class="body">Q counts only failures where the faults flipped nothing and the "correction" did the damage. The complement — genuine logical events the decoder failed to catch — is deliberately unattributed between unavoidable degeneracy and subtler decoder suboptimality. The next chapter's referee-v2 intervention is the instrument that can split it.</div>
   </details>
 
   <details class="finding">
-    <summary><span class="tag open">OPEN</span>Five 2026-era code-search papers ride at preprint grade</summary>
-    <div class="body">He &amp; Liu, the IBM LLM-guided search, Liu &amp; Marquardt, the Bayesian-optimization search, and Benito et al. are arXiv preprints, flagged in the citation table. They establish the prior-art landscape — that published AI code search grades at code capacity — rather than carrying any load-bearing number here; each closes as it peer-reviews, or fails to.</div>
+    <summary><span class="tag open">OPEN</span>Cross-machine reproduction of the direct-MC rows is interval-level, not byte-level</summary>
+    <div class="body">stim's seeded streams are machine-dependent (measured this chapter; notebook-corrected). The sampler-path results (all numpy) reproduce exactly anywhere; the leaderboard rows reproduce within their published intervals on other machines and byte-exactly only on the workbench that ran them. Stated in REPRODUCE THIS.</div>
   </details>
 
   <details class="finding">
-    <summary><span class="tag open">OPEN</span>One prior-art noise-model quote is not yet verbatim-confirmed</summary>
-    <div class="body">The Bayesian-optimization paper's noise-model statement is summarized, not yet quoted verbatim from the source; its cite card carries this as open. The seam claim it supports — that AI search and honest circuit-level grading had not previously met — is triangulated across the other four preprints and the one circuit-level counterexample (Benito et al.), not resting on this one source alone.</div>
+    <summary><span class="tag open">OPEN</span>The two new rare-event references ride at preprint grade</summary>
+    <div class="body">The failure-spectrum program (arXiv:2511.15177) and circuit-level splitting (arXiv:2509.13678) are preprints, flagged in the citation table; the classical splitting anchor (Bravyi &amp; Vargo, PRA 2013) is journal-published. They position this chapter against the field's measurement program; no measured number here rests on them. Each closes as it peer-reviews. Of Chapter 4's five preprint-grade code-search citations, the three this chapter still cites (He & Liu, the IBM LLM search, the Bayesian-optimization search) carry forward under the same flag.</div>
+  </details>
+
+  <details class="finding">
+    <summary><span class="tag open">OPEN</span>Two instrument-constant items carry forward from Chapter 4</summary>
+    <div class="body">The GM gate-channel constants are still not byte-verified against the source PDF (OPEN-7), and kappa-2 is still not pinned from the Ocelot appendices (OPEN-1). Both affect absolute calibration only; this chapter's claims are same-instrument orderings on the frozen referee. Both close on their respective verification passes.</div>
   </details>
 </section>
 
@@ -494,9 +489,10 @@
     <li><b>Mechanical verification</b><span>Consistency checks recomputed by script; every citation checked. Fail = fix the paper, never the tolerance.</span></li>
     <li><b>Adversarial review</b><span>Fresh AI sessions briefed as hostile referees. Findings published RESOLVED or OPEN.</span></li>
     <li><b>Human review</b><span>Consistency and reality checks on end results. Per-claim waiver allowed — at exactly one price: the label tells the truth.</span></li>
-    <li><b>Publication</b><span>Repo live → GitHub Pages → OpenTimestamps anchor (auto) on every release → archival milestones additionally Zenodo-DOI'd (this chapter is the dossier's first) → community review via issues.</span></li>
+    <li><b>Publication</b><span>Repo live → GitHub Pages → OpenTimestamps anchor (auto) on every release → archival milestones additionally Zenodo-DOI'd → community review via issues.</span></li>
   </ol>
 </section>
+
 
 
 <div class="publish-cta">
@@ -523,17 +519,17 @@
 //               not independently reproduced — provenance, not a pass)
 // ---------------------------------------------------------------
 const cites = [
-  ["ocelot", "Putterman et al. — Nature 638, 927-934 (2025), DOI 10.1038/s41586-025-08642-7; data DOI 10.5281/zenodo.14257632 — the noise-model anchor", "V"],
-  ["gm2019", "Guillaud & Mirrahimi — PRX 9, 041053 (2019), arXiv 1904.09474 — the high-bias gate channel (constants pending byte-check, OPEN-7)", "V"],
-  ["ruiz", "Ruiz et al. — Nat. Commun. 16, 1040 (2025), DOI 10.1038/s41467-025-56298-8 — the frontier benchmark and corridor fit", "V"],
+  ["ocelot", "Putterman et al. — Nature 638, 927-934 (2025), DOI 10.1038/s41586-025-08642-7; data DOI 10.5281/zenodo.14257632 — the noise-model anchor, unchanged from Chapter 4", "V"],
+  ["ruiz", "Ruiz et al. — Nat. Commun. 16, 1040 (2025), DOI 10.1038/s41467-025-56298-8 — the frontier benchmark (758 cats / 100 logical at 1e-8) this chapter's leaderboard is a data point in", "V"],
   ["nautrup", "Nautrup et al. — Quantum 3, 215 (2019), arXiv 1812.08451 — RL code search, code-capacity", "V"],
   ["olle", "Olle et al. — npj Quantum Information 10 (2024), DOI 10.1038/s41534-024-00920-y, arXiv 2311.04750 — noise-aware RL, error-free encoding assumed", "V"],
-  ["roffe", "Roffe et al. — Quantum 7, 1005 (2023), arXiv 2202.01702 — bias-tailored qLDPC theory context", "V"],
   ["heliu", "He & Liu — arXiv 2502.14372 (2025) — weight-constrained RL code search, code-capacity", "F"],
   ["ibmllm", "Cruz-Benito et al., IBM — arXiv 2606.02418 (2026) — LLM-guided bicycle-code search, code-capacity", "F"],
-  ["liumarq", "Liu & Marquardt — arXiv 2606.24808 (2026) — LLM qLDPC discovery, code-capacity depolarizing", "F"],
   ["bayesopt", "Bayesian-optimization code discovery — arXiv 2601.18562 (2026) — identity verified; noise-model quote pending", "F"],
-  ["benito", "Benito, Velazquez-Resendiz & Bermudez — arXiv 2606.17709 (2026) — circuit-level bias-tailored codes; independent corroboration of the first miss", "F"],
+  ["trapping", "Raveendran & Vasić — Quantum 5, 562 (2021) — trapping sets of quantum LDPC codes; the genus this chapter's six circuit-level decoder traps belong to", "V"],
+  ["failfast", "Beverland et al. — arXiv:2511.15177 (2025) — failure-spectrum ansatz + exact low-weight counting + splitting; the measurement program this chapter's instruments independently collided with", "F"],
+  ["splitting", "Mayer et al. — arXiv:2509.13678 (2025) — circuit-level rare-event splitting, reported below 1e-20", "F"],
+  ["bravyi", "Bravyi & Vargo — Phys. Rev. A 88, 062308 (2013) — the splitting-method origin both modern rare-event programs build on; the journal-published anchor under the two preprints", "V"],
 ];
 const lab = {
   V: ["VERIFIED — primary source", "v"],

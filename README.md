@@ -10,6 +10,8 @@ Rationale: lead with the live result for the skeptic, then GETTING-STARTED for t
 
 ▶ **[Read the self-explaining edition](https://m4gr4th34.github.io/dossier-QC-Accelerate-002/)** · [Audit trail](https://m4gr4th34.github.io/dossier-QC-Accelerate-002/dossier.html)
 
+**Status:** concluded at Chapter 5 (v5.0.0) — see [CONCLUSION.md](CONCLUSION.md). Forward bets remain live and score at their signposts.
+
 ## How this works (the pre-release operating model)
 
 Before release, this repo is a **build-as-we-go shared drafting surface, not a

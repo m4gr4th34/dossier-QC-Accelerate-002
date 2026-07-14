@@ -7,3 +7,13 @@ verification/figure_style_demo.png
 
 # macOS Finder artifact
 .DS_Store
+
+# Expedition raw run dumps (regenerable search output, ~100MB+). The tracked
+# record is expedition/records/*.jsonl; the instruments that produced them are
+# committed. These are the raw output, not the record.
+expedition/s5_run*/
+expedition/s5_run*.log
+
+# Python bytecode
+__pycache__/
+*.pyc

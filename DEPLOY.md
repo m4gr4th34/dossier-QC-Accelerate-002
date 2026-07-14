@@ -83,6 +83,8 @@ auto-timestamp workflow updates only release_tag and the release date in
 provenance.json. The provenance bar and verify.html read provenance.json
 automatically.
 
+**Before each release, reset `provenance.version_doi` to `""` so the freeze seals the honest pre-mint state.** The freeze runs on the release event, before Zenodo mints the new DOI, and it bakes whatever `version_doi` provenance holds into the immutable `chapters/<tag>/` snapshot. If the previous chapter's DOI is still sitting there, the freeze seals a DOI that points at the WRONG record. Clearing it to `""` first makes the freeze seal an honest "DOI coming" placeholder, which the post-mint hand-backfill then fills.
+
 Releasing a chapter **without** a DOI — to preserve thinking between archival results without
 minting a DOI for every milestone — is a first-class option. Set `version_doi` and `concept_doi`
 to `""` (empty, not the `TODO` placeholder) and add `"doi_archived": false` to provenance.json.

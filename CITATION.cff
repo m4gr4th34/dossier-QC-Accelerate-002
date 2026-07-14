@@ -7,8 +7,8 @@ authors:
     given-names: "Irfan"
     affiliation: "Independent Researcher"
     orcid: "https://orcid.org/0009-0008-9685-8197"
-version: "4.0.0"
-date-released: "2026-07-08"  # ISO 8601: YYYY-MM-DD
+version: "5.0.0"
+date-released: "2026-07-14"  # ISO 8601: YYYY-MM-DD
 license: "CC-BY-4.0"
 repository-code: "https://github.com/m4gr4th34/dossier-QC-Accelerate-002"
 url: "https://m4gr4th34.github.io/dossier-QC-Accelerate-002/"

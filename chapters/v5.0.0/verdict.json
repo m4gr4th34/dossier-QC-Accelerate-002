@@ -1,0 +1,138 @@
+{
+  "checks": [
+    {
+      "status": "PASS",
+      "label": "Consistency: at least one avenue in the landscape"
+    },
+    {
+      "status": "PASS",
+      "label": "Consistency: every FORECAST has a dated signpost"
+    },
+    {
+      "status": "PASS",
+      "label": "Consistency: all forecast probabilities lie in [0,100]"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: the headline 4.6x = rep-7 eps / winner eps (6.153e-7 / 1.328e-7)"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: matched efficiency 0.0769 -- winner 4/52 equals rep-7 1/13"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: matched efficiency value = 4/52"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: certified -- rep-13 floor UB sits below the winner's CI-lower"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: certified -- rep-7's CI-lower sits above the frontier's CI-upper"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: the TIE is real -- frontier CI-lower sits below winner CI-upper (overlap)"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: winner row cap-limited at +/-21% = half-width over point"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: C3 point sits inside its stated band"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: '67 million runs' = 2.0e7+2.0e7+5.5e6+1.97e7+2.0e6 shots (Entry 012 rows)"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: '100x the standard budget' = 2e7 truth rows over 2e5 proxy rows"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: rep-13 efficiency 0.040 = 1/(13+12)"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: rep-13 eff is 'roughly half' the winner's = 0.040/0.0769"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: rep-7 at the old 2e5 budget -- 'about one expected event' (p_any 4.92e-6, Entry 012)"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: the typical run carries 'eight point four' faults (lambda)"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: fig-2 '1-in-42,000 at six faults' = 1/f_6"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: fig-2 'about 1 in 7,000' at the typical count = 1/f_8"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: fig-2 spectrum tops out at '35%' by thirty-four faults"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: decoder-created share is a minority on four of five codes"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: the 'sevenfold' Q spread = 0.627/0.085"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: certified Q pair -- rep-7 CI-lower above frontier CI-upper"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: certified Q pair -- rep-7 CI-lower above C3 CI-upper"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: rep-7 'indicated, not certified' -- its own CI spans the 0.5 line"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: S9 campaign '8.0M decodes' = 2x250k + 3e6 + 1.5e6 + 3e6"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: 'twenty-five priors' across the four measurement preregs = 7+8+6+4"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: 'eight resolved against us' = P6 + Q3,Q4,Q5,Q8 + T3,T4 + S1"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: 'five died untested' = P4,P5,P7 + Q6,Q7"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: the error ledger runs E1-E14 = nine measurement-arc + five write-up"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: 'four of them author-side' in the measurement arc (E1-E4)"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: landscape carries five scored + six forward = eleven avenues"
+    },
+    {
+      "status": "PASS",
+      "label": "Ch5: stakes passage '758 cats for 100 logical' ~ 7.6 qubits per logical (Ruiz)"
+    }
+  ],
+  "tally": "33 checks · 33 pass · 0 fail",
+  "summary": "All checks pass — the survey is internally consistent."
+}

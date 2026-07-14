@@ -42,6 +42,16 @@
       "version_doi": "10.5281/zenodo.21270187",
       "concept_doi": "10.5281/zenodo.21270186",
       "path": "chapters/v4.0.0/"
+    },
+    {
+      "n": 5,
+      "tag": "v5.0.0",
+      "title": "Chapter 5 — the price of an honest number",
+      "summary": "Chapter 4 turned the discovery loop once, by hand, and promised to let it run. This chapter ran it — four campaigns, thousands of candidate codes — and the loop immediately hit a wall nobody advertises: the codes worth ranking cannot be measured. Every cheap shortcut died a pre-registered death; two purpose-built rare-event instruments died next, killed by their own registered criteria; and the wreckage paid for the answer. At matched efficiency, an automated search's code beats hand-picked repetition 4.6× per-logical at the operating point — measured, certified, and only visible at 100× the shot budget every proxy said was enough. Then one last measurement turned the question around: a code's error rate is partly its decoder's invention, in a proportion that varies sevenfold from code to code — which is the question the next chapter is built on. The error ledger runs to nine catches in the measurement arc alone, four of them the machinery catching its own author; as before, that is half the result.",
+      "released": "2026-07-14",
+      "version_doi": "10.5281/zenodo.21270187",
+      "concept_doi": "10.5281/zenodo.21270186",
+      "path": "chapters/v5.0.0/"
     }
   ]
 }

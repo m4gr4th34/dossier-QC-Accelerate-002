@@ -1,0 +1,199 @@
+<!--edition
+eyebrow: An Open Dossier · <b>QC-Accelerate-002</b>
+title: Audit Trail — Accelerating Quantum Computing Research Using AI and Robotics
+byline: Irfan Ali-Khan · companion verification record
+active: dossier.html
+-->
+<!--slot:body-->
+
+<section>
+  <div class="kicker violet">SOURCES — THE CENTREPIECE</div>
+  <h2>Citation audit</h2>
+  <p class="lede">Every source is checked against the primary work or triangulated through independent citing works; interested-party sources are marked REPORTED, not verified. This chapter's two load-bearing new references (the failure-spectrum program and circuit-level splitting) ride at preprint grade and are flagged as such — they position the field, they do not carry any measured number here. Every measured number in this chapter carries its own committed record instead.</p>
+  <table>
+    <thead><tr><th>#</th><th>Reference</th><th>Status</th></tr></thead>
+    <tbody id="cites"></tbody>
+  </table>
+</section>
+
+<section>
+  <div class="kicker coral">ADVERSARIAL REVIEW</div>
+  <h2>Red-team findings</h2>
+  <p class="lede">A hostile pass over the finished chapter, published with it. Resolved findings were fixed before launch; open findings are stated as caveats in the chapter itself.</p>
+
+  <details class="finding resolved" open>
+    <summary><span class="tag res">RESOLVED</span>Every number here grades a model, not a chip</summary>
+    <div class="body">The leaderboard, the 4.6x headline, the decoder-gap table — all are measured inside a circuit-level simulator calibrated to Amazon's Ocelot chip, not on hardware. The label rides with the claims on the front door and in every figure. The evaluator's license is unchanged from Chapter 4 (closes on three independently measured Ocelot numbers, matches an independent group's simulation at twelve of twelve grid points) — and the referee has been byte-frozen since, with its configuration anchored verbatim in every instrument's self-test. A validated model is still a model. Lead finding, as before.</div>
+  </details>
+
+  <details class="finding resolved">
+    <summary><span class="tag res">RESOLVED</span>The instrument's absolute tilt is disclosed; this chapter's claims are same-instrument orderings</summary>
+    <div class="body">The evaluator reads 1.2-2x optimistic on absolute logical error against an independent published fit (Chapter 4's disclosure, unchanged). Every ordering claim in this chapter — the leaderboard, the 4.6x at matched efficiency, the tie left as a tie — compares codes on the same frozen instrument, where a shared tilt cannot re-order. Absolute values (including the rep-13 floor) are labeled as instrument-absolute.</div>
+  </details>
+
+  <details class="finding resolved">
+    <summary><span class="tag res">RESOLVED</span>The winner's row is cap-limited and says so</summary>
+    <div class="body">The headline code's measurement ended at its 20-million-shot cap with 85 events — a ±21% interval against a ±20% target. A valid measurement, labeled cap-limited on the front door and in the record; the 4.6x claim's interval separation does not depend on the missing precision.</div>
+  </details>
+
+  <details class="finding resolved">
+    <summary><span class="tag res">RESOLVED</span>Two claims were softened at the gate to what the statistics certify</summary>
+    <div class="body">The rep-7 "majority decoder-created" claim (point 63%, interval spanning the 50% line) was caught at the commit gate and published as indicated, not certified — with two independent reasons stated. Earlier, an ordering between the chapter's two best finds was never asserted at all: their intervals overlap, so the record says TIED. The discipline is the same in both directions: no claim outruns its interval.</div>
+  </details>
+
+  <details class="finding resolved">
+    <summary><span class="tag res">RESOLVED</span>The write-up itself was fact-checked like an experiment — and failed twice before landing</summary>
+    <div class="body">The chapter draft's first version carried invented summary counts (priors registered, misses, ledger size) written from narrative memory rather than the committed record; the executing agent's pre-commit fact-check counted the actual artifacts and the draft was re-issued with the verified numbers (25 priors, 8 against, 5 dead-untested; nine measurement-arc catches). A separate cross-machine reproducibility claim in the notebook was falsified mid-arc (stim seed streams are per-machine) and corrected append-only. The prose is held to the same verify-don't-recall standard as the data.</div>
+  </details>
+
+  <details class="finding resolved">
+    <summary><span class="tag res">RESOLVED</span>Fourteen of the machinery's own errors — caught, credited, published (E1-E14)</summary>
+    <div class="body">Measurement arc (nine, as counted on the front door): E1 hardcoded "truth" constants that were reconstructions, not the committed bytes — caught by the landmark-anchor gate on its first firing; E2 a checkpoint count written from a stale mid-run report, caught twice against the file; E3 a commit clause asserting records "identical to committed outputs" with no committed twins; E4 the "majority" overclaim above; E5 a registered gate that was arithmetically impossible as written, caught pre-run and fixed by dated addendum; E6 the stim per-machine discovery correcting a notebook claim; E7 a shell that aborts speculative file checks; E8 a transport channel that corrupts long code (files-and-hashes ever since); E9 an approval relayed in the wrong room, twice, caught both times by a one-line HEAD guard. Write-up phase (five more): E10 the invented summary counts above; E11 a staging instruction that would have swept 224k lines of run cruft into a publication-adjacent commit, caught and staged precisely instead; E12 a raw "&lt;" in a figure caption that silently swallowed 34 atoms from the markdown projection, caught by the projection gate; E13 a perl one-liner that mojibake'd every em-dash in the source, caught by integrity counts, reverted and redone; E14 a lightbox renderer shipped with its parameters backwards — five green CI gates missed it, the mandated in-browser functional check caught it. Each is credited to its catcher in the expedition notebook. The errors are half the value.</div>
+  </details>
+
+  <details class="finding">
+    <summary><span class="tag open">OPEN</span>rep-13's crown rests on a floor, not a measurement</summary>
+    <div class="body">The best per-logical performer produced zero failures in twenty million runs: an upper bound at 2.31e-8, with the true rate unknown below it. "rep-13 beats everything" is certified as floor-below-interval, stated as such everywhere. Measuring under the floor requires ~1e8-shot rows or a gated splitting instrument — the crown attempt of the next chapter's plan.</div>
+  </details>
+
+  <details class="finding">
+    <summary><span class="tag open">OPEN</span>The decoder-gap share is a lower bound with an unattributed majority</summary>
+    <div class="body">Q counts only failures where the faults flipped nothing and the "correction" did the damage. The complement — genuine logical events the decoder failed to catch — is deliberately unattributed between unavoidable degeneracy and subtler decoder suboptimality. The next chapter's referee-v2 intervention is the instrument that can split it.</div>
+  </details>
+
+  <details class="finding">
+    <summary><span class="tag open">OPEN</span>Cross-machine reproduction of the direct-MC rows is interval-level, not byte-level</summary>
+    <div class="body">stim's seeded streams are machine-dependent (measured this chapter; notebook-corrected). The sampler-path results (all numpy) reproduce exactly anywhere; the leaderboard rows reproduce within their published intervals on other machines and byte-exactly only on the workbench that ran them. Stated in REPRODUCE THIS.</div>
+  </details>
+
+  <details class="finding">
+    <summary><span class="tag open">OPEN</span>The two new rare-event references ride at preprint grade</summary>
+    <div class="body">The failure-spectrum program (arXiv:2511.15177) and circuit-level splitting (arXiv:2509.13678) are preprints, flagged in the citation table; the classical splitting anchor (Bravyi &amp; Vargo, PRA 2013) is journal-published. They position this chapter against the field's measurement program; no measured number here rests on them. Each closes as it peer-reviews. Of Chapter 4's five preprint-grade code-search citations, the three this chapter still cites (He & Liu, the IBM LLM search, the Bayesian-optimization search) carry forward under the same flag.</div>
+  </details>
+
+  <details class="finding">
+    <summary><span class="tag open">OPEN</span>Two instrument-constant items carry forward from Chapter 4</summary>
+    <div class="body">The GM gate-channel constants are still not byte-verified against the source PDF (OPEN-7), and kappa-2 is still not pinned from the Ocelot appendices (OPEN-1). Both affect absolute calibration only; this chapter's claims are same-instrument orderings on the frozen referee. Both close on their respective verification passes.</div>
+  </details>
+</section>
+
+<section>
+  <div class="kicker teal">THE METHOD</div>
+  <h2>The Open Dossier pipeline</h2>
+  <p class="lede">The architecture that produced this record — reusable for every subsequent dossier.</p>
+  <ol class="phases">
+    <li><b>Prior-art reconnaissance</b><span>Extract candidate novelty claims; search each one, its components, and combinations; produce the established / adjacent / open table.</span></li>
+    <li><b>Claim ledger</b><span>Every claim typed — CITE, NUM, DERIV, NOVEL, EST, FORECAST — routed to its mandated verifier. A FORECAST's verifier is its dated, falsifiable signpost.</span></li>
+    <li><b>Drafting</b><span>Survey written against the open ledger. Reproducibility section and AI-assistance disclosure are mandatory.</span></li>
+    <li><b>Mechanical verification</b><span>Consistency checks recomputed by script; every citation checked. Fail = fix the paper, never the tolerance.</span></li>
+    <li><b>Adversarial review</b><span>Fresh AI sessions briefed as hostile referees. Findings published RESOLVED or OPEN.</span></li>
+    <li><b>Human review</b><span>Consistency and reality checks on end results. Per-claim waiver allowed — at exactly one price: the label tells the truth.</span></li>
+    <li><b>Publication</b><span>Repo live → GitHub Pages → OpenTimestamps anchor (auto) on every release → archival milestones additionally Zenodo-DOI'd → community review via issues.</span></li>
+  </ol>
+</section>
+
+
+<!--/slot:body-->
+<!--slot:head_extra-->
+
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;font-size:16px}
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px}
+  .statusbar{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 6px}
+  .chip{font-family:var(--mono);font-size:12.5px;padding:7px 12px;border:1.5px solid var(--ink);background:var(--card);display:flex;gap:8px;align-items:center}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .dot.g{background:var(--pass)}.dot.o{background:var(--open)}.dot.t{background:var(--teal)}.dot.v{background:var(--violet)}.dot.c{background:var(--coral)}
+  section{padding:38px 0 8px}
+  h2{font-family:var(--serif);font-weight:600;font-size:25px;margin:0 0 4px}
+  p.lede{color:var(--ink2);max-width:64ch;margin-top:6px}
+  /* citations */
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card)}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+  td.st{font-family:var(--mono);font-size:11.5px;white-space:nowrap}
+  td.st.v{color:var(--pass)}
+  td.st.fl{color:var(--open)}
+  td.st.rp{color:var(--coral)}
+  details.block summary{cursor:pointer;font-family:var(--mono);font-size:13px;padding:10px 0;color:var(--teal)}
+  /* findings */
+  .finding{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--open);margin:10px 0}
+  .finding.resolved{border-left-color:var(--pass)}
+  .finding summary{cursor:pointer;padding:13px 16px;font-weight:600;display:flex;gap:10px;align-items:baseline;list-style:none}
+  .finding summary::-webkit-details-marker{display:none}
+  .tag{font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:2px 7px;flex:0 0 auto}
+  .tag.res{color:var(--pass);border:1px solid var(--pass)}
+  .tag.open{color:var(--open);border:1px solid var(--open)}
+  .finding .body{padding:0 16px 14px;color:var(--ink2);max-width:70ch}
+  /* pipeline */
+  ol.phases{list-style:none;counter-reset:ph -1;padding:0;margin:14px 0}
+  ol.phases li{counter-increment:ph;background:var(--card);border:1px solid var(--line);padding:14px 16px 14px 64px;position:relative;margin:8px 0;max-width:74ch}
+  ol.phases li::before{content:counter(ph);position:absolute;left:16px;top:12px;font-family:var(--serif);font-weight:800;font-size:26px;color:var(--violet)}
+  ol.phases b{display:block}
+  ol.phases span{color:var(--ink2);font-size:14.5px}
+  footer{margin-top:44px;padding:22px 0 56px;border-top:3px solid var(--ink);font-size:13.5px;color:var(--ink2)}
+  @media(max-width:560px){th:nth-child(1),td:nth-child(1){display:none}}
+  table,.finding,ol.phases li{
+    border-radius:var(--r-lg); overflow:hidden;
+    background:linear-gradient(180deg,#ffffff,#f4f8f7);
+    box-shadow:var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.85);
+  }
+  .finding{transition:box-shadow .2s ease, transform .2s ease}
+  .finding:hover{
+    box-shadow:var(--shadow-lift), inset 0 1px 0 rgba(255,255,255,.85); transform:translateY(-3px);
+  }
+  .chip,.tag{border-radius:var(--r-pill)}
+  .dot.g{box-shadow:0 0 7px -1px var(--pass)}
+  .dot.o{box-shadow:0 0 7px -1px var(--open)}
+  .dot.t{box-shadow:0 0 7px -1px var(--teal)}
+  .dot.v{box-shadow:0 0 7px -1px var(--violet)}
+  .dot.c{box-shadow:0 0 7px -1px var(--coral)}
+<!--/slot:head_extra-->
+<!--slot:cites-->
+<script>
+// ---------------------------------------------------------------
+// CITATION TABLE — fill in your references here.
+// Format: ["KEY", "Author(s) — Venue, volume, page (year)", "STATUS"]
+// STATUS codes: "V" = verified primary, "T" = triangulated,
+//               "F" = flagged, "R" = REPORTED (interested-party /
+//               not independently reproduced — provenance, not a pass)
+// ---------------------------------------------------------------
+const cites = [
+  ["ocelot", "Putterman et al. — Nature 638, 927-934 (2025), DOI 10.1038/s41586-025-08642-7; data DOI 10.5281/zenodo.14257632 — the noise-model anchor, unchanged from Chapter 4", "V"],
+  ["ruiz", "Ruiz et al. — Nat. Commun. 16, 1040 (2025), DOI 10.1038/s41467-025-56298-8 — the frontier benchmark (758 cats / 100 logical at 1e-8) this chapter's leaderboard is a data point in", "V"],
+  ["nautrup", "Nautrup et al. — Quantum 3, 215 (2019), arXiv 1812.08451 — RL code search, code-capacity", "V"],
+  ["olle", "Olle et al. — npj Quantum Information 10 (2024), DOI 10.1038/s41534-024-00920-y, arXiv 2311.04750 — noise-aware RL, error-free encoding assumed", "V"],
+  ["heliu", "He & Liu — arXiv 2502.14372 (2025) — weight-constrained RL code search, code-capacity", "F"],
+  ["ibmllm", "Cruz-Benito et al., IBM — arXiv 2606.02418 (2026) — LLM-guided bicycle-code search, code-capacity", "F"],
+  ["bayesopt", "Bayesian-optimization code discovery — arXiv 2601.18562 (2026) — identity verified; noise-model quote pending", "F"],
+  ["trapping", "Raveendran & Vasić — Quantum 5, 562 (2021) — trapping sets of quantum LDPC codes; the genus this chapter's six circuit-level decoder traps belong to", "V"],
+  ["failfast", "Beverland et al. — arXiv:2511.15177 (2025) — failure-spectrum ansatz + exact low-weight counting + splitting; the measurement program this chapter's instruments independently collided with", "F"],
+  ["splitting", "Mayer et al. — arXiv:2509.13678 (2025) — circuit-level rare-event splitting, reported below 1e-20", "F"],
+  ["bravyi", "Bravyi & Vargo — Phys. Rev. A 88, 062308 (2013) — the splitting-method origin both modern rare-event programs build on; the journal-published anchor under the two preprints", "V"],
+];
+const lab = {
+  V: ["VERIFIED — primary source", "v"],
+  T: ["VERIFIED — triangulated \u00d73", "v"],
+  F: ["FLAGGED — preprint, closes on peer review", "fl"],
+  R: ["REPORTED — interested party, not independent", "rp"]
+};
+document.getElementById('cites').innerHTML = cites.map((c, i) =>
+  '<tr><td>' + (i+1) + '</td><td>' + c[1] + '</td>' +
+  '<td class="st ' + lab[c[2]][1] + '">' + lab[c[2]][0] + '</td></tr>'
+).join('');
+</script>
+<!--/slot:cites-->
+<!--slot:foot-->
+
+<div class="publish-cta">
+  <div class="pc-text">
+    <p class="pc-h">Want to publish like this?</p>
+    <p class="pc-sub">Open Dossier is a free template — executable claims, a self-explaining edition, a DOI and blockchain timestamp on every release. From idea to live publication in an afternoon, with an AI agent doing the heavy lifting. No LaTeX, no gatekeepers, no fees.</p>
+  </div>
+  <a class="pc-btn" href="https://github.com/m4gr4th34/open-dossier-template/blob/main/GETTING-STARTED.md">Publish your own →</a>
+</div>
+
+<footer>
+  <a href="index.html">← Back to the paper</a> &nbsp;·&nbsp;
+  Open Dossier format · CC BY 4.0 (paper) / MIT (code)
+</footer>
+
+<!--/slot:foot-->

@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accelerating Quantum Computing Research Using AI and Robotics (Open Dossier)</title>
+<meta name="description" content="Working draft — an Open Dossier survey of how AI and robotics could accelerate quantum-computing research. A survey that explains itself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../katex/katex.min.css">
+<style>
+  :root{
+    --ink:#17262c;--ink2:#586a6f;--paper:#f3f6f5;--card:#ffffff;
+    --teal:#0c8f86;--teal-soft:#e2efed;--coral:#cf5d36;--coral-soft:#fbe9e3;--violet:#6b4e9b;--violet-soft:#efe9f6;
+    --pass:#1d9b62;--fail:#cf3a2c;--open:#bd861d;--open-soft:#fdf6e9;--line:rgba(23,38,44,.085);
+    --serif:'Spectral',Georgia,serif;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --r-lg:16px; --r-sm:10px; --r-pill:999px;
+    --shadow-soft:0 2px 12px rgba(23,38,44,.05);
+    --shadow-lift:0 16px 44px rgba(23,38,44,.09);
+    --teal-glow:rgba(12,143,134,.30);
+  }
+  @supports (color: oklch(0 0 0)){
+    @media (color-gamut: p3){
+      :root{
+        --teal: oklch(0.585 0.15 187);
+        --pass: oklch(0.665 0.19 156);
+        --open: oklch(0.725 0.175 73);
+        --fail: oklch(0.625 0.245 27);
+        --coral: oklch(0.685 0.205 41);
+        --teal-glow: oklch(0.59 0.15 187 / .5);
+      }
+    }
+  }
+  ::selection{background:var(--teal-soft);color:var(--ink)}
+  a,button{-webkit-tap-highlight-color:transparent}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
+    opacity:.05;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  *{box-sizing:border-box}
+  /* Reserve the scrollbar gutter on every page so the centering axis never moves
+     between scrolling and non-scrolling editions — the body (720, reading measure)
+     and chrome (820, nav width) both margin:0 auto onto a now-immovable midpoint,
+     so nav/provenance/eyebrow sit at identical x on all four editions. */
+  html{scrollbar-gutter:stable}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  /* paper's reading column is 720; its chrome is 820 — the narrowest width that keeps
+     the 4-button nav AND the 4-item provenance bar single-row (measured: nav needs
+     >=818, bar >=769). With the eyebrow now identity-only (identical text on every
+     edition) and the scrollbar gutter reserved above, the chrome is geometrically
+     identical across all four editions: no wrap-bounce on the eyebrow, nav, or bar. */
+  .chrome{max-width:820px;margin:0 auto;padding:0 20px}
+  a{color:var(--teal)}
+  header{padding:54px 0 26px;border-bottom:3px solid var(--ink)}
+  .eyebrow{font-family:var(--mono);font-size:12px;line-height:1.65;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+  .eyebrow b{color:var(--coral)}
+  h1{font-family:var(--serif);font-weight:800;font-size:clamp(27px,4.6vw,44px);line-height:1.12;margin:.4em 0 .25em;letter-spacing:-.014em}
+  .byline{font-family:var(--serif);font-style:italic;color:var(--ink2)}
+  .byline-updated{font-family:var(--mono);font-style:normal;font-size:12.5px;color:var(--ink2);letter-spacing:.01em}
+  .byline-status{display:block;font-family:var(--mono);font-style:normal;font-size:12.5px;color:var(--ink2);letter-spacing:.01em;margin-top:5px}
+  .byline-utc{text-decoration:underline dotted;text-underline-offset:2px;cursor:help;border:0}
+  .howto{background:var(--card);border:1.5px solid var(--ink);padding:14px 16px;font-size:15px;margin:18px 0 8px}
+  .howto .mono{font-family:var(--mono);font-size:13px}
+  h2{font-family:var(--serif);font-weight:600;font-size:27px;margin:48px 0 6px;line-height:1.2}
+  h2 .num{color:var(--coral);font-family:var(--mono);font-size:15px;font-weight:600;vertical-align:middle;margin-right:10px}
+  h3{font-family:var(--serif);font-weight:600;font-size:20px;margin:26px 0 2px}
+  p{margin:14px 0;max-width:68ch}
+
+  /* tappable terms */
+  .term{background:linear-gradient(transparent 70%, var(--teal-soft) 70%);border:none;border-bottom:1.5px dashed var(--teal);
+        padding:0 1px;font:inherit;color:inherit;cursor:pointer;text-align:left}
+  .term:focus-visible{outline:2.5px solid var(--coral);outline-offset:2px}
+  /* citation chips */
+  .cite{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--violet);background:var(--violet-soft);
+        border:1px solid var(--violet);border-radius:10px;padding:1px 8px;cursor:pointer;vertical-align:2px}
+  .cite:focus-visible{outline:2.5px solid var(--coral);outline-offset:2px}
+  /* the expansion card both produce */
+  .popcard{display:block;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);
+           padding:12px 14px;margin:10px 0;font-size:15px;color:var(--ink2);max-width:68ch;animation:open .18s ease-out}
+  .popcard.citecard{border-left-color:var(--violet)}
+  .popcard b{color:var(--ink)}
+  .popcard .src{font-family:var(--mono);font-size:11.5px;color:var(--ink2);display:block;margin-top:6px}
+  @keyframes open{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.popcard{animation:none}}
+
+  /* go-deeper layers */
+  details.deeper{background:var(--card);border:1px solid var(--line);margin:16px 0}
+  details.deeper summary{cursor:pointer;padding:12px 15px;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--violet);list-style:none}
+  details.deeper summary::-webkit-details-marker{display:none}
+  details.deeper summary::before{content:'\25B8 ';color:var(--violet)}
+  details.deeper[open] summary::before{content:'\25BE '}
+  details.deeper .body{padding:0 15px 14px;font-size:15px;color:var(--ink2)}
+  .eq{
+    font-size:15px; margin:14px 0; padding:16px 18px;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:var(--r-lg); box-shadow:var(--shadow-soft);
+    overflow-x:auto; overflow-y:hidden;
+  }
+  .eq .katex{color:var(--ink); font-size:1.05em}
+  .eq .katex-display{margin:0}              /* container already provides spacing */
+  span.math .katex{color:var(--ink)}        /* inline math inherits ink */
+
+  /* ===== honest-label callouts at the claim site =====
+     One per survey status that needs a visible home in prose:
+       .openclaim  amber   OPEN-UNVERIFIED  (the author's own open claim)
+       .forecast   violet  FORECAST         (labeled estimate + dated signpost)
+       .reported   coral   REPORTED         (interested-party / not independently reproduced)
+     ESTABLISHED needs no box — it is asserted plainly, with citations. */
+  .openclaim,.forecast,.reported{padding:14px 16px;margin:18px 0;font-size:15.5px;border:1px solid;border-left-width:5px}
+  .openclaim{background:var(--open-soft);border-color:var(--open)}
+  .forecast{background:var(--violet-soft);border-color:var(--violet)}
+  .reported{background:var(--coral-soft);border-color:var(--coral)}
+  .openclaim .tag,.forecast .tag,.reported .tag{font-family:var(--mono);font-size:11px;padding:2px 7px;margin-right:8px;border:1px solid}
+  .openclaim .tag{color:var(--open);border-color:var(--open)}
+  .forecast .tag{color:var(--violet);border-color:var(--violet)}
+  .reported .tag{color:var(--coral);border-color:var(--coral)}
+
+  .punch{font-family:var(--serif);font-style:italic;font-size:20px;border-left:4px solid var(--coral);padding:6px 0 6px 16px;margin:26px 0;max-width:60ch}
+  footer{margin-top:56px;padding:22px 0 60px;border-top:3px solid var(--ink);font-size:14px;color:var(--ink2)}
+  .mono{font-family:var(--mono)}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+  .btn{font-family:var(--mono);font-size:13.5px;line-height:1.65;font-weight:600;text-decoration:none;padding:11px 16px;border:1.5px solid var(--ink);color:var(--ink);background:var(--card);white-space:nowrap}
+  .btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+  .cta{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 4px}
+  .btn:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.provenance{display:flex;flex-wrap:wrap;gap:0;margin:18px 0 4px;border:1.5px solid var(--ink);background:var(--card);font-family:var(--mono);font-size:12px;overflow:hidden;min-height:46px}
+.provenance .pv-item{flex:1 1 0;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:9px 14px;border-right:1px solid var(--line);text-decoration:none;color:var(--ink);min-width:0}
+.provenance .pv-item:last-child{border-right:none}
+.provenance a.pv-item:hover{background:var(--teal-soft,#e3f0f0)}
+.provenance .pv-k{font-size:9.5px;line-height:1.65;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.provenance .pv-v{font-size:12.5px;line-height:1.65;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.provenance a.pv-item .pv-v{color:var(--teal)}
+#pv-state{color:var(--open,#b07d1f)}
+@media(max-width:560px){.provenance .pv-item{flex:1 1 45%;border-bottom:1px solid var(--line)}}
+.publish-cta{margin:46px 0 8px;padding:22px 24px;border:1.5px solid var(--teal);background:var(--teal-soft,#e3f0f0);
+  display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;justify-content:space-between}
+.publish-cta .pc-text{flex:1 1 320px;min-width:0}
+.publish-cta .pc-h{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--ink);margin:0 0 3px}
+.publish-cta .pc-sub{font-size:14px;color:var(--ink2);margin:0}
+.publish-cta a.pc-btn{flex:0 0 auto;font-family:var(--mono);font-size:14px;font-weight:600;text-decoration:none;
+  background:var(--teal);color:#fff;padding:12px 20px;white-space:nowrap;
+  border-radius:var(--r-sm);
+  background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+  box-shadow:0 4px 14px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.32);
+  transition:filter .2s ease, box-shadow .2s ease, transform .12s ease}
+.publish-cta a.pc-btn:hover{
+  background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+  box-shadow:0 8px 22px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.36);
+  transform:translateY(-1px);
+  filter:brightness(1.04);
+}
+
+  /* ===== elevated-light "instrument" surface treatment ===== */
+  .howto,.popcard,details.deeper,.provenance{
+    border-radius:var(--r-lg); overflow:hidden;
+    background:linear-gradient(180deg,#ffffff,#f4f8f7);
+    box-shadow:var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.85);
+  }
+  /* status callouts keep their honest-label colour; only round + lift */
+  .openclaim,.forecast,.reported{
+    border-radius:var(--r-lg);
+    box-shadow:var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .openclaim .tag,.forecast .tag,.reported .tag{border-radius:var(--r-pill)}
+  .btn{border-radius:var(--r-sm); transition:box-shadow .2s ease, transform .2s ease}
+  .btn:not(.primary):hover{ box-shadow:var(--shadow-soft); transform:translateY(-2px); }
+  .btn.primary{
+    background:var(--teal);
+    background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+    box-shadow:0 4px 14px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.32);
+  }
+  .btn.primary:hover{
+    background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+    box-shadow:0 8px 22px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.36);
+  }
+  .publish-cta{border-radius:var(--r-lg)}
+  h1{font-weight:500; letter-spacing:-.014em}
+
+  /* ===== instrument-surface polish for the merged landscape (avenue grid + console) ===== */
+  .av-card,.console{
+    border-radius:var(--r-lg); overflow:hidden;
+    background:linear-gradient(180deg,#ffffff,#f4f8f7);
+    box-shadow:var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.85);
+    transition:box-shadow .2s ease, transform .2s ease;
+  }
+  .av-card:hover{
+    box-shadow:var(--shadow-lift), inset 0 1px 0 rgba(255,255,255,.85); transform:translateY(-3px);
+  }
+  .s-chip{border-radius:var(--r-pill)}
+  button#run{
+    border-radius:var(--r-sm);
+    background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+    box-shadow:0 4px 14px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.32);
+    transition:box-shadow .2s ease, transform .2s ease;
+  }
+  button#run:hover{
+    background:linear-gradient(180deg, color-mix(in oklab, white 14%, var(--teal)), var(--teal));
+    box-shadow:0 8px 22px var(--teal-glow), inset 0 1px 0 rgba(255,255,255,.36);
+    transform:translateY(-1px);
+  }
+
+  /* ===== figures + dependency-free lightbox (inert with no figures) ===== */
+  figure{
+    margin:28px 0; padding:0;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:var(--r-lg); overflow:hidden;
+    box-shadow:var(--shadow-soft);
+  }
+  figure img{
+    display:block; width:100%; height:auto; cursor:zoom-in;
+  }
+  /* figure.living-figure.wide — break a data-dense figure out of the paper column to a
+     page-wide, viewport-capped width. Body-safe transform breakout (the lightbox appends to
+     the document body, so the figure's own transform can't trap the fixed overlay). The counter-scale keys
+     off rendered width, so wider = more drawable art at the SAME tier text sizes. min()
+     collapses the breakout to exactly column width on narrow viewports — degrades to a normal
+     figure. */
+  figure.living-figure.wide{
+    width:min(1140px, calc(100vw - 48px));
+    max-width:none;
+    margin-left:50%;
+    transform:translateX(-50%);
+  }
+  figcaption{
+    font-family:var(--mono); font-size:12.5px; line-height:1.5;
+    color:var(--ink2); text-align:center;
+    padding:11px 16px 13px; border-top:1px solid var(--line);
+  }
+  /* lightbox — overlay must clear the grain overlay at z-index:9999 */
+  .lbx{
+    position:fixed; inset:0; z-index:10000;
+    display:none; align-items:center; justify-content:center;
+    background:rgba(23,38,44,.78); padding:24px; cursor:zoom-out;
+    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+  }
+  .lbx.open{display:flex}
+  .lbx img{
+    max-width:min(1100px,94vw); max-height:92vh; width:auto; height:auto;
+    border-radius:var(--r-lg); box-shadow:var(--shadow-lift);
+    background:var(--card);
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .lbx img{transition:transform .2s ease}
+  }
+
+  /* ===== lineage strip (hidden until lineage.json has chapters) ===== */
+  .lineage-strip{
+    display:none;                      /* revealed by script when chapters>0 */
+    align-items:center; flex-wrap:wrap; gap:8px 16px;
+    margin:14px 0 0; padding:11px 16px;
+    background:linear-gradient(180deg,#ffffff,#f4f8f7);
+    border:1px solid var(--line); border-radius:var(--r-lg);
+    box-shadow:var(--shadow-soft);
+    font-family:var(--mono); font-size:12.5px; color:var(--ink2);
+  }
+  .lineage-strip.show{display:flex}
+  .lineage-strip b{color:var(--ink); font-weight:600}
+  .lineage-strip a{color:var(--teal)}
+  .lineage-strip .sep{color:var(--line); }
+  .lineage-strip .ls-all{margin-left:auto; font-weight:500}
+
+  /* ===== merged from the landscape (index.html): abstract + kicker/lede ===== */
+  .abstract{font-family:var(--serif);font-size:17.5px;max-width:70ch;margin-top:18px}
+  .abstract b{color:var(--teal)}
+  .kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+  .kicker.teal{color:var(--teal)}.kicker.coral{color:var(--coral)}.kicker.violet{color:var(--violet)}
+  p.lede{color:var(--ink2);max-width:66ch;margin-top:6px}
+  /* region-spacing system — a heading relates to what FOLLOWS, not what precedes. The kickers had
+     margin below but none above (glued to the previous region, floating 48px from their own h2 —
+     the footnote effect). Fix: a uniform region PAUSE above the kicker (2x the 26px paragraph gap,
+     exceeding the 48px sub-section h2 rhythm), and the kicker set tight above its h2 so the eyebrow
+     OWNS its title. Rhythm: region pause (52) > paragraph gap (26) > kicker->title (8). */
+  .kicker{margin-top:52px}
+  .kicker + h2{margin-top:8px}
+  /* seam reconciliation: when the essay-first seam below fires, ITS 64+border+30 IS the boundary --
+     zero the kicker's pause so they don't double-stack (prototyped: 147px crater -> 95px). */
+  h2 ~ #landscape .kicker{margin-top:0}
+  /* inter-register seam — fires ONLY when the landscape follows essay sections (an h2 sibling
+     precedes it); inert when the apparatus opens the page. A section-break marker belongs between
+     registers, not before the first one. */
+  h2 ~ #landscape{margin-top:64px;padding-top:30px;border-top:1px solid var(--line)}
+
+  /* ===== survey landscape — card grid (survey-default keystone) ===== */
+  .av-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:18px}
+  .av-card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--line);padding:15px 16px 16px;display:flex;flex-direction:column;gap:9px}
+  .av-card.t-est{border-top-color:var(--pass)}
+  .av-card.t-open{border-top-color:var(--open)}
+  .av-card.t-forecast{border-top-color:var(--violet)}
+  .av-card.t-reported{border-top-color:var(--coral)}
+  .av-card .av-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .av-card .av-name{font-family:var(--serif);font-weight:600;font-size:18px;line-height:1.2}
+  .av-card .av-thesis{color:var(--ink2);font-size:14.5px;margin:0}
+  .av-card .av-meta{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:4px}
+  .av-card .fc{font-family:var(--mono);font-size:13px}
+  .av-card .fc .pct{font-weight:600}
+  .av-card .fc .by{color:var(--ink2)}
+  .av-card .fc.missing{color:var(--fail)}
+  .av-card .srcs{display:flex;flex-wrap:wrap;gap:5px}
+  .av-card .srcs .ref{font-family:var(--mono);font-size:11px;color:var(--violet);background:var(--violet-soft);border:1px solid var(--violet);border-radius:9px;padding:0 7px}
+  .av-card .srcs .none{color:var(--ink2);font-size:12px;font-family:var(--mono)}
+
+  /* ===== status chips — one home per honest label (incl. new REPORTED token #4) ===== */
+  .s-chip{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.05em;padding:2px 8px;border:1px solid;white-space:nowrap;display:inline-block;flex:0 0 auto}
+  .s-est{color:var(--pass);border-color:var(--pass)}
+  .s-open{color:var(--open);border-color:var(--open)}
+  .s-forecast{color:var(--violet);border-color:var(--violet)}
+  .s-reported{color:var(--coral);border-color:var(--coral);background:var(--coral-soft)}
+  .s-default{color:var(--ink2);border-color:var(--line)}
+  .legend{display:flex;flex-wrap:wrap;gap:14px 18px;margin-top:14px;font-size:13px;color:var(--ink2)}
+  .legend span.item{display:inline-flex;align-items:center;gap:7px}
+
+  /* verification/consistency console */
+  .console{background:var(--card);border:1.5px solid var(--ink);margin-top:18px}
+  .console-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .console-head .label{font-family:var(--mono);font-size:12.5px;color:var(--ink2)}
+  button#run{font-family:var(--mono);font-size:14px;font-weight:600;background:var(--teal);color:#fff;border:none;padding:10px 18px;cursor:pointer}
+  button#run[disabled]{background:var(--ink2);cursor:default}
+  #log{font-family:var(--mono);font-size:13px;padding:10px 16px 14px;min-height:80px}
+  .row{display:flex;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line);align-items:baseline}
+  .row:last-child{border-bottom:none}
+  .badge{flex:0 0 auto;font-weight:600;padding:1px 7px;font-size:11.5px}
+  .badge.p{color:var(--pass);border:1px solid var(--pass)}
+  .badge.f{color:var(--fail);border:1px solid var(--fail)}
+  .row .what{flex:1 1 auto;min-width:0}
+  .row .nums{flex:0 0 auto;color:var(--ink2)}
+  .tally{margin-top:10px;padding-top:10px;border-top:2px solid var(--ink);font-weight:600}
+  @media(max-width:560px){.row{flex-wrap:wrap}.row .nums{width:100%;padding-left:46px}}
+  /* Chrome width is UNIVERSAL and skin-owned: this rule is injected AFTER the head_extra slot so no
+     edition's head_extra can widen the nav/provenance/eyebrow chrome (an edition may set its own
+     .wrap body width, but the chrome stays identical on every page -> no cross-edition shift). */
+  .chrome{max-width:820px}
+</style>
+</head>
+<body data-chrome="reading">
+<header>
+  <div class="chrome">
+    <div class="eyebrow">An Open Dossier · <b>QC-Accelerate-002</b></div>
+    <div class="cta">
+      <a class="btn primary" href="index.html">The paper</a>
+      <a class="btn" href="dossier.html">Audit trail</a>
+      <a class="btn" href="../../lineage.html">Chapters</a>
+      <a class="btn" href="https://github.com/m4gr4th34/dossier-QC-Accelerate-002/issues" target="_blank" rel="noopener">Contribute ↗</a>
+    </div>
+    <div class="provenance" role="contentinfo" aria-label="Provenance and verification">
+      <span class="pv-item"><span class="pv-k">Reading</span><span class="pv-v" id="pv-state">release v5.0.0</span></span>
+      <a class="pv-item" id="pv-doi" href="https://doi.org/10.5281/zenodo.21270187" data-doi-baked="1" target="_blank" rel="noopener"><span class="pv-k">Archived DOI</span><span class="pv-v" id="pv-doi-v">10.5281/zenodo.21270187 ↗</span></a>
+      <a class="pv-item" href="verify.html" target="_blank" rel="noopener"><span class="pv-k">Bitcoin timestamp</span><span class="pv-v">verify proof ↗</span></a>
+      <a class="pv-item" href="https://github.com/m4gr4th34/dossier-QC-Accelerate-002" target="_blank" rel="noopener"><span class="pv-k">Source</span><span class="pv-v">full history ↗</span></a>
+    </div>
+    <div class="lineage-strip" id="lineageStrip" aria-label="Lineage"></div>
+    <h1>Accelerating Quantum Computing Research Using AI and Robotics</h1>
+    <div class="byline" id="byline">Irfan Ali-Khan — Independent Researcher</div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="record-note" role="note" style="margin:18px 0;padding:13px 16px;border:1px solid var(--line);border-left:4px solid var(--open);border-radius:var(--r-lg);background:var(--open-soft);color:var(--ink2);font-size:14px;line-height:1.55"><div><b style="color:var(--open)">Reading the current edition.</b> A current-skin reading view of a sealed chapter (released 2026-07-14) — not the version of record.</div><div style="margin-top:6px"><b>Cite this chapter:</b> DOI <a href="https://doi.org/10.5281/zenodo.21270187" target="_blank" rel="noopener">10.5281/zenodo.21270187 ↗</a> · <a href="https://doi.org/10.5281/zenodo.21270186" target="_blank" rel="noopener">all versions ↗</a></div><div style="margin-top:4px"><a href="../../chapters/v5.0.0/index.html" target="_blank" rel="noopener">View the version of record ↗</a> <span style="opacity:.85">— the immutable, DOI'd bytes (chapters/v5.0.0/index.html).</span></div></div>
+  <p class="abstract"><b>Chapter 5 — the price of an honest number.</b>
+<em>Chapter 4 turned the discovery loop once, by hand, and promised to let
+it run. This chapter ran it — four campaigns, thousands of candidate codes
+— and the loop immediately hit a wall nobody advertises: the codes worth
+ranking cannot be measured. Every cheap shortcut died a pre-registered
+death; two purpose-built rare-event instruments died next, killed by their
+own registered criteria; and the wreckage paid for the answer. At matched
+efficiency, an automated search's code beats hand-picked repetition 4.6×
+per-logical at the operating point — measured, certified, and only visible
+at 100× the shot budget every proxy said was enough. Then one last
+measurement turned the question around: a code's error rate is partly its
+decoder's invention, in a proportion that varies sevenfold from code to
+code — which is the question the next chapter is built on. The error
+ledger runs to nine catches in the measurement arc alone, four of them
+the machinery catching its own author; as before, that is half the
+result.</em></p>
+
+  <div class="howto">
+    <b>How to read this:</b> the whole survey is on this one page, written to explain itself.
+    Tap any <button class="term" data-d="Like this! Underlined-dashed words expand in place with a plain-language explanation. Tap again to close. You never leave the page.">underlined term</button>
+    for a plain-language explanation. Tap any <button class="cite" data-c="demo">ref</button> to see what that source actually showed, in two sentences. Each avenue carries an honest label — <span class="mono">established, open, forecast, or reported</span> — colored to match the <a href="#landscape">landscape</a>. <span class="mono">No rabbit holes. No prerequisites.</span>
+  </div>
+
+<section id="landscape">
+  <div class="kicker teal">THE LANDSCAPE · SURVEY</div>
+  <h2>Avenues at a glance</h2>
+  <p class="lede">Every avenue in this survey, each with its honest status label and — where the avenue is a forward bet — a dated forecast. <span class="mono">The labels are the verification here: each is exactly as strong as its evidence.</span></p>
+  <div class="av-grid" id="av-grid" data-baked="1"><div class="av-card "><div class="av-top"><span class="av-name">Scored: the founding question gets a measured answer</span><span class="s-chip s-default">SCORED: TRUE</span></div><p class="av-thesis">Frozen across PREREG_truth (T1 at 75%, T2 at 65%): the winner and frontier rows reach conclusive measurements (>=40 events) within their caps. Both did -- 85 and 97 events -- and the certified result followed: at matched efficiency (0.0769) the loop's find beats the repetition benchmark 4.6x per-logical at the operating point, intervals cleanly apart.</p><div class="av-meta"><span class="srcs"><span class="ref">ocelot</span><span class="ref">ruiz</span></span></div></div><div class="av-card "><div class="av-top"><span class="av-name">Scored: repetition stays invisible and dominant</span><span class="s-chip s-default">SCORED: FALSE</span></div><p class="av-thesis">Frozen at 55% (T4): both repetition rows stay under 10 events at the caps AND their floors sit below the products -- the four-campaign throughline holding. FALSE twice over: rep-7 measured at 97 events, and it sits ABOVE both products. The old 'repetition dominates' was a resolution artifact of 200k-shot floors.</p><div class="av-meta"><span class="srcs"><span class="none">no sources</span></span></div></div><div class="av-card "><div class="av-top"><span class="av-name">Scored: the frontier beats the winner</span><span class="s-chip s-default">SCORED: FALSE</span></div><p class="av-thesis">Frozen at 50% (T3): the search's deeper find (d=16) beats its simpler champion (d=12) per-logical with non-overlapping intervals. FALSE -- they are statistically TIED and the record leaves them tied; the extra distance bought nothing at the operating point, consistent with the decoder-trap mechanism.</p><div class="av-meta"><span class="srcs"><span class="none">no sources</span></span></div></div><div class="av-card "><div class="av-top"><span class="av-name">Scored: a rare-event sampler beats brute force</span><span class="s-chip s-default">SCORED: FALSE</span></div><p class="av-thesis">Frozen at 50% (union PREREG Q3, after the count-stratified design had already run at measured parity): the Karp-Luby core-union sampler reproduces the truth band at 5x under the brute-force baseline. FALSE -- killed inside budget by its own registered criteria: the failure structure is combinatorially diffuse (>=1.6e4 minimal conspiracies at maximal generosity, ~3e7 at the measured mean) and the decoder rescues 93% of planted cores.</p><div class="av-meta"><span class="srcs"><span class="ref">failfast</span><span class="ref">splitting</span><span class="ref">bravyi</span></span></div></div><div class="av-card "><div class="av-top"><span class="av-name">Scored: the decoder is the majority culprit</span><span class="s-chip s-default">SCORED: FALSE</span></div><p class="av-thesis">Frozen at 60% (S1): decoder-created failures -- fault sets that flip nothing, where the 'correction' does the damage -- are the majority share on at least 4 of 5 codes. FALSE: a minority on 4 of 5 (8.5-35%), majority-indicated only on rep-7 (63%, interval spans the line). The measured surprise: the share spans sevenfold under the same decoder -- a property of the code-decoder pair.</p><div class="av-meta"><span class="srcs"><span class="ref">trapping</span></span></div></div><div class="av-card t-forecast"><div class="av-top"><span class="av-name">Forward: decoder repair re-orders the leaderboard</span><span class="s-chip s-forecast">FORECAST</span></div><p class="av-thesis">Referee-v2 -- BP-OSD plus exact-trap post-processing, under the full instrument-change ritual -- moves at least one certified ordering on the five-code leaderboard. The measured sevenfold spread in decoder-created share says repair acts non-uniformly; rep-7 (indicated majority) has the most to gain against the 4.6x headline.</p><div class="av-meta"><span class="fc"><span class="pct">~55%</span> <span class="by">by referee-v2 delta table on all five codes, committed by 2026-08-15</span></span><span class="srcs"><span class="ref">trapping</span></span></div></div><div class="av-card t-forecast"><div class="av-top"><span class="av-name">Forward: a cheap ruler finally gates</span><span class="s-chip s-forecast">FORECAST</span></div><p class="av-thesis">The published failure-spectrum ansatz, fitted by this chapter's exact stratified machinery on cheap strata, predicts operating-point eps within the certified bands on all six truth codes -- turning per-night grading into per-minute grading and making the discovery loop runnable on the number that matters.</p><div class="av-meta"><span class="fc"><span class="pct">~50%</span> <span class="by">by ruler gate run against all six certified truths, committed by 2026-08-31</span></span><span class="srcs"><span class="ref">failfast</span></span></div></div><div class="av-card t-forecast"><div class="av-top"><span class="av-name">Forward: the crown -- below the floor</span><span class="s-chip s-forecast">FORECAST</span></div><p class="av-thesis">An AI-discovered code measured below rep-13's floor (2.31e-8 per-logical per-round) at competitive efficiency, on the certified instrument -- the outright operating-point crown, and the result a stranger would care about. Requires the ruler to gate, the loop to run on it, and a splitting-grade confirmation row.</p><div class="av-meta"><span class="fc"><span class="pct">~20%</span> <span class="by">by a confirmed sub-floor row committed by 2026-12-31</span></span><span class="srcs"><span class="ref">failfast</span><span class="ref">splitting</span></span></div></div><div class="av-card t-forecast"><div class="av-top"><span class="av-name">Forward: low-weight codes reach the frontier overhead</span><span class="s-chip s-forecast">FORECAST</span></div><p class="av-thesis">Carried from Chapter 4, unresolved: weight-4-check codes reach the frontier qubit overhead at the high-bias operating point.</p><div class="av-meta"><span class="fc"><span class="pct">~30%</span> <span class="by">by carried from Chapter 4; scores by end 2027</span></span><span class="srcs"><span class="ref">ruiz</span></span></div></div><div class="av-card t-forecast"><div class="av-top"><span class="av-name">Forward: the field crosses the noise seam</span><span class="s-chip s-forecast">FORECAST</span></div><p class="av-thesis">Carried from Chapter 4, unresolved: a published AI code search grades itself at circuit level under hardware-calibrated noise.</p><div class="av-meta"><span class="fc"><span class="pct">~55%</span> <span class="by">by carried from Chapter 4; scores by mid 2027</span></span><span class="srcs"><span class="none">no sources</span></span></div></div><div class="av-card t-forecast"><div class="av-top"><span class="av-name">Forward: a multi-logical outer cat code on hardware</span><span class="s-chip s-forecast">FORECAST</span></div><p class="av-thesis">Carried from Chapter 4, unresolved: a multi-logical-qubit outer code demonstrated on cat-qubit hardware.</p><div class="av-meta"><span class="fc"><span class="pct">~25%</span> <span class="by">by carried from Chapter 4; scores by end 2028</span></span><span class="srcs"><span class="ref">ocelot</span><span class="ref">ruiz</span></span></div></div></div>
+  <div class="legend">
+    <span class="item"><span class="s-chip s-est">ESTABLISHED</span> documented, cited</span>
+    <span class="item"><span class="s-chip s-open">OPEN-UNVERIFIED</span> the author's open claim</span>
+    <span class="item"><span class="s-chip s-forecast">FORECAST</span> labeled estimate + dated signpost</span>
+    <span class="item"><span class="s-chip s-reported">REPORTED</span> interested-party / not independently reproduced</span>
+  </div>
+</section>
+
+<div class="kicker teal">THE CHAPTER · THE EXPEDITION</div>
+
+<h2><span class="num">01</span>THE QUESTION CHAPTER 4 LEFT</h2>
+
+<p>Last chapter ended with a promise and a boundary. The boundary: the
+loop had been turned exactly once — a single propose-refute-repair pass
+over hand-seeded candidates, hours of compute, a proof of principle. The
+promise: let an automated proposer run, and see what it finds. This
+chapter kept the promise, and the honest report is that the interesting
+thing was not what the proposer found. It was what the grader could not
+do.</p>
+
+<p>Recall the game. A code, here, is a small grid of 0s and 1s; the
+machine it implies — qubits, helper qubits, gates, measurements, cycle
+after cycle — is simulated under noise copied from published cat-qubit
+hardware <button class="cite" data-c="ocelot">Nature 2025</button>, a
+decoding algorithm fights every injected error, and each time it loses,
+that is one logical failure. The number this dossier ranks on is the
+per-logical, per-round failure rate at a fixed future operating point —
+the regime the hardware roadmap points at <button class="cite" data-c="ruiz">Nat. Commun. 2025</button>. One number per code. Lower
+wins.</p>
+
+<p>The wall is this: for any code good enough to care about, that number
+is somewhere around one failure in ten million runs. Simulate two hundred
+thousand runs — a generous budget, minutes to hours per code — and the
+expected number of failures you observe is zero, one, maybe two. Zero
+observed failures is not a measurement; it is a floor, a statement that
+the truth lives somewhere below what you can see. Early in this chapter
+we watched two strong codes swap places on the leaderboard when the shot
+budget doubled — not because either code changed, but because two events
+against one is a coin toss dressed as a ranking. An automated loop
+steering on numbers like that is steering on noise.</p>
+
+<figure class="living-figure" data-figure='{"type": "qc-wall", "stage": "#ffffff", "caption": "Fig 1 \u2014 The game, and the wall. The game: a code (a small grid of 0s and 1s) implies a checking machine; simulate it under chip-calibrated noise with a decoder fighting every fault, and count failures \u2014 one number per code, lower wins. The wall: for a strong code the true rate is ~1 failure in 10,000,000 runs, so the field-standard budget of 200,000 runs observes 0-2 events \u2014 a floor dressed as a ranking (this chapter watched a leaderboard invert on a re-roll). Seeing the answer took 20,000,000 runs per code: 100x the standard budget. [SCHEMATIC + SCORED numbers as committed]"}'>
+    <style class="lf-tier-style">.lf-svg text{font-size:13px}.lf-svg .lf-tick{font-size:11px}.lf-svg .lf-axis{font-size:13px}.lf-svg .lf-callout{font-size:15px}.lf-caption{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#586a6f;margin:10px 14px 0;max-width:78ch;}</style>
+    <svg data-poster="1" viewBox="0 0 960 520" width="100%" class="lf-svg" role="img" aria-label="The evaluation pipeline from a code grid through the simulated checking machine with injected noise and a decoder, to a single failure-rate number; below it, two budget panels contrasting 200,000 runs (zero to two observed failures, a floor) against 20 million runs (85 to 200 observed failures, a real measurement)."><text class="lf-callout lf-scale-with-art" x="480" y="40" text-anchor="middle" fill="#3a474b">THE GAME, AND THE WALL</text><text class="lf-tick lf-scale-with-art" x="480" y="64" text-anchor="middle" fill="#5a6b70">one number per code — and for the codes that matter, the number is invisible at every budget anyone pays</text><rect x="20" y="120" width="190" height="84" fill="#ffffff" stroke="#3a474b" stroke-width="2.2" rx="10"></rect><text class="lf-axis lf-scale-with-art" x="115" y="152" text-anchor="middle" fill="#3a474b">A CODE</text><text class="lf-tick lf-scale-with-art" x="115" y="174" text-anchor="middle" fill="#3a474b">a small grid</text><text class="lf-tick lf-scale-with-art" x="115" y="190" text-anchor="middle" fill="#3a474b">of 0s and 1s</text><line x1="210" y1="162" x2="250" y2="162" stroke="#5a6b70" stroke-width="1.6"></line><polygon points="250,157 260,162 250,167" fill="#5a6b70"></polygon><rect x="250" y="120" width="190" height="84" fill="#ffffff" stroke="#3a474b" stroke-width="2.2" rx="10"></rect><text class="lf-axis lf-scale-with-art" x="345" y="152" text-anchor="middle" fill="#3a474b">THE MACHINE</text><text class="lf-tick lf-scale-with-art" x="345" y="174" text-anchor="middle" fill="#3a474b">qubits, gates, checks,</text><text class="lf-tick lf-scale-with-art" x="345" y="190" text-anchor="middle" fill="#3a474b">cycle after cycle</text><line x1="440" y1="162" x2="480" y2="162" stroke="#5a6b70" stroke-width="1.6"></line><polygon points="480,157 490,162 480,167" fill="#5a6b70"></polygon><rect x="480" y="120" width="190" height="84" fill="#ffffff" stroke="#3a474b" stroke-width="2.2" rx="10"></rect><text class="lf-axis lf-scale-with-art" x="575" y="152" text-anchor="middle" fill="#3a474b">NOISE + DECODER</text><text class="lf-tick lf-scale-with-art" x="575" y="174" text-anchor="middle" fill="#3a474b">chip-calibrated faults injected;</text><text class="lf-tick lf-scale-with-art" x="575" y="190" text-anchor="middle" fill="#3a474b">the decoder fights each one</text><line x1="670" y1="162" x2="710" y2="162" stroke="#5a6b70" stroke-width="1.6"></line><polygon points="710,157 720,162 710,167" fill="#5a6b70"></polygon><rect x="710" y="120" width="190" height="84" fill="#ffffff" stroke="#0c8f86" stroke-width="2.2" rx="10"></rect><text class="lf-axis lf-scale-with-art" x="805" y="152" text-anchor="middle" fill="#0c8f86">THE NUMBER</text><text class="lf-tick lf-scale-with-art" x="805" y="174" text-anchor="middle" fill="#3a474b">failures per logical</text><text class="lf-tick lf-scale-with-art" x="805" y="190" text-anchor="middle" fill="#3a474b">per cycle — lower wins</text><text class="lf-axis lf-scale-with-art" x="480" y="262" text-anchor="middle" fill="#3a474b">THE WALL: what each budget can see (a strong code, true rate ~1 failure in 10,000,000 runs)</text><rect x="120" y="290" width="330" height="150" fill="#ffffff" stroke="#d7dee0"></rect><text class="lf-axis lf-scale-with-art" x="285" y="314" text-anchor="middle" fill="#c2562f">200,000 runs — the budget everyone pays</text><text class="lf-tick lf-scale-with-art" x="285" y="338" text-anchor="middle" fill="#3a474b">expected failures observed: 0, 1, maybe 2</text><circle cx="255" cy="364" r="7" fill="#c2562f"></circle><circle cx="285" cy="364" r="7" fill="#c2562f"></circle><text class="lf-tick lf-scale-with-art" x="285" y="394" text-anchor="middle" fill="#5a6b70">two events vs one is a coin toss</text><text class="lf-tick lf-scale-with-art" x="285" y="410" text-anchor="middle" fill="#5a6b70">dressed as a ranking — a FLOOR, not a measurement</text><text class="lf-tick lf-scale-with-art" x="285" y="430" text-anchor="middle" fill="#c2562f">this chapter watched a leaderboard invert on a re-roll</text><rect x="510" y="290" width="330" height="150" fill="#ffffff" stroke="#0c8f86" stroke-width="1.6"></rect><text class="lf-axis lf-scale-with-art" x="675" y="314" text-anchor="middle" fill="#0c8f86">20,000,000 runs — what the truth costs</text><text class="lf-tick lf-scale-with-art" x="675" y="338" text-anchor="middle" fill="#3a474b">failures observed: 85-200 per code</text><circle cx="575" cy="364" r="5" fill="#0c8f86"></circle><circle cx="593" cy="364" r="5" fill="#0c8f86"></circle><circle cx="611" cy="364" r="5" fill="#0c8f86"></circle><circle cx="629" cy="364" r="5" fill="#0c8f86"></circle><circle cx="647" cy="364" r="5" fill="#0c8f86"></circle><circle cx="665" cy="364" r="5" fill="#0c8f86"></circle><circle cx="683" cy="364" r="5" fill="#0c8f86"></circle><circle cx="701" cy="364" r="5" fill="#0c8f86"></circle><circle cx="719" cy="364" r="5" fill="#0c8f86"></circle><circle cx="737" cy="364" r="5" fill="#0c8f86"></circle><circle cx="755" cy="364" r="5" fill="#0c8f86"></circle><circle cx="773" cy="364" r="5" fill="#0c8f86"></circle><text class="lf-tick lf-scale-with-art" x="675" y="394" text-anchor="middle" fill="#5a6b70">proper error bars, certified orderings —</text><text class="lf-tick lf-scale-with-art" x="675" y="410" text-anchor="middle" fill="#5a6b70">a MEASUREMENT (one overnight per code)</text><text class="lf-tick lf-scale-with-art" x="675" y="430" text-anchor="middle" fill="#0c8f86">100x the standard budget: the price of honesty</text></svg>
+    <figcaption class="lf-caption">Fig 1 — The game, and the wall. The game: a code (a small grid of 0s and 1s) implies a checking machine; simulate it under chip-calibrated noise with a decoder fighting every fault, and count failures — one number per code, lower wins. The wall: for a strong code the true rate is ~1 failure in 10,000,000 runs, so the field-standard budget of 200,000 runs observes 0-2 events — a floor dressed as a ranking (this chapter watched a leaderboard invert on a re-roll). Seeing the answer took 20,000,000 runs per code: 100x the standard budget. [SCHEMATIC + SCORED numbers as committed]</figcaption></figure>
+
+<p>So this chapter became, against its own plan, a chapter about
+measurement. Four campaigns of automated search ran and taught real
+lessons — that the loop can learn, that one prized find was a hard local
+optimum, that fitness design is load-bearing — but every campaign
+ultimately foundered on the same reef: no affordable number honestly
+ranks strong codes at the operating point. What follows is the story of
+buying that number: every shortcut killed in the open, two clever
+instruments built and buried by their own pre-registered kill criteria,
+and then the unglamorous purchase — sixty-seven million simulated runs in
+one night — of the answer the chapter was founded to find. Pre-registered
+priors, committed before each experiment, frame every step; the
+measurement arc alone registered twenty-five across four documents, eight
+resolved against us, five died untested when their instruments were
+killed — and each miss is published at the size of a hit.</p>
+
+<h2><span class="num">02</span>THE WALL, MAPPED</h2>
+
+<p>Why can nothing cheap stand in for the honest number? This chapter's
+first arc tried every candidate and buried each with a cause of death on
+the certificate.</p>
+
+<p><b>Algebra is not the operating point.</b> A code's vital statistics —
+block size, encoded qubits, distance — are free to compute and genuinely
+predictive of <em>something</em>, but the something is not the ranking at
+the operating point. The measured leaderboard at this chapter's end makes
+the point brutally: a distance-16 code ties a distance-12 code, and a
+distance-13 code beats them both while a distance-7 code loses to
+everything. No monotone story in distance survives contact with the
+table. Rate-per-distance composites, slope fits at elevated noise,
+threshold crossings — each was gated against measured truths and each
+died; the elevated-noise fits die of a curvature confound (the ranking at
+ten times the noise is not the ranking at the operating point, and the
+extrapolation between them is exactly the quantity in dispute).</p>
+
+<p><b>Counting faults is not the axis either.</b> Here is the mechanism,
+and it is the chapter's quiet centerpiece. At the operating point, the
+average simulated run of the error-correction machine suffers about
+eight point four faults — not one rare fault, eight, every run, because
+the machine has hundreds of fault locations and each is only mostly
+reliable. Almost all such runs end fine: the decoder catches everything.
+Failure is not a run with unusually <em>many</em> faults; it is a run
+whose perfectly typical number of faults land in a conspiring
+<em>pattern</em>. Conditioning on the count buys nothing — we built the
+exact machinery (this chapter's first instrument) and measured its
+advantage over brute force at parity: none. The rare event lives in the
+geometry of which faults, not the arithmetic of how many.</p>
+
+<figure class="living-figure" data-figure='{"type": "qc-spectrum", "stage": "#ffffff", "caption": "Fig 2 \u2014 Why counting faults buys nothing: the measured failure spectrum of one code (rep2 x extended-Hamming) at the operating point \u2014 the chance that a run with exactly w faults fails, from 1-in-42,000 at six faults to 35% at thirty-four, on a log axis. The typical run (dashed line) already carries 8.4 faults and fails only ~1 time in 7,000: failures are typical counts in conspiring patterns, not rare pile-ups. The curve climbs smoothly, so conditioning on the count enriches nothing \u2014 the mechanism behind both instrument deaths of section 03, measured. Exact w≤2 points are full enumerations. [SCORED \u00b7 numbers as committed]"}'>
+    <style class="lf-tier-style">.lf-svg text{font-size:13px}.lf-svg .lf-tick{font-size:11px}.lf-svg .lf-axis{font-size:13px}.lf-svg .lf-callout{font-size:15px}.lf-caption{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#586a6f;margin:10px 14px 0;max-width:78ch;}</style>
+    <svg data-poster="1" viewBox="0 0 960 520" width="100%" class="lf-svg" role="img" aria-label="A log-scale curve of failure probability versus number of faults per run, rising smoothly from about one in forty-two thousand at six faults to thirty-five percent at thirty-four faults, with a dashed marker at the typical run of eight point four faults where failure chance is about one in seven thousand."><text class="lf-callout lf-scale-with-art" x="480" y="40" text-anchor="middle" fill="#3a474b">WHY COUNTING FAULTS BUYS NOTHING</text><text class="lf-tick lf-scale-with-art" x="480" y="64" text-anchor="middle" fill="#5a6b70">the typical run already carries ~8 faults; failure lives in WHICH faults conspire, not HOW MANY there are</text><line x1="150" y1="120" x2="150" y2="430" stroke="#5a6b70" stroke-width="1.4"></line><line x1="144" y1="430.0" x2="150" y2="430.0" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="140" y="434.0" text-anchor="end" fill="#5a6b70">1 in 100,000</text><line x1="150" y1="430.0" x2="880" y2="430.0" stroke="#d7dee0" stroke-width="1"></line><line x1="144" y1="368.0" x2="150" y2="368.0" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="140" y="372.0" text-anchor="end" fill="#5a6b70">1 in 10,000</text><line x1="150" y1="368.0" x2="880" y2="368.0" stroke="#d7dee0" stroke-width="1"></line><line x1="144" y1="306.0" x2="150" y2="306.0" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="140" y="310.0" text-anchor="end" fill="#5a6b70">1 in 1,000</text><line x1="150" y1="306.0" x2="880" y2="306.0" stroke="#d7dee0" stroke-width="1"></line><line x1="144" y1="244.0" x2="150" y2="244.0" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="140" y="248.0" text-anchor="end" fill="#5a6b70">1 in 100</text><line x1="150" y1="244.0" x2="880" y2="244.0" stroke="#d7dee0" stroke-width="1"></line><line x1="144" y1="182.0" x2="150" y2="182.0" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="140" y="186.0" text-anchor="end" fill="#5a6b70">1 in 10</text><line x1="150" y1="182.0" x2="880" y2="182.0" stroke="#d7dee0" stroke-width="1"></line><line x1="144" y1="120.0" x2="150" y2="120.0" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="140" y="124.0" text-anchor="end" fill="#5a6b70">all fail</text><line x1="150" y1="120.0" x2="880" y2="120.0" stroke="#d7dee0" stroke-width="1"></line><text class="lf-axis lf-scale-with-art" x="96" y="275" text-anchor="middle" fill="#5a6b70" transform="rotate(-90 96 275)">chance a run with w faults fails</text><line x1="150" y1="430" x2="880" y2="430" stroke="#5a6b70" stroke-width="1.4"></line><line x1="195.625" y1="430" x2="195.625" y2="436" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="195.625" y="452" text-anchor="middle" fill="#5a6b70">6</text><line x1="286.875" y1="430" x2="286.875" y2="436" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="286.875" y="452" text-anchor="middle" fill="#5a6b70">10</text><line x1="378.125" y1="430" x2="378.125" y2="436" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="378.125" y="452" text-anchor="middle" fill="#5a6b70">14</text><line x1="469.375" y1="430" x2="469.375" y2="436" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="469.375" y="452" text-anchor="middle" fill="#5a6b70">18</text><line x1="560.625" y1="430" x2="560.625" y2="436" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="560.625" y="452" text-anchor="middle" fill="#5a6b70">22</text><line x1="651.875" y1="430" x2="651.875" y2="436" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="651.875" y="452" text-anchor="middle" fill="#5a6b70">26</text><line x1="743.125" y1="430" x2="743.125" y2="436" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="743.125" y="452" text-anchor="middle" fill="#5a6b70">30</text><line x1="834.375" y1="430" x2="834.375" y2="436" stroke="#5a6b70" stroke-width="1.2"></line><text class="lf-tick lf-scale-with-art" x="834.375" y="452" text-anchor="middle" fill="#5a6b70">34</text><text class="lf-axis lf-scale-with-art" x="515.0" y="474" text-anchor="middle" fill="#5a6b70">w — number of faults in the run</text><polyline points="195.6,406.3 218.4,392.7 241.2,356.8 264.1,354.9 286.9,329.8 309.7,322.3 332.5,315.9 355.3,310.1 378.1,291.4 400.9,274.9 423.8,273.6 446.6,266.9 469.4,250.6 492.2,260.1 515.0,222.1 537.8,225.4 560.6,211.5 583.4,212.3 606.2,198.3 629.1,192.4 651.9,183.7 674.7,179.4 697.5,171.1 720.3,171.6 743.1,164.3 765.9,158.8 788.8,155.7 811.6,151.6 834.4,148.7" fill="none" stroke="#3a474b" stroke-width="2"></polyline><circle cx="195.625" cy="406.34423181283483" r="4" fill="#3a474b"></circle><circle cx="264.0625" cy="354.9129939673744" r="4" fill="#3a474b"></circle><circle cx="332.5" cy="315.8993790157479" r="4" fill="#3a474b"></circle><circle cx="400.9375" cy="274.9059373330176" r="4" fill="#3a474b"></circle><circle cx="469.375" cy="250.58507579266424" r="4" fill="#3a474b"></circle><circle cx="537.8125" cy="225.40947556190616" r="4" fill="#3a474b"></circle><circle cx="606.25" cy="198.2585880514872" r="4" fill="#3a474b"></circle><circle cx="674.6875" cy="179.43365352019003" r="4" fill="#3a474b"></circle><circle cx="743.125" cy="164.29544684151801" r="4" fill="#3a474b"></circle><circle cx="811.5625" cy="151.6225742756602" r="4" fill="#3a474b"></circle><line x1="249.46249999999998" y1="430" x2="249.46249999999998" y2="120" stroke="#c2562f" stroke-width="1.6" stroke-dasharray="5,4"></line><text class="lf-axis lf-scale-with-art" x="249.46249999999998" y="106" text-anchor="middle" fill="#c2562f">THE TYPICAL RUN: 8.4 faults</text><text class="lf-tick lf-scale-with-art" x="257.4625" y="343.08234193854776" text-anchor="start" fill="#c2562f">...and here the failure chance is ~1 in 7,000:</text><text class="lf-tick lf-scale-with-art" x="257.4625" y="359.08234193854776" text-anchor="start" fill="#c2562f">typical runs almost never fail — but they carry the mass</text><text class="lf-tick lf-scale-with-art" x="606.25" y="295.08234193854776" text-anchor="start" fill="#5a6b70">the curve climbs smoothly — no cliff, no special count,</text><text class="lf-tick lf-scale-with-art" x="606.25" y="308.83696441476184" text-anchor="start" fill="#5a6b70">no place for a count-based shortcut to stand</text></svg>
+    <figcaption class="lf-caption">Fig 2 — Why counting faults buys nothing: the measured failure spectrum of one code (rep2 x extended-Hamming) at the operating point — the chance that a run with exactly w faults fails, from 1-in-42,000 at six faults to 35% at thirty-four, on a log axis. The typical run (dashed line) already carries 8.4 faults and fails only ~1 time in 7,000: failures are typical counts in conspiring patterns, not rare pile-ups. The curve climbs smoothly, so conditioning on the count enriches nothing — the mechanism behind both instrument deaths of section 03, measured. Exact w≤2 points are full enumerations. [SCORED · numbers as committed]</figcaption></figure>
+
+<p>That single measured fact — typical counts, conspiring patterns —
+is the wall in one sentence, and both purpose-built instruments of the
+next section were attempts to climb it at exactly its two footholds.</p>
+
+<h2><span class="num">03</span>TWO INSTRUMENTS, TWO HONEST DEATHS</h2>
+
+<p><b>Instrument one: stratify by fault count.</b> If failures were
+concentrated at unusual fault counts, sampling each count separately and
+recombining exactly would beat brute force. The instrument was built to
+metrological standard — exact stratum weights, exact conditional
+sampling, enumeration of the cheap strata, every convention imported from
+the frozen referee rather than re-derived — and gated in three
+pre-registered steps against directly measured truths before it was
+allowed to touch an open question. It passed every gate. And then it ran
+at parity: the same precision as brute force, for the same price, because
+(section 02) failure does not live on the count axis. The instrument
+survives as machinery — its exact failure-spectrum measurement is the
+engine of the next chapter's plan — but as a shortcut it is dead, and the
+record says so in its own commit messages.</p>
+
+<p><b>Instrument two: enumerate the conspiracies.</b> If failing fault
+patterns were built from a modest catalogue of minimal "cores" — small
+conspiring sets that doom any run containing them — then classical
+rare-event technique (union sampling over the catalogue, with the decoder
+adjudicating every sample so the estimate stays honest even when extra
+faults <em>rescue</em> a doomed run) would crack the problem. The
+instrument's estimator was validated unbiased against brute-force exact
+answers before deployment. Then the catalogue-building loop ran, and
+delivered a beautiful negative: roughly fifty <em>never-before-seen</em>
+minimal cores per harvest round, three rounds, zero saturation, while
+the catalogue's coverage of the failure probability sat at 0.14 percent.
+The arithmetic is short and damning: every failing run provably contains
+a minimal core, so the complete catalogue's summed firing probabilities
+must at least equal the failure rate — and at the measured
+per-core probabilities that demands somewhere between sixteen thousand
+and thirty million distinct conspiracies. The failure structure is
+combinatorially diffuse. No enumerable catalogue compresses it. Both
+registered kill criteria fired inside budget, and the design died of
+structure, not resources.</p>
+
+<p>The wreckage paid twice. First: the harvest's byproduct was six
+<em>exactly known</em> two-fault patterns — one physical pattern,
+repeated once per correction cycle — with a property that reframes the
+whole chapter: the two faults, together, flip <b>nothing</b>. The stored
+information is intact. The syndrome they light up simply fools the
+decoder into "correcting" its way into a logical error. The failure is
+the decoder's invention. Readers from classical coding theory will
+recognize the genus — these are trapping sets <button class="cite" data-c="trapping">Quantum 2021</button> — surfacing here at circuit
+level, under biased cat-qubit noise, with the decoder everyone actually
+uses. Second: the diffuse-structure result itself, which any future
+sampling method must now beat on the record, not in principle.</p>
+
+<figure class="living-figure" data-figure='{"type": "qc-trap", "stage": "#ffffff", "caption": "Fig 3 \u2014 Anatomy of a decoder trap, one of six exactly-known on the gate code: two idle-window faults land (panel 1) that together flip nothing \u2014 the stored information is intact; their six-detector alarm pattern (panel 2) is unusual but benign; the decoder reads it, picks the wrong explanation, and applies a correction that flips the logical bit (panel 3). The failure is the decoder&#39;s invention. One physical pattern repeats once per correction cycle, giving six traps, each known to the exact fault pair \u2014 circuit-level members of the trapping-set genus from classical coding theory. [SCHEMATIC \u00b7 structure as committed]"}'>
+    <style class="lf-tier-style">.lf-svg text{font-size:13px}.lf-svg .lf-tick{font-size:11px}.lf-svg .lf-axis{font-size:13px}.lf-svg .lf-callout{font-size:15px}.lf-caption{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#586a6f;margin:10px 14px 0;max-width:78ch;}</style>
+    <svg data-poster="1" viewBox="0 0 960 520" width="100%" class="lf-svg" role="img" aria-label="Three panels: two harmless idle-window faults that flip nothing; the benign six-detector alarm pattern they produce; and the decoder misreading the alarms and applying a correction that itself flips the logical bit."><text class="lf-callout lf-scale-with-art" x="480" y="40" text-anchor="middle" fill="#3a474b">ANATOMY OF A DECODER TRAP</text><text class="lf-tick lf-scale-with-art" x="480" y="64" text-anchor="middle" fill="#5a6b70">two harmless faults, a confusing alarm pattern, and a cure worse than the disease — six of these exist, exactly known</text><rect x="60" y="100" width="260" height="300" fill="#ffffff" stroke="#d7dee0"></rect><text class="lf-axis lf-scale-with-art" x="190" y="128" text-anchor="middle" fill="#3a474b">1. TWO FAULTS LAND</text><circle cx="150" cy="190" r="10" fill="#ffffff" stroke="#3a474b" stroke-width="2"></circle><circle cx="230" cy="250" r="10" fill="#ffffff" stroke="#3a474b" stroke-width="2"></circle><text class="lf-tick lf-scale-with-art" x="150" y="222" text-anchor="middle" fill="#5a6b70">idle-window fault A</text><text class="lf-tick lf-scale-with-art" x="230" y="282" text-anchor="middle" fill="#5a6b70">idle-window fault B</text><text class="lf-tick lf-scale-with-art" x="190" y="330" text-anchor="middle" fill="#3a474b">together they flip</text><text class="lf-axis lf-scale-with-art" x="190" y="348" text-anchor="middle" fill="#0c8f86">NOTHING — the stored</text><text class="lf-axis lf-scale-with-art" x="190" y="366" text-anchor="middle" fill="#0c8f86">information is intact</text><line x1="330" y1="250" x2="360" y2="250" stroke="#5a6b70" stroke-width="1.6"></line><polygon points="360,245 370,250 360,255" fill="#5a6b70"></polygon><rect x="380" y="100" width="220" height="300" fill="#ffffff" stroke="#d7dee0"></rect><text class="lf-axis lf-scale-with-art" x="490" y="128" text-anchor="middle" fill="#3a474b">2. ALARMS LIGHT UP</text><rect x="431" y="181" width="18" height="18" fill="#c2562f"></rect><rect x="481" y="166" width="18" height="18" fill="#c2562f"></rect><rect x="531" y="181" width="18" height="18" fill="#c2562f"></rect><rect x="431" y="236" width="18" height="18" fill="#c2562f"></rect><rect x="531" y="236" width="18" height="18" fill="#c2562f"></rect><rect x="481" y="256" width="18" height="18" fill="#c2562f"></rect><text class="lf-tick lf-scale-with-art" x="490" y="310" text-anchor="middle" fill="#3a474b">a six-detector syndrome —</text><text class="lf-tick lf-scale-with-art" x="490" y="328" text-anchor="middle" fill="#3a474b">unusual, but perfectly benign</text><line x1="610" y1="250" x2="640" y2="250" stroke="#5a6b70" stroke-width="1.6"></line><polygon points="640,245 650,250 640,255" fill="#5a6b70"></polygon><rect x="660" y="100" width="240" height="300" fill="#ffffff" stroke="#c2562f" stroke-width="2"></rect><text class="lf-axis lf-scale-with-art" x="780" y="128" text-anchor="middle" fill="#c2562f">3. THE DECODER “FIXES” IT</text><text class="lf-tick lf-scale-with-art" x="780" y="170" text-anchor="middle" fill="#3a474b">BP-OSD reads the alarms,</text><text class="lf-tick lf-scale-with-art" x="780" y="188" text-anchor="middle" fill="#3a474b">picks the wrong explanation,</text><text class="lf-tick lf-scale-with-art" x="780" y="206" text-anchor="middle" fill="#3a474b">and applies a correction that</text><text class="lf-axis lf-scale-with-art" x="780" y="224" text-anchor="middle" fill="#c2562f">FLIPS THE LOGICAL BIT</text><text class="lf-tick lf-scale-with-art" x="780" y="262" text-anchor="middle" fill="#3a474b">the failure is the decoder's</text><text class="lf-tick lf-scale-with-art" x="780" y="280" text-anchor="middle" fill="#3a474b">invention — the physics was fine</text><text class="lf-tick lf-scale-with-art" x="780" y="330" text-anchor="middle" fill="#5a6b70">one pattern, repeated once per</text><text class="lf-tick lf-scale-with-art" x="780" y="348" text-anchor="middle" fill="#5a6b70">correction cycle: 6 traps total,</text><text class="lf-tick lf-scale-with-art" x="780" y="366" text-anchor="middle" fill="#5a6b70">each known to the exact fault pair</text><text class="lf-tick lf-scale-with-art" x="480" y="440" text-anchor="middle" fill="#5a6b70">classical coding theory calls these trapping sets — here they surface at circuit level, under cat-qubit noise, in the production decoder</text><text class="lf-axis lf-scale-with-art" x="480" y="464" text-anchor="middle" fill="#3a474b">section 05 asks the natural next question: how much of EVERY code's failure rate is invention like this?</text></svg>
+    <figcaption class="lf-caption">Fig 3 — Anatomy of a decoder trap, one of six exactly-known on the gate code: two idle-window faults land (panel 1) that together flip nothing — the stored information is intact; their six-detector alarm pattern (panel 2) is unusual but benign; the decoder reads it, picks the wrong explanation, and applies a correction that flips the logical bit (panel 3). The failure is the decoder's invention. One physical pattern repeats once per correction cycle, giving six traps, each known to the exact fault pair — circuit-level members of the trapping-set genus from classical coding theory. [SCHEMATIC · structure as committed]</figcaption></figure>
+
+<h2><span class="num">04</span>BRUTE FORCE, PRICED HONESTLY</h2>
+
+<p>With every shortcut dead by measurement, the defensible instrument was
+the oldest one: simulate at true cost, overnight, with exact Poisson
+statistics and a rule fixed in advance — no ordering claim unless the 95%
+intervals do not touch. Five codes. Sixty-seven million runs. Four point
+seven hours. Every failure counted.</p>
+
+<figure class="living-figure" data-figure='{"type": "qc-board", "stage": "#ffffff", "caption": "Fig 4 \u2014 The leaderboard, measured: five codes at the operating point, 67 million runs, exact 95% intervals, log axis (left is better). Certified orderings only where intervals do not touch: rep-13 (a floor at 2.31e-8, zero failures in 20 million runs) beats everything; the two AI finds are statistically TIED and left tied; rep-7 loses to both. The headline sits in the bracket: the AI find and rep-7 carry exactly the same efficiency (0.0769 logical per physical resource), and at that matched price the find fails 4.6x less often. C3, a weaker find, anchors the right edge. [SCORED \u00b7 numbers as committed]"}'>
+    <style class="lf-tier-style">.lf-svg text{font-size:13px}.lf-svg .lf-tick{font-size:11px}.lf-svg .lf-axis{font-size:13px}.lf-svg .lf-callout{font-size:15px}.lf-caption{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#586a6f;margin:10px 14px 0;max-width:78ch;}</style>
+    <svg data-poster="1" viewBox="0 0 960 520" width="100%" class="lf-svg" role="img" aria-label="A five-row interval chart on a log axis of per-logical failure rate: rep-13 as a leftmost floor arrow at 2.31e-8; the two AI finds tied near 1.3e-7; rep-7 near 6.2e-7; C3 near 2.1e-5; a bracket marks the 4.6x gap between the matched-efficiency pair."><text class="lf-callout lf-scale-with-art" x="480" y="40" text-anchor="middle" fill="#3a474b">THE LEADERBOARD, MEASURED — 67 MILLION RUNS</text><text class="lf-tick lf-scale-with-art" x="480" y="64" text-anchor="middle" fill="#5a6b70">per-logical failure rate at the operating point, 95% intervals; ordering claims only where intervals do not touch</text><line x1="430.0" y1="110" x2="430.0" y2="430" stroke="#d7dee0" stroke-width="1"></line><text class="lf-tick lf-scale-with-art" x="430.0" y="448" text-anchor="middle" fill="#5a6b70">1e-8</text><line x1="547.5" y1="110" x2="547.5" y2="430" stroke="#d7dee0" stroke-width="1"></line><text class="lf-tick lf-scale-with-art" x="547.5" y="448" text-anchor="middle" fill="#5a6b70">1e-7</text><line x1="665.0" y1="110" x2="665.0" y2="430" stroke="#d7dee0" stroke-width="1"></line><text class="lf-tick lf-scale-with-art" x="665.0" y="448" text-anchor="middle" fill="#5a6b70">1e-6</text><line x1="782.5" y1="110" x2="782.5" y2="430" stroke="#d7dee0" stroke-width="1"></line><text class="lf-tick lf-scale-with-art" x="782.5" y="448" text-anchor="middle" fill="#5a6b70">1e-5</text><line x1="900.0" y1="110" x2="900.0" y2="430" stroke="#d7dee0" stroke-width="1"></line><text class="lf-tick lf-scale-with-art" x="900.0" y="448" text-anchor="middle" fill="#5a6b70">1e-4</text><text class="lf-axis lf-scale-with-art" x="665.0" y="470" text-anchor="middle" fill="#5a6b70">failures per logical, per cycle (log scale) — LEFT IS BETTER</text><text class="lf-tick lf-scale-with-art" x="415" y="144" text-anchor="end" fill="#3a474b">rep-13 [13,1,13] — human pick, half the rate</text><line x1="430.0" y1="140" x2="472.7244076373269" y2="140" stroke="#3a474b" stroke-width="2" stroke-dasharray="3,4"></line><polygon points="472.7244076373269,133 483.7244076373269,140 472.7244076373269,147" fill="#ffffff" stroke="#3a474b" stroke-width="1.8"></polygon><text class="lf-tick lf-scale-with-art" x="490.7244076373269" y="144" text-anchor="start" fill="#3a474b">floor: <= 2.31e-8 (0 failures in 20M)</text><text class="lf-tick lf-scale-with-art" x="415" y="204" text-anchor="end" fill="#3a474b">winner rep3(x)eH8 [24,4,12] — AI find</text><line x1="550.5215576084075" y1="200" x2="572.806345452052" y2="200" stroke="#0c8f86" stroke-width="2.4"></line><line x1="550.5215576084075" y1="193" x2="550.5215576084075" y2="207" stroke="#0c8f86" stroke-width="2.4"></line><line x1="572.806345452052" y1="193" x2="572.806345452052" y2="207" stroke="#0c8f86" stroke-width="2.4"></line><circle cx="561.9757738162598" cy="200" r="7" fill="#0c8f86"></circle><text class="lf-tick lf-scale-with-art" x="584.806345452052" y="204" text-anchor="start" fill="#0c8f86">1.33e-7  [1.06, 1.64]</text><text class="lf-tick lf-scale-with-art" x="415" y="264" text-anchor="end" fill="#3a474b">frontier eH8(x)eH8 [64,16,16] — AI find</text><line x1="553.1462478410841" y1="260" x2="574.0042063291378" y2="260" stroke="#0c8f86" stroke-width="2.4"></line><line x1="553.1462478410841" y1="253" x2="553.1462478410841" y2="267" stroke="#0c8f86" stroke-width="2.4"></line><line x1="574.0042063291378" y1="253" x2="574.0042063291378" y2="267" stroke="#0c8f86" stroke-width="2.4"></line><circle cx="563.8617830646639" cy="260" r="7" fill="#0c8f86"></circle><text class="lf-tick lf-scale-with-art" x="586.0042063291378" y="264" text-anchor="start" fill="#0c8f86">1.38e-7  [1.12, 1.68] — TIED with winner</text><text class="lf-tick lf-scale-with-art" x="415" y="324" text-anchor="end" fill="#c2562f">rep-7 [7,1,7] — human pick, SAME PRICE as winner</text><line x1="629.5268141107483" y1="320" x2="650.3876925979897" y2="320" stroke="#c2562f" stroke-width="2.4"></line><line x1="629.5268141107483" y1="313" x2="629.5268141107483" y2="327" stroke="#c2562f" stroke-width="2.4"></line><line x1="650.3876925979897" y1="313" x2="650.3876925979897" y2="327" stroke="#c2562f" stroke-width="2.4"></line><circle cx="640.2177125228434" cy="320" r="7" fill="#c2562f"></circle><text class="lf-tick lf-scale-with-art" x="662.3876925979897" y="324" text-anchor="start" fill="#c2562f">6.15e-7  [4.99, 7.51]</text><text class="lf-tick lf-scale-with-art" x="415" y="384" text-anchor="end" fill="#5a6b70">C3 find [34,6,12] — AI find, weaker</text><line x1="817.6921075973073" y1="380" x2="822.1983654123285" y2="380" stroke="#5a6b70" stroke-width="2.4"></line><line x1="817.6921075973073" y1="373" x2="817.6921075973073" y2="387" stroke="#5a6b70" stroke-width="2.4"></line><line x1="822.1983654123285" y1="373" x2="822.1983654123285" y2="387" stroke="#5a6b70" stroke-width="2.4"></line><circle cx="819.9459892188602" cy="380" r="7" fill="#5a6b70"></circle><text class="lf-tick lf-scale-with-art" x="834.1983654123285" y="384" text-anchor="start" fill="#5a6b70">2.08e-5  [1.99, 2.18]</text><line x1="561.9757738162598" y1="470" x2="640.2177125228434" y2="470" stroke="#3a474b" stroke-width="1.6"></line><line x1="561.9757738162598" y1="463" x2="561.9757738162598" y2="477" stroke="#3a474b" stroke-width="1.6"></line><line x1="640.2177125228434" y1="463" x2="640.2177125228434" y2="477" stroke="#3a474b" stroke-width="1.6"></line><text class="lf-axis lf-scale-with-art" x="601.0967431695516" y="492" text-anchor="middle" fill="#3a474b">THE HEADLINE: same price, 4.6x fewer failures — AI find vs the human benchmark, intervals cleanly apart</text></svg>
+    <figcaption class="lf-caption">Fig 4 — The leaderboard, measured: five codes at the operating point, 67 million runs, exact 95% intervals, log axis (left is better). Certified orderings only where intervals do not touch: rep-13 (a floor at 2.31e-8, zero failures in 20 million runs) beats everything; the two AI finds are statistically TIED and left tied; rep-7 loses to both. The headline sits in the bracket: the AI find and rep-7 carry exactly the same efficiency (0.0769 logical per physical resource), and at that matched price the find fails 4.6x less often. C3, a weaker find, anchors the right edge. [SCORED · numbers as committed]</figcaption></figure>
+
+<p>The founding question resolves in one comparison the table makes fair
+by construction. The automated loop's champion and the human baseline it
+was always benchmarked against — a seven-qubit repetition code — carry
+<em>exactly</em> the same efficiency: one-thirteenth of a logical qubit
+per physical resource, 0.0769 to four places, which is precisely why that
+baseline was chosen chapters ago. At that matched price, the loop's find
+fails 4.6 times less often: 1.33e-7 against 6.15e-7 per logical per
+round, intervals cleanly separated. <b>The loop beats the human pick, at
+the human pick's own price point, measured.</b> Three honest
+qualifications ride with the headline, all on the record. The
+thirteen-qubit repetition code, at roughly half the efficiency, still
+holds the outright per-logical crown — its row produced zero failures in
+twenty million runs, a floor at 2.31e-8 that now stands as the challenge
+any future find must measure below. The loop's two best codes —
+distance 12 and distance 16 — are statistically <em>tied</em>, and the
+record leaves them tied. And the old "repetition always dominates"
+conclusion from earlier campaigns is revealed as a resolution artifact:
+at the old budgets the seven-qubit code's true failure rate was
+literally invisible — one expected event — and what cannot be seen
+cannot lose.</p>
+
+<p>One more number frames everything that follows. The proxy budgets
+this chapter inherited were two hundred thousand runs per code. The
+answer cost twenty million per row. The gap between what everyone spends
+and what the truth costs is two orders of magnitude — and every
+code-search paper grading itself at the cheap budget is publishing
+floors, not measurements.</p>
+
+
+
+<h2><span class="num">05</span>WHOSE FAULT IS FAILURE?</h2>
+
+<p>The trap discovery of section 03 raised a suspicion too important to
+leave qualitative: if a decoder can invent a logical error out of a
+harmless pair of faults, how much of every code's failure rate is the
+decoder's invention? The chapter's last measurement asked exactly that,
+with a metric chosen for bluntness. Take every failing run and check one
+thing: did the injected faults, by themselves, actually flip the stored
+information? If yes, the physics presented a genuine logical event. If
+<em>no</em> — information intact, decoder "corrected" its way into a
+flip — the failure is decoder-created, full stop. The fraction of
+decoder-created failures is a hard <em>lower bound</em> on the decoder's
+culpability (the genuine-event majority is left unattributed: some of it
+is unavoidable ambiguity, some may yet be decoder suboptimality of a
+subtler kind).</p>
+
+<figure class="living-figure" data-figure='{"type": "qc-gap", "stage": "#ffffff", "caption": "Fig 5 \u2014 Whose fault is failure: for each code, the share of operating-point failures where the injected faults flipped nothing and the decoder&#39;s own correction did the damage \u2014 a hard lower bound on the decoder&#39;s culpability, with 95% intervals. A minority on four of five codes (8.5-35%), but spanning sevenfold under the same decoder at the same operating point: the decoder gap is a property of the code-decoder pair, so any decoder repair moves the leaderboard non-uniformly. The indicated exception is rep-7 (point 63%; interval spans the majority line, so indicated, not certified) \u2014 the code the headline result beats \u2014 which frames the next chapter&#39;s registered question: how much of the 4.6x survives fixing the decoder? [SCORED \u00b7 numbers as committed]"}'>
+    <style class="lf-tier-style">.lf-svg text{font-size:13px}.lf-svg .lf-tick{font-size:11px}.lf-svg .lf-axis{font-size:13px}.lf-svg .lf-callout{font-size:15px}.lf-caption{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#586a6f;margin:10px 14px 0;max-width:78ch;}</style>
+    <svg data-poster="1" viewBox="0 0 960 520" width="100%" class="lf-svg" role="img" aria-label="A five-row interval chart of decoder-created failure share from zero to one hundred percent with a dashed majority line at fifty percent: four codes sit between eight and thirty-five percent; rep-7 sits at sixty-three percent with an interval spanning the line."><text class="lf-callout lf-scale-with-art" x="480" y="40" text-anchor="middle" fill="#3a474b">WHOSE FAULT IS FAILURE?</text><text class="lf-tick lf-scale-with-art" x="480" y="64" text-anchor="middle" fill="#5a6b70">share of each code's failures that the decoder INVENTS (faults flipped nothing; the “correction” did the damage) — a lower bound</text><line x1="380" y1="110" x2="380" y2="420" stroke="#d7dee0" stroke-width="1"></line><text class="lf-tick lf-scale-with-art" x="380" y="438" text-anchor="middle" fill="#5a6b70">0%</text><line x1="510.0" y1="110" x2="510.0" y2="420" stroke="#d7dee0" stroke-width="1"></line><text class="lf-tick lf-scale-with-art" x="510.0" y="438" text-anchor="middle" fill="#5a6b70">25%</text><line x1="640.0" y1="110" x2="640.0" y2="420" stroke="#d7dee0" stroke-width="1"></line><text class="lf-tick lf-scale-with-art" x="640.0" y="438" text-anchor="middle" fill="#5a6b70">50%</text><line x1="770.0" y1="110" x2="770.0" y2="420" stroke="#d7dee0" stroke-width="1"></line><text class="lf-tick lf-scale-with-art" x="770.0" y="438" text-anchor="middle" fill="#5a6b70">75%</text><line x1="900.0" y1="110" x2="900.0" y2="420" stroke="#d7dee0" stroke-width="1"></line><text class="lf-tick lf-scale-with-art" x="900.0" y="438" text-anchor="middle" fill="#5a6b70">100%</text><line x1="640.0" y1="110" x2="640.0" y2="420" stroke="#5a6b70" stroke-width="1.4" stroke-dasharray="5,4"></line><text class="lf-tick lf-scale-with-art" x="640.0" y="100" text-anchor="middle" fill="#5a6b70">majority line</text><text class="lf-tick lf-scale-with-art" x="365" y="149" text-anchor="end" fill="#3a474b">frontier eH8(x)eH8</text><line x1="380.0" y1="145" x2="495.44" y2="145" stroke="#3a474b" stroke-width="2.4"></line><line x1="380.0" y1="138" x2="380.0" y2="152" stroke="#3a474b" stroke-width="2.4"></line><line x1="495.44" y1="138" x2="495.44" y2="152" stroke="#3a474b" stroke-width="2.4"></line><circle cx="424.2" cy="145" r="7" fill="#3a474b"></circle><text class="lf-tick lf-scale-with-art" x="507.44" y="149" text-anchor="start" fill="#3a474b">8%</text><text class="lf-tick lf-scale-with-art" x="365" y="204" text-anchor="end" fill="#3a474b">C3 find</text><line x1="428.36" y1="200" x2="475.68" y2="200" stroke="#3a474b" stroke-width="2.4"></line><line x1="428.36" y1="193" x2="428.36" y2="207" stroke="#3a474b" stroke-width="2.4"></line><line x1="475.68" y1="193" x2="475.68" y2="207" stroke="#3a474b" stroke-width="2.4"></line><circle cx="450.2" cy="200" r="7" fill="#3a474b"></circle><text class="lf-tick lf-scale-with-art" x="487.68" y="204" text-anchor="start" fill="#3a474b">14%</text><text class="lf-tick lf-scale-with-art" x="365" y="259" text-anchor="end" fill="#3a474b">rep2(x)eH8 (gate code)</text><line x1="455.92" y1="255" x2="546.4" y2="255" stroke="#3a474b" stroke-width="2.4"></line><line x1="455.92" y1="248" x2="455.92" y2="262" stroke="#3a474b" stroke-width="2.4"></line><line x1="546.4" y1="248" x2="546.4" y2="262" stroke="#3a474b" stroke-width="2.4"></line><circle cx="499.6" cy="255" r="7" fill="#3a474b"></circle><text class="lf-tick lf-scale-with-art" x="558.4" y="259" text-anchor="start" fill="#3a474b">23%</text><text class="lf-tick lf-scale-with-art" x="365" y="314" text-anchor="end" fill="#3a474b">winner rep3(x)eH8</text><line x1="431.48" y1="310" x2="699.8" y2="310" stroke="#3a474b" stroke-width="2.4"></line><line x1="431.48" y1="303" x2="431.48" y2="317" stroke="#3a474b" stroke-width="2.4"></line><line x1="699.8" y1="303" x2="699.8" y2="317" stroke="#3a474b" stroke-width="2.4"></line><circle cx="560.96" cy="310" r="7" fill="#3a474b"></circle><text class="lf-tick lf-scale-with-art" x="711.8" y="314" text-anchor="start" fill="#3a474b">35%</text><text class="lf-tick lf-scale-with-art" x="365" y="369" text-anchor="end" fill="#3a474b">rep-7</text><line x1="591.64" y1="365" x2="806.92" y2="365" stroke="#c2562f" stroke-width="2.4"></line><line x1="591.64" y1="358" x2="591.64" y2="372" stroke="#c2562f" stroke-width="2.4"></line><line x1="806.92" y1="358" x2="806.92" y2="372" stroke="#c2562f" stroke-width="2.4"></line><circle cx="706.04" cy="365" r="7" fill="#c2562f"></circle><text class="lf-tick lf-scale-with-art" x="818.92" y="369" text-anchor="start" fill="#c2562f">63%</text><text class="lf-axis lf-scale-with-art" x="480" y="452" text-anchor="middle" fill="#3a474b">a minority culprit on four of five — but a SEVENFOLD spread under the same decoder: the gap is a property of the PAIR</text><text class="lf-tick lf-scale-with-art" x="480" y="476" text-anchor="middle" fill="#c2562f">rep-7 — the code the headline beats — is the indicated exception (63%, interval spans the line): Chapter 6's registered question</text></svg>
+    <figcaption class="lf-caption">Fig 5 — Whose fault is failure: for each code, the share of operating-point failures where the injected faults flipped nothing and the decoder's own correction did the damage — a hard lower bound on the decoder's culpability, with 95% intervals. A minority on four of five codes (8.5-35%), but spanning sevenfold under the same decoder at the same operating point: the decoder gap is a property of the code-decoder pair, so any decoder repair moves the leaderboard non-uniformly. The indicated exception is rep-7 (point 63%; interval spans the majority line, so indicated, not certified) — the code the headline result beats — which frames the next chapter's registered question: how much of the 4.6x survives fixing the decoder? [SCORED · numbers as committed]</figcaption></figure>
+
+<p>The answer came back with structure nobody ordered. On four
+of the five measurable codes the decoder-created share is a
+<b>minority</b> — 8.5 to 35 percent. But it is not one number: it spans
+those codes by a factor of seven under the <em>same decoder at the same
+operating point</em>, with the extremes certified apart. The decoder gap
+is not a property of the decoder; it is a property of the
+code-decoder <em>pair</em> — which means any future decoder improvement
+will move the leaderboard non-uniformly, and a ranking measured under
+one decoder is, in part, a ranking <em>of</em> that decoder. The one
+indicated exception is the seven-qubit repetition code — the very
+baseline the headline result beats: its point estimate says
+sixty-three percent of its failures are decoder-created, though its
+interval spans the fifty-percent line, so the majority reading is
+indicated, not certified. Which frames the question the next chapter is
+built on, registered before any repair is attempted: <b>how much of the
+4.6× survives fixing the decoder?</b></p>
+
+<h2><span class="num">06</span>WHERE THIS SITS</h2>
+
+<p>Three literatures meet at this chapter, and the intersection was
+empty when it started. First, AI code search: the field is prolific —
+reinforcement learning <button class="cite" data-c="nautrup">Quantum
+2019</button> <button class="cite" data-c="olle">npj QI 2024</button>,
+weight-constrained RL <button class="cite" data-c="heliu">arXiv
+2025</button>, LLM-guided evolution and Bayesian optimization in a 2026
+flurry <button class="cite" data-c="ibmllm">arXiv 2026</button>
+<button class="cite" data-c="bayesopt">arXiv 2026</button> — and,
+checked sentence by sentence, grades itself at code capacity, on
+budgets where (section 04) strong codes are floors, not measurements.
+This chapter's campaigns are, as far as we can find, the only published
+record of a search loop run against the circuit-level operating-point
+number itself — including the honest reason that is rare: four
+campaigns' worth of the objective being unmeasurable, ending in the
+priced answer.</p>
+
+<p>Second, rare-event measurement: three weeks before this chapter's
+instruments died, the field converged on the same objects. A November
+2025 preprint <button class="cite" data-c="failfast">arXiv
+2025</button> proposes fitting a low-parameter ansatz to the failure
+spectrum — the exact fraction-of-w-fault-runs-that-fail curve this
+chapter's first instrument measures with exact stratum weights — plus
+exact low-weight counting and a splitting method; circuit-level
+splitting recipes followed <button class="cite" data-c="splitting">arXiv
+2025</button>. Our diffuse-structure kill and parity result are, read
+against that program, field notes on where those techniques will and
+will not save you; our six certified operating-point truths are the
+calibration set such rulers should be gated against, and the next
+chapter does exactly that. Third, decoder failure structure: the traps
+of section 03 are circuit-level members of the trapping-set genus
+<button class="cite" data-c="trapping">Quantum 2021</button>, where
+classical experience says exact knowledge of a decoder's failure sets
+buys orders of magnitude — under biased cat-qubit noise, with the
+production decoder, that program has not been run. It is the next
+chapter's Phase 1. And the leaderboard itself lands in a live debate:
+the flagship cat-qubit roadmap replaces repetition with high-rate LDPC
+outer codes <button class="cite" data-c="ruiz">Nat. Commun.
+2025</button>; this chapter's measured table — products beating
+matched-efficiency repetition, losing to half-efficiency repetition —
+is a small, certified data point in exactly that trade.</p>
+
+<p><b>And here is why any of it matters.</b> Every quantum-computing
+roadmap lives or dies on one ratio: physical resources per logical qubit.
+The cat-qubit lane's flagship claim — a hundred logical qubits on 758
+physical cats — is exactly a bet about which outer codes win at which
+price points, and it is a bet currently made on cheap grading. This
+chapter built the expensive scale and weighed five contenders honestly;
+what it is building toward is the thing that would actually move that
+ratio. Three registered shots, in rising order of impact. First: the six
+known decoder traps invite a repaired decoder, and the measured
+code-decoder interaction says repair will re-shuffle the leaderboard —
+if the repair alone drops the leading codes below today's floor, the
+ratio moves without touching the hardware. Second: a cheap ruler that
+survives its gate against this chapter's six certified truths would make
+honest grading a per-minute cost instead of a per-night one — and that,
+finally, is a discovery loop that can actually run, steering on the
+number that matters instead of a proxy that lies. Third, the crown: an
+AI-discovered code measured below 2.31e-8 at competitive efficiency —
+beating the best human pick outright, at scale, on the certified
+instrument. That is the result a stranger would care about. This chapter
+is not that result. It is the reason the attempt will mean something:
+the wall is mapped, the instrument is priced, the truths are certified,
+the question is registered — and when the crown attempt resolves, in
+either direction, nobody will have to take anyone's word for it.</p>
+
+<h2><span class="num">07</span>THE ERROR LEDGER</h2>
+
+<p>Nine catches in this chapter's measurement arc alone, each caught by
+the discipline built for it, each on the record in the expedition
+notebook — and four of them are the machinery catching its own author,
+which is the strongest evidence the machinery works. The author's side: hardcoded "truth"
+constants that were the strategy room's reconstruction rather than the
+committed bytes — caught by the landmark-anchor gate on its first
+firing; a checkpoint count written from a stale mid-run report — caught
+twice, against the file, by the executing agent; a commit clause
+asserting records "identical to committed outputs" that had no
+committed twins — caught by pre-commit re-verification; a "majority"
+claim whose interval spans the majority line — caught at the diff gate
+and softened to what the statistics certify. The machinery's side: a
+registered gate that was arithmetically impossible as written (its
+budget excluded a cost it mandated) — caught before the run, fixed by
+dated addendum; a seed-reproducibility claim falsified across machines
+(the simulator's random streams are per-machine; the numerics library's
+are not) — corrected append-only; a shell that aborts speculative file
+checks; a transport channel that corrupts long code (files and hashes
+ever since); and an approval relayed in the wrong room, twice, caught
+both times by a one-line guard that now heads every handoff. None of
+these touched a published number. All of them would have, eventually,
+somewhere — that is what the ledger is for.</p>
+
+<h2><span class="num">08</span>REPRODUCE THIS</h2>
+
+<p>Everything is in the repository at this release's tag: the frozen
+referee (simulator, noise model, decoder configuration — anchored
+verbatim in every instrument's self-test), eight pre-registration
+documents — the measurement arc's four alone carry twenty-five priors —
+with every resolution mechanical and on the record,
+every instrument with its gates, every run's checkpoints and logs, and
+a thirteen-entry expedition notebook that is the uncut record this page
+narrates. The overnight leaderboard run is one command
+(<span class="mono">python -u s8_truth.py --run</span>, ~5 hours, checkpointed and
+resumable); the decoder-gap measurement is another (~2 hours); the
+canonical environment is pinned (Python 3.12, numpy 2.5.1, stim 1.16.0,
+ldpc 2.4.1). One reproducibility honesty note, learned the hard way and
+recorded in the notebook: the simulator's seeded random streams are
+deterministic per machine but not across machines — your leaderboard
+will agree within the published intervals, not to the byte; the
+numerics-library paths (all samplers here) reproduce exactly anywhere.
+The six certified truths are the calibration set for any cheaper ruler
+you care to propose; the rep-13 floor, 2.31e-8, is the number to beat;
+and the decoder-gap question is open, registered, and waiting.</p>
+<section id="verify">
+  <div class="kicker teal">CONSISTENCY · EXECUTABLE</div>
+  <h2>Run the checks</h2>
+  <p class="lede">A survey's verification weight sits mostly in the <a href="dossier.html">citation audit</a>; the console here runs the <em>consistency</em> checks — cross-avenue totals, internal arithmetic, and the rule that every forecast carries a dated signpost. Same arithmetic as <span class="mono">verification/verify_numbers.py</span>, which CI reruns on every commit.</p>
+  <div class="console">
+    <div class="console-head">
+      <span class="label">consistency console · <span id="ncheck">33</span> checks</span>
+      <button id="run">Run all checks</button>
+    </div>
+    <div id="log" aria-live="polite" data-baked="1">
+      <div class="row"><span class="badge p">PASS</span><span class="what">01 · Consistency: at least one avenue in the landscape</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">02 · Consistency: every FORECAST has a dated signpost</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">03 · Consistency: all forecast probabilities lie in [0,100]</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">04 · Ch5: the headline 4.6x = rep-7 eps / winner eps (6.153e-7 / 1.328e-7)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">05 · Ch5: matched efficiency 0.0769 -- winner 4/52 equals rep-7 1/13</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">06 · Ch5: matched efficiency value = 4/52</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">07 · Ch5: certified -- rep-13 floor UB sits below the winner's CI-lower</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">08 · Ch5: certified -- rep-7's CI-lower sits above the frontier's CI-upper</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">09 · Ch5: the TIE is real -- frontier CI-lower sits below winner CI-upper (overlap)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">10 · Ch5: winner row cap-limited at +/-21% = half-width over point</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">11 · Ch5: C3 point sits inside its stated band</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">12 · Ch5: '67 million runs' = 2.0e7+2.0e7+5.5e6+1.97e7+2.0e6 shots (Entry 012 rows)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">13 · Ch5: '100x the standard budget' = 2e7 truth rows over 2e5 proxy rows</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">14 · Ch5: rep-13 efficiency 0.040 = 1/(13+12)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">15 · Ch5: rep-13 eff is 'roughly half' the winner's = 0.040/0.0769</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">16 · Ch5: rep-7 at the old 2e5 budget -- 'about one expected event' (p_any 4.92e-6, Entry 012)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">17 · Ch5: the typical run carries 'eight point four' faults (lambda)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">18 · Ch5: fig-2 '1-in-42,000 at six faults' = 1/f_6</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">19 · Ch5: fig-2 'about 1 in 7,000' at the typical count = 1/f_8</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">20 · Ch5: fig-2 spectrum tops out at '35%' by thirty-four faults</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">21 · Ch5: decoder-created share is a minority on four of five codes</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">22 · Ch5: the 'sevenfold' Q spread = 0.627/0.085</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">23 · Ch5: certified Q pair -- rep-7 CI-lower above frontier CI-upper</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">24 · Ch5: certified Q pair -- rep-7 CI-lower above C3 CI-upper</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">25 · Ch5: rep-7 'indicated, not certified' -- its own CI spans the 0.5 line</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">26 · Ch5: S9 campaign '8.0M decodes' = 2x250k + 3e6 + 1.5e6 + 3e6</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">27 · Ch5: 'twenty-five priors' across the four measurement preregs = 7+8+6+4</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">28 · Ch5: 'eight resolved against us' = P6 + Q3,Q4,Q5,Q8 + T3,T4 + S1</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">29 · Ch5: 'five died untested' = P4,P5,P7 + Q6,Q7</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">30 · Ch5: the error ledger runs E1-E14 = nine measurement-arc + five write-up</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">31 · Ch5: 'four of them author-side' in the measurement arc (E1-E4)</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">32 · Ch5: landscape carries five scored + six forward = eleven avenues</span></div>
+      <div class="row"><span class="badge p">PASS</span><span class="what">33 · Ch5: stakes passage '758 cats for 100 logical' ~ 7.6 qubits per logical (Ruiz)</span></div>
+      <div class="tally">TOTAL: 33 checks · 33 pass · 0 fail — All checks pass — the survey is internally consistent.</div>
+    </div>
+  </div>
+</section>
+
+<div class="publish-cta">
+  <div class="pc-text">
+    <p class="pc-h">Want to publish like this?</p>
+    <p class="pc-sub">You just read a survey that explains itself. You can publish one too — Open Dossier is a free template, and an AI agent does the drafting, typesetting, citations, and verification. Idea to live publication in an afternoon.</p>
+  </div>
+  <a class="pc-btn" href="https://github.com/m4gr4th34/open-dossier-template/blob/main/GETTING-STARTED.md">Publish your own →</a>
+</div>
+
+<footer>
+  <b>About this edition:</b> this page is the complete survey in self-explaining form — the avenue <a href="#landscape">landscape</a> and the consistency console up top, the narrative below. This live edition is the paper. The <a href="dossier.html">audit trail</a> carries the citation audit and the receipts. A quiet secondary purpose: these early chapters double as a live shakedown of the Open Dossier template itself — the machinery is tested by being used, and several of its fixes were found here.
+  <br><br><span class="mono">An Open Dossier · CC BY 4.0 · AI-assistance: extremely heavy AI use, with human guidance and final review · every verification label is true</span>
+</footer>
+
+<script src="../../figures/figures.js"></script>
+<script src="../../figures/qc-degenloop.js"></script>
+<script src="../../figures/qc-severitymap.js"></script>
+<script src="../../figures/qc-campaign.js"></script>
+<script src="../../figures/qc-ch5-posters.js"></script>
+<script>
+(function () {
+  if (!window.DossierFigures) return;
+  var figs = document.querySelectorAll("figure[data-figure]");
+  for (var i = 0; i < figs.length; i++) {
+    var fig = figs[i], spec;
+    try { spec = JSON.parse(fig.getAttribute("data-figure")); } catch (e) { continue; }
+    var fn = spec && window.DossierFigures.renderers[spec.type];
+    if (typeof fn === "function") fn(fig, spec);
+  }
+})();
+</script>
+
+</div>
+
+<!-- cite fields. who: "Author et al. (Year)". what: 1-2 sentence plain-language summary of what it showed + why it matters. src: "Journal Vol, Page (Year), DOI/arXiv". Re-state fresh per chapter; never back-reference. -->
+<script type="application/json" id="cites-data">
+{
+ "ocelot": {
+  "who": "Putterman et al. (2025)",
+  "what": "Amazon's Ocelot chip: measured cat-qubit error correction with released shot-level data — the hardware anchor of this chapter's noise model, unchanged from Chapter 4's calibration.",
+  "src": "Nature 638, 927-934 (2025), DOI 10.1038/s41586-025-08642-7; data DOI 10.5281/zenodo.14257632"
+ },
+ "ruiz": {
+  "who": "Ruiz et al. (2025)",
+  "what": "LDPC-cat: the roadmap that replaces repetition with high-rate phase-flip LDPC outer codes (758 cats for 100 logical qubits at 1e-8) — the live trade this chapter's measured leaderboard is a data point in, and the source of the operating-point regime it targets.",
+  "src": "Nat. Commun. 16, 1040 (2025), DOI 10.1038/s41467-025-56298-8"
+ },
+ "nautrup": {
+  "who": "Nautrup et al. (2019)",
+  "what": "The RL code-search origin point — agents optimizing code layouts, graded at code capacity; the budget-honesty seam of section 06 starts here.",
+  "src": "Quantum 3, 215 (2019), arXiv 1812.08451"
+ },
+ "olle": {
+  "who": "Olle et al. (2024)",
+  "what": "Noise-aware RL code discovery whose noise is channel bias with error-free extraction, by the authors' own statement — code capacity in modern dress.",
+  "src": "npj Quantum Information 10 (2024), DOI 10.1038/s41534-024-00920-y, arXiv 2311.04750"
+ },
+ "heliu": {
+  "who": "He & Liu (2025)",
+  "what": "RL discovery of low-weight codes under hardware caps — the weight-constraint half of the search space, evaluated at code capacity.",
+  "src": "arXiv 2502.14372 (2025)"
+ },
+ "ibmllm": {
+  "who": "Cruz-Benito et al., IBM (2026)",
+  "what": "LLM-guided code search, part of the 2026 flurry — code-capacity graded.",
+  "src": "arXiv 2606.02418 (2026)"
+ },
+ "bayesopt": {
+  "who": "Bayesian-optimization code discovery (2026)",
+  "what": "Bayesian-optimization code search, same flurry, same grading.",
+  "src": "arXiv 2601.18562 (2026)"
+ },
+ "trapping": {
+  "who": "Raveendran & Vasić (2021)",
+  "what": "Trapping sets of quantum LDPC codes: the systematic study of decoder failure sets, showing their exact knowledge can buy orders of magnitude in the error floor — the genus this chapter's six circuit-level decoder traps belong to.",
+  "src": "Quantum 5, 562 (2021)"
+ },
+ "failfast": {
+  "who": "Beverland et al. (2025)",
+  "what": "'Fail fast': a low-parameter ansatz for the failure spectrum plus exact low-weight counting and splitting — the measurement program this chapter's instruments independently collided with; its ansatz is the ruler candidate the next chapter gates against this chapter's certified truths.",
+  "src": "arXiv:2511.15177 (2025)"
+ },
+ "splitting": {
+  "who": "Mayer et al. (2025)",
+  "what": "Rare-event splitting for the circuit-level noise model, reported to reach failure rates below 1e-20 — the published route to certifying below the rep-13 floor if the next chapter's crown attempt needs it.",
+  "src": "arXiv:2509.13678 (2025)"
+ },
+ "bravyi": {
+  "who": "Bravyi & Vargo (2013)",
+  "what": "The splitting-method origin both modern rare-event programs build on — journal-published anchor under the two preprints.",
+  "src": "Phys. Rev. A 88, 062308 (2013)"
+ }
+}
+</script>
+<script>
+// citation database — add an entry per chip:
+// KEY: {who:"Author(s) (Year)", what:"What they showed, 2 sentences, plain language.", src:"Journal Vol, Page"}
+const CITES = Object.assign(
+  { demo: {who:"This is a citation chip", what:"Tap any chip like this one and you get the source plus a two-sentence plain-language summary of what it actually showed \u2014 instead of a bare [7] sending you down a rabbit hole.", src:"You never leave the page."} },
+  (document.getElementById('cites-data') ? JSON.parse(document.getElementById('cites-data').textContent) : {})
+);
+// one shared toggle behavior for terms and citations
+function closeCard(btn){ const c = btn._card; if(c){ c.remove(); btn._card = null; btn.setAttribute('aria-expanded','false'); } }
+function toggle(btn, html, extraClass){
+  if(btn._card){ closeCard(btn); return; }
+  const card = document.createElement('span');
+  card.className = 'popcard' + (extraClass ? ' ' + extraClass : '');
+  card.innerHTML = html;
+  const block = btn.closest('p, .howto, .body, .openclaim, .forecast, .reported') || btn.parentNode;
+  block.insertAdjacentElement('afterend', card);
+  btn._card = card; btn.setAttribute('aria-expanded','true');
+}
+document.querySelectorAll('.term').forEach(btn=>{
+  btn.setAttribute('aria-expanded','false');
+  btn.addEventListener('click', ()=> toggle(btn, btn.dataset.d));
+});
+document.querySelectorAll('.cite').forEach(btn=>{
+  btn.setAttribute('aria-expanded','false');
+  btn.addEventListener('click', ()=>{
+    const c = CITES[btn.dataset.c];
+    if(!c) return;
+    toggle(btn, '<b>'+c.who+':</b> '+c.what+'<span class="src">'+c.src+'</span>', 'citecard');
+  });
+});
+</script>
+<script>
+// ---------------------------------------------------------------
+// SURVEY LANDSCAPE — single source of truth for the cards.
+// One object per avenue. Replace the sample rows with yours.
+//   name     : avenue/option name
+//   thesis   : one-line plain-language thesis
+//   status   : ESTABLISHED | OPEN-UNVERIFIED | FORECAST | REPORTED
+//              (any other ladder status renders as a neutral chip)
+//   forecast : integer percent, or null  (only meaningful for FORECAST)
+//   signpost : dated, falsifiable signpost string — MANDATORY for a
+//              FORECAST (a forecast without one is just an opinion with
+//              a number on it; the card flags it in red)
+//   cites    : array of citation keys (match dossier.html's audit)
+// ---------------------------------------------------------------
+let AVENUES = [];
+let RULES = {};
+
+const STATUS = {
+  "ESTABLISHED":     {cls:"s-est",      tcls:"t-est"},
+  "OPEN-UNVERIFIED": {cls:"s-open",     tcls:"t-open"},
+  "FORECAST":        {cls:"s-forecast", tcls:"t-forecast"},
+  "REPORTED":        {cls:"s-reported", tcls:"t-reported"},
+};
+const statusMeta = s => STATUS[s] || {cls:"s-default", tcls:""};
+
+function chip(s){ return '<span class="s-chip '+statusMeta(s).cls+'">'+s+'</span>'; }
+function forecastCell(a){
+  if(a.status !== "FORECAST") return '';
+  if(!a.signpost)             return '<span class="fc missing">⚠ forecast needs a dated signpost</span>';
+  const pct = (a.forecast==null) ? '?' : a.forecast+'%';
+  return '<span class="fc"><span class="pct">~'+pct+'</span> <span class="by">by '+a.signpost+'</span></span>';
+}
+function sourcesCell(a){
+  if(!a.cites || !a.cites.length) return '<span class="srcs"><span class="none">no sources</span></span>';
+  return '<span class="srcs">'+a.cites.map(c=>'<span class="ref">'+c+'</span>').join('')+'</span>';
+}
+
+function renderCards(){
+  document.getElementById('av-grid').innerHTML = AVENUES.map(a =>
+    '<div class="av-card '+statusMeta(a.status).tcls+'">'+
+      '<div class="av-top"><span class="av-name">'+a.name+'</span>'+chip(a.status)+'</div>'+
+      '<p class="av-thesis">'+a.thesis+'</p>'+
+      '<div class="av-meta">'+forecastCell(a)+sourcesCell(a)+'</div>'+
+    '</div>'
+  ).join('');
+}
+
+// ---------------------------------------------------------------
+// CONSISTENCY CONSOLE — checks computed from AVENUES; the RULES they
+// enforce are single-sourced from avenues.json's "checks" block (the
+// same file verify_numbers.py reads), so a threshold can't drift
+// between this page and the verifier. RULES is set by the loader below.
+// ---------------------------------------------------------------
+function buildChecks(){
+  const c = [];
+  const minAvenues   = (RULES.min_avenues ?? 1);
+  const signpostReq  = (RULES.forecast_signpost_required ?? true);
+  const pctMin       = (RULES.forecast_pct_min ?? 0);
+  const pctMax       = (RULES.forecast_pct_max ?? 100);
+
+  const forecasts    = AVENUES.filter(a=>a.status==="FORECAST");
+  const withSignpost = forecasts.filter(a=>!!a.signpost).length;
+  const outOfRange   = AVENUES.filter(a=>a.forecast!=null && (a.forecast<pctMin || a.forecast>pctMax)).length;
+
+  c.push(["Consistency: at least one avenue in the landscape", AVENUES.length, [minAvenues, 9999]]);
+  const expSign = signpostReq ? forecasts.length : withSignpost;
+  c.push(["Consistency: every FORECAST has a dated signpost", withSignpost, [expSign, expSign]]);
+  c.push(["Consistency: all forecast probabilities lie in ["+pctMin+","+pctMax+"]", outOfRange, [0, 0]]);
+  return c;
+}
+
+const fmt = v => v >= 1e4 ? v.toExponential(2) : (Number.isInteger(v) ? String(v) : v.toFixed(4));
+const runBtn = document.getElementById('run');
+const logEl  = document.getElementById('log');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function renderLandscapeError(){
+  document.getElementById('av-grid').innerHTML =
+    '<div class="av-card"><div class="av-top"><span class="av-name">Landscape unavailable</span></div>'+
+    '<p class="av-thesis">The avenue data loads from <span class="mono">avenues.json</span>. '+
+    'View this page on the live site or a local server — a file:// double-click can\'t fetch it.</p></div>';
+  document.getElementById('ncheck').textContent = '0';
+}
+// data-baked guard: a static-baked floor (bake_machinery.js) already carries the cards +
+// console verdict; still load AVENUES/RULES so the Run button works, but DON'T re-render the
+// cards or let a fetch failure (file://) overwrite the baked floor.
+const baked = !!document.querySelector('#av-grid[data-baked]');
+if (document.getElementById('av-grid')) {
+fetch('avenues.json').then(r=>r.json()).then(d=>{
+  AVENUES = Array.isArray(d.avenues) ? d.avenues : [];
+  RULES   = d.checks || {};
+  if(!baked){
+    renderCards();
+    document.getElementById('ncheck').textContent = buildChecks().length;
+  }
+}).catch(()=>{ if(!baked) renderLandscapeError(); });
+
+runBtn.addEventListener('click', () => {
+  runBtn.disabled = true; logEl.innerHTML = '';
+  const checks = buildChecks(); let pass = 0;
+  checks.forEach((ck, i) => {
+    const [label, val, [lo, hi]] = ck, ok = val >= lo && val <= hi;
+    if(ok) pass++;
+    const row = document.createElement('div'); row.className = 'row'; row.style.opacity = '0';
+    row.innerHTML = '<span class="badge ' + (ok?'p':'f') + '">' + (ok?'PASS':'FAIL') + '</span>' +
+      '<span class="what">' + String(i+1).padStart(2,'0') + ' · ' + label + '</span>' +
+      '<span class="nums">' + fmt(val) + ' ∈ [' + fmt(lo) + ', ' + fmt(hi) + ']</span>';
+    logEl.appendChild(row);
+    const show = () => { row.style.transition = 'opacity .25s'; row.style.opacity = '1'; };
+    reduced ? show() : setTimeout(show, 90 * i);
+    if(i === checks.length - 1){
+      const t = document.createElement('div'); t.className = 'tally';
+      t.textContent = 'TOTAL: ' + checks.length + ' checks · ' + pass + ' pass · ' +
+        (checks.length - pass) + ' fail' +
+        (pass === checks.length ? ' — the survey is internally consistent.' : ' — fix the paper, not the tolerance.');
+      const fin = () => { logEl.appendChild(t); runBtn.disabled = false; runBtn.textContent = 'Run again'; };
+      reduced ? fin() : setTimeout(fin, 90 * i + 350);
+    }
+  });
+});
+}
+</script>
+<script>
+fetch('provenance.json').then(r=>r.json()).then(p=>{
+  const d=document.getElementById('pv-doi'), v=document.getElementById('pv-doi-v');
+  // Lineage is an index over ALL chapters, not a single reading edition: it shows the
+  // concept (all-versions) DOI and an index-appropriate reading label. The trinity shows
+  // this release's version DOI. The no-DOI branch stays FIRST for both (an honestly
+  // un-DOI'd dossier shows "not DOI-archived" on every surface, lineage included).
+  var isIndex = document.body.dataset.chrome === 'index';
+  if(p.doi_archived===false){
+    v.textContent='not DOI-archived \u2197';
+    d.href='verify.html';
+  } else if(isIndex){
+    var cd=p.concept_doi||'';
+    if(!cd || cd.indexOf('TODO')===0){ v.textContent='DOI after first release'; d.href='https://github.com/m4gr4th34/dossier-QC-Accelerate-002'; }
+    else { d.href='https://doi.org/'+cd; v.textContent=cd+' \u2197'; }
+  } else if(!p.version_doi || p.version_doi.indexOf('TODO')===0){
+    v.textContent='DOI after first release';
+    d.href='https://github.com/m4gr4th34/dossier-QC-Accelerate-002';
+  } else {
+    d.href='https://doi.org/'+p.version_doi; v.textContent=p.version_doi+' \u2197';
+  }
+  // Draft-state labels (root reading editions): render ONLY client-side-verifiable states from
+  // provenance.json. "identical to <tag>" is deliberately impossible — not verifiable without
+  // hashing — so we never claim it. released = a real tag AND a real release date (mirrors
+  // check_placeholders' semantics). updatedSince = the working "last worked on" date is after the
+  // release date (day granularity; ISO date strings compare lexically) -> worked on since the freeze.
+  var released = p.release_tag && p.release_tag !== 'v0.0.0' &&
+                 !/^TODO/.test(p.release_tag) &&
+                 /^\d{4}-\d{2}-\d{2}$/.test(p.released || '');
+  var updatedSince = released && p.updated && p.updated > p.released;
+  document.getElementById('pv-state').textContent =
+    isIndex ? 'the chapter index'
+      : !released ? 'working draft · unreleased'
+      : updatedSince ? 'living draft · updated since ' + p.release_tag
+      : 'living draft · last release ' + p.release_tag;
+  // Byline "last updated" date: appended client-side (never baked -> HTML stays deterministic for
+  // check-edition). Only on author/meta bylines (index + dossier) -- NOT lineage (chapter index,
+  // not a dated edition) and NOT verify (its byline is an aphorism). p.updated is the working
+  // "last worked on" date (render-stamped); real-date-gated so the YYYY-MM-DD placeholder never shows.
+  (function(){
+    if (isIndex) return;                          // lineage: no date on the series subtitle
+    var path = location.pathname;
+    if (/verify\.html$/.test(path)) return;       // verify: byline is an aphorism, no date
+    var dt = p.updated;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dt) || dt === 'YYYY-MM-DD') return;  // real-date gate
+    var by = document.getElementById('byline');
+    if (!by) return;
+    var span = document.createElement('span');
+    span.className = 'byline-updated';
+    span.textContent = ' \u00b7 updated ' + dt + ' ';
+    var utc = document.createElement('abbr');
+    utc.className = 'byline-utc';
+    utc.textContent = '(UTC)';
+    // Self-explaining tooltip (matches the dossier's "explain any term" idiom) -- no external link,
+    // no link rot. The date is UTC to stay consistent with the release date (also UTC) and to be
+    // timezone-neutral for any reader.
+    utc.title = 'Coordinated Universal Time \u2014 the timezone-neutral standard; may differ from your local date.';
+    span.appendChild(utc);
+    by.appendChild(span);
+  })();
+  // Byline STATUS STRIP: a one-line, truthful draft-state label. Root reading editions only (skip
+  // the chapter index and verify's aphorism byline). Frozen live/ pages never reach here \u2014 their
+  // provenance.json fetch 404s -> .catch -> the strip is self-suppressing, and their statically
+  // baked "release <tag>" chip + record-note banner stand untouched. Every wording is a state
+  // verifiable from provenance.json alone; no identity/divergence claim beyond the day-granular
+  // updated-vs-released date.
+  (function(){
+    if (isIndex) return;                          // chapter index: not a dated reading edition
+    if (/verify\.html$/.test(location.pathname)) return;  // verify: byline is an aphorism
+    var by = document.getElementById('byline'); if (!by) return;
+    var strip = document.createElement('span');
+    strip.className = 'byline-status';
+    if (!released) {
+      strip.textContent = 'Working draft \u2014 not yet released.';
+    } else {
+      strip.textContent = 'Living draft \u2014 last frozen as ' + p.release_tag + ' (' + p.released + '). ';
+      var a = document.createElement('a');
+      a.href = 'lineage.html';
+      a.textContent = 'All versions \u2197';
+      strip.appendChild(a);
+    }
+    by.appendChild(strip);
+  })();
+}).catch(()=>{
+  // data-doi-baked guard: a frozen chapters/<tag>/ (or live/<tag>/) page bakes its DOI state
+  // statically at freeze/reskin time (freeze_chapter.py bake_doi_chip). Its provenance.json fetch
+  // 404s by design -> this .catch fires, but the baked chip is the SEALED TRUTH (a real doi.org
+  // link, or the honest "not DOI-archived"); overwriting it with a generic "see repository" would
+  // un-bake honesty on every JS-on load. Leave a baked chip entirely alone (text + href). Root/live
+  // drafts are never baked, so they still fall through to the generic fallback below.
+  if(document.querySelector('#pv-doi[data-doi-baked]')) return;
+  document.getElementById('pv-doi-v').textContent='see repository \u2197';
+  document.getElementById('pv-doi').href='https://github.com/m4gr4th34/dossier-QC-Accelerate-002';});
+</script>
+<div class="lbx" id="lbx" role="dialog" aria-modal="true" aria-label="Figure, full size" aria-hidden="true">
+  <img id="lbx-img" alt="">
+</div>
+<script>
+(function(){
+  var lbx = document.getElementById('lbx');
+  var lbxImg = document.getElementById('lbx-img');
+  if(!lbx || !lbxImg) return;
+  var imgs = document.querySelectorAll('figure img');
+  if(!imgs.length) return;            // INERT when there are no figures
+  var lastFocus = null;
+  function open(src, alt){
+    lastFocus = document.activeElement;
+    lbxImg.src = src; lbxImg.alt = alt || '';
+    lbx.classList.add('open'); lbx.setAttribute('aria-hidden','false');
+    lbx.tabIndex = -1; lbx.focus();
+  }
+  function close(){
+    lbx.classList.remove('open'); lbx.setAttribute('aria-hidden','true');
+    lbxImg.src = '';
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  imgs.forEach(function(img){
+    img.setAttribute('role','button');
+    img.setAttribute('tabindex','0');
+    if(!img.getAttribute('aria-label'))
+      img.setAttribute('aria-label','View figure full size');
+    img.addEventListener('click', function(){ open(img.currentSrc||img.src, img.alt); });
+    img.addEventListener('keydown', function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(img.currentSrc||img.src, img.alt); }
+    });
+  });
+  lbx.addEventListener('click', close);   // backdrop OR image click closes (cursor:zoom-out)
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape' && lbx.classList.contains('open')) close();
+  });
+})();
+</script>
+<script>
+// Lineage strip — mirrors the provenance fetch shape against lineage.json.
+// ANCESTORS-ONLY / OUTWARD: links the latest SEALED chapter + "view all", never a
+// forward/next chapter (a sealed chapter cannot know its successors). Hidden
+// unless chapters exist; built via createElement/textContent (no innerHTML).
+fetch('lineage.json').then(function(r){return r.json();}).then(function(d){
+  var chs = (d.chapters||[]).slice().sort(function(a,b){return a.n-b.n;});
+  if(chs.length < 1) return;                 // solo dossier (no releases) -> strip stays hidden
+  var strip = document.getElementById('lineageStrip');
+  if(!strip) return;
+  var currentN = Math.max.apply(null, chs.map(function(c){return c.n;}));
+  var latest = chs.filter(function(c){return c.n===currentN;})[0];
+
+  function sep(){ var s=document.createElement('span'); s.className='sep'; s.textContent='·'; return s; }
+
+  // The reader is on the WORKING DRAFT (the live, unreleased tip) — NOT on a
+  // sealed chapter. Label it as such; never call the latest seal "current".
+  var lead=document.createElement('span');
+  var b=document.createElement('b'); b.textContent='Working draft';
+  lead.appendChild(b);
+  strip.appendChild(lead);
+
+  // ANCESTOR back-link only: the latest SEALED release (Chapter currentN) is the
+  // working draft's immediate ancestor — never a forward/next claim.
+  strip.appendChild(sep());
+  var rel=document.createElement('a');
+  rel.href=(latest.path||'')+'index.html';
+  rel.textContent='latest release Chapter '+latest.n;
+  strip.appendChild(rel);
+
+  var all=document.createElement('a');
+  all.className='ls-all'; all.href='lineage.html';
+  all.textContent='View all chapters →';
+  strip.appendChild(all);
+
+  strip.classList.add('show');
+}).catch(function(){ /* hide: strip stays display:none (standalone or load failure) */ });
+</script>
+</body>
+</html>
